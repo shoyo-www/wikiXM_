@@ -160,7 +160,7 @@ class SignInScreen extends StatelessWidget {
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: FontSize.sp_11,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w800,
                                   ),
                                 ),
                               ],
@@ -355,13 +355,27 @@ class SignInScreen extends StatelessWidget {
                                       color: Color(0xfff50309),
                                     borderRadius: BorderRadius.circular(4)
                                   ),
-                                  child:  Text(
-                                    'LIVE',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: FontSize.sp_8_5,
-                                      fontWeight: FontWeight.w900,
-                                    ),
+                                  child:  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: Dimensions.h_3,
+                                        height: Dimensions.h_3,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      SizedBox(width: Dimensions.w_2),
+                                      Text(
+                                        'LIVE',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: FontSize.sp_8_5,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                      ),
+                                    ],
                                   )),
                             ],
                           ),
@@ -370,13 +384,14 @@ class SignInScreen extends StatelessWidget {
                               Text(
                                 'View all',
                                 style: TextStyle(
-                                  color: Color(0xff00127f),
+                                  color: Color(0xff0607fa),
                                   fontSize: FontSize.sp_9,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               SizedBox(width: Dimensions.w_2),
-                              Icon(CupertinoIcons.arrow_right,size: Dimensions.h_11,color: Color(0xff00127f))
+                              Icon(CupertinoIcons.arrow_right,size: Dimensions.h_11,color: Color(0xff0607fa)),
+                              SizedBox(width: Dimensions.w_2),
                             ],
                           )
                         ],
@@ -406,7 +421,7 @@ class SignInScreen extends StatelessWidget {
           boxShadow: [
             BoxShadow(color: Colors.grey.shade400,
                 offset: Offset(4, 4),
-                blurRadius: 10,
+                blurRadius: 20,
                 spreadRadius: 1),
           ]
       ),
@@ -441,7 +456,7 @@ class SignInScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: Dimensions.h_3),
+          SizedBox(height: Dimensions.h_5),
           Text(
             "Welcome back! Let's pick up where you left",
             style: TextStyle(
@@ -450,7 +465,7 @@ class SignInScreen extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: Dimensions.h_8),
+          SizedBox(height: Dimensions.h_5),
           Text(
             "Email or Mobile Number",
             style: TextStyle(
