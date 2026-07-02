@@ -6,7 +6,10 @@ class Images {
   static const firstVisitTownTalk = 'assets/images/first_visit_town_talk.jpg';
   static const firstVisitTownHall = 'assets/images/first_visit_town_hall.jpg';
   static const firstVisitEvents = 'assets/images/first_visit_events.jpg';
-  static const firstVisitTownMemory =
-      'assets/images/first_visit_town_memory.jpg';
+  static const firstVisitTownMemory = 'assets/images/first_visit_town_memory.jpg';
   static const invite = 'assets/images/invite.png';
+  static const apple = 'assets/images/ic_signin_apple_icon.png';
+  static const facebook = 'assets/images/ic_signin_facbook.png';
+  static const google = 'assets/images/ic_signin_google_icon.png';
+  static const twitter = 'assets/images/ic_signin_twitter_logn.png';
 }

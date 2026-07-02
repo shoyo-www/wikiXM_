@@ -3,9 +3,9 @@ import 'appcolor.dart';
 
 class AppTheme {
   final lightTheme = ThemeData.light().copyWith(
-    textTheme: ThemeData.light().textTheme.apply(fontFamily: 'Merriweather'),
+    textTheme: ThemeData.light().textTheme.apply(fontFamily: 'Poppins'),
     primaryTextTheme:
-        ThemeData.light().primaryTextTheme.apply(fontFamily: 'Merriweather'),
+        ThemeData.light().primaryTextTheme.apply(fontFamily: 'Poppins'),
     primaryColor: AppColor.appColor,
     // backgroundColor: AppColor.lightBackground,
     highlightColor: AppColor.black,
@@ -23,9 +23,9 @@ class AppTheme {
   );
 
   final darkTheme = ThemeData.dark().copyWith(
-    textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'Merriweather'),
+    textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'Poppins'),
     primaryTextTheme:
-        ThemeData.dark().primaryTextTheme.apply(fontFamily: 'Merriweather'),
+        ThemeData.dark().primaryTextTheme.apply(fontFamily: 'Poppins'),
     primaryColor: AppColor.appColor,
     // backgroundColor: AppColor.darkCardColor,
     highlightColor: AppColor.white,
