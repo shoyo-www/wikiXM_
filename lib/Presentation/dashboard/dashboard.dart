@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/Presentation/dashboard/controller.dart';
@@ -27,7 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return AppScaffold(
       top: false,
-      bottom: false,
+      bottom: Platform.isAndroid ? true : false,
       bodyPadding: EdgeInsets.zero,
       isNavbar: true,
       body: Obx(() {

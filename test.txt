@@ -1,0 +1,17 @@
+Today's Task
+Project: WikiXM
+
+-Created the new Sign In screen UI based on the client-provided design.
+-Replaced the old sign-in layout with the new responsive layout.
+-Added the black gradient blur effect to the header hero section.
+-Created the Your Community Journey section with a responsive design and custom icons.
+-Added a progress bar to the Community Journey section.
+-Created the Today's Fastest Way to Progress section.
+-Added the Continue Where You Left Off section with horizontally scrollable cards.
+-Created the login request and response models.
+-Integrated the login API and added a loading state while the request is in progress.
+-Added form validation to prevent login requests with empty or invalid fields.
+-Added support for handling API responses where the message field is returned as an array.
+
+FreeTime: None
+RoadBlock: None

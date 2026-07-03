@@ -17,9 +17,6 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   HttpOverrides.global = MyHttpOverrides();
   await GetStorage.init();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [
-    SystemUiOverlay.top,
-    SystemUiOverlay.bottom]);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
@@ -29,20 +26,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarDividerColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
-    );
     SizeConfig.init(context);
     return GetMaterialApp(
       initialBinding: InitialBinding(),
-      builder: EasyLoading.init(),
+      builder: EasyLoading.init(
+        builder: (context,child) {
+          SystemChrome.setSystemUIOverlayStyle(
+            const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness: Brightness.light,
+              systemNavigationBarColor: Colors.white,
+              systemNavigationBarDividerColor: Colors.white,
+              systemNavigationBarIconBrightness: Brightness.dark,
+            ),
+          );
+          return child!;
+        },
+      ),
       debugShowCheckedModeBanner: false,
       theme: AppTheme().lightTheme,
       darkTheme: AppTheme().darkTheme,

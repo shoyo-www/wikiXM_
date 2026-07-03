@@ -50,6 +50,7 @@ class Dimensions {
   static double get w_4   => SizeConfig.w(4.0);
   static double get w_5   => SizeConfig.w(5.0);
   static double get w_6   => SizeConfig.w(6.0);
+  static double get w_7   => SizeConfig.w(7.0);
   static double get w_8   => SizeConfig.w(8.0);
   static double get w_10  => SizeConfig.w(10.0);
   static double get w_12  => SizeConfig.w(12.0);
@@ -104,8 +105,10 @@ class Dimensions {
   static double get h_2   => SizeConfig.h(2.0);
   static double get h_3   => SizeConfig.h(3.0);
   static double get h_4   => SizeConfig.h(4.0);
+  static double get h_4_5   => SizeConfig.h(4.5);
   static double get h_5   => SizeConfig.h(5.0);
   static double get h_6   => SizeConfig.h(6.0);
+  static double get h_7   => SizeConfig.h(7.0);
   static double get h_8   => SizeConfig.h(8.0);
   static double get h_10  => SizeConfig.h(10.0);
   static double get h_11  => SizeConfig.h(11.0);
@@ -170,6 +173,7 @@ class Dimensions {
   static double get h_240 => SizeConfig.h(240.0);
   static double get h_246 => SizeConfig.h(246.0);
   static double get h_250 => SizeConfig.h(250.0);
+  static double get h_260 => SizeConfig.h(260.0);
   static double get h_280 => SizeConfig.h(280.0);
   static double get h_290 => SizeConfig.h(290.0);
   static double get h_300 => SizeConfig.h(300.0);

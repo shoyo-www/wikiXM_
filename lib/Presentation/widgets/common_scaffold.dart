@@ -37,7 +37,7 @@ class AppScaffold extends StatelessWidget {
       color: Colors.white,
       child: SafeArea(
         top: top ?? true,
-        bottom: bottom ?? false,
+        bottom: Platform.isAndroid ? true:bottom ?? false,
         child: isNavbar == true
             ? Stack(
                 children: [
@@ -61,7 +61,7 @@ class AppScaffold extends StatelessWidget {
                     () => Positioned(
                       left: 0,
                       right: 0,
-                      bottom: Platform.isAndroid ? Dimensions.h_25:0,
+                      bottom: Platform.isAndroid ? Dimensions.h_5:0,
                       child: Padding(
                         padding:  EdgeInsets.symmetric(horizontal: Dimensions.w_20),
                         child: Platform.isAndroid ?

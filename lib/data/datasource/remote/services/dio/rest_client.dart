@@ -84,8 +84,11 @@ class RestClient implements BaseService {
             throw Dio.DioException('Something went wrong');
           }else {
             Map<String, dynamic> errorResponse = jsonDecode(e.response?.data);
-            final String message = errorResponse['message'] ?? 'Something went Wrong';
-            throw Dio.DioException(message);
+            dynamic message = errorResponse['message'];
+            if (message is List) {
+              message = message.isNotEmpty ? message.first.toString() : 'Something went wrong';
+            }
+            throw Dio.DioException(message?.toString() ?? 'Something went wrong');
           }
         }
         if (kDebugMode) {
