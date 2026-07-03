@@ -1065,7 +1065,7 @@ class SignInScreen extends StatelessWidget {
                   color: Colors.grey,
                 )),
                 Text(
-                  "or Continue with",
+                  "or continue with",
                   style: TextStyle(
                     color: Color(0xff00127f),
                     fontSize: FontSize.sp_9_5,
