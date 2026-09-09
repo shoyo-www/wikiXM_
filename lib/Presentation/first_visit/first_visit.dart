@@ -4,9 +4,12 @@ import 'package:get/get.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/Presentation/widgets/town_search.dart';
 import 'package:wikixm/approutes.dart';
+import 'package:wikixm/constants/appcolor.dart';
 
+import '../../constants/constants.dart';
 import '../../constants/fontsize.dart';
 import '../../constants/images.dart';
+import '../../data/datasource/local/local_storage.dart';
 import '../widgets/cache_image.dart';
 
 class FirstVisit extends StatelessWidget {
@@ -14,6 +17,7 @@ class FirstVisit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isLight = Theme.of(context).brightness == Brightness.light;
     return AppScaffold(
       top: false,
       bodyPadding: EdgeInsets.zero,
@@ -25,24 +29,31 @@ class FirstVisit extends StatelessWidget {
               children: [
                 AppCacheImage(
                   size: Dimensions.h_290,
-                  imageUrl: Images.firstVisitSeattle,
+                  imageUrl: isLight ? Images.cityImageMobileDay:Images.cityImageMobile,
                   isShadow: false,
                   fit: BoxFit.cover,
                   widthSize: Get.width,
                 ),
-                const Positioned.fill(
+                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
-                        colors: [
-                          Color(0xE6020B15),
-                          Color(0x99020B15),
-                          Color(0x00000000),
-                          Color(0x00000000),
+                        colors: isLight
+                            ? [
+                          const Color(0xE6FFFFFF),
+                          const Color(0x99FFFFFF),
+                          const Color(0x00FFFFFF),
+                          const Color(0x00FFFFFF),
+                        ]
+                            : [
+                          const Color(0xE6020B15),
+                          const Color(0x99020B15),
+                          const Color(0x00000000),
+                          const Color(0x00000000),
                         ],
-                        stops: [0, 0.4, 0.78, 1],
+                        stops: const [0, 0.4, 0.78, 1],
                       ),
                     ),
                   ),
@@ -56,11 +67,10 @@ class FirstVisit extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Image.asset(Images.appLogoGif,height: Dimensions.h_50,width: Dimensions.h_50),
                       Text(
                         'Your town.',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: isLight ? AppColor.primaryNavyNew :Colors.white,
                           fontSize: FontSize.sp_24,
                           fontWeight: FontWeight.w900,
                         ),
@@ -68,7 +78,7 @@ class FirstVisit extends StatelessWidget {
                       Text(
                         'Your voice.',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: isLight ? AppColor.primaryNavyNew :Colors.white,
                           fontSize: FontSize.sp_24,
                           fontWeight: FontWeight.w900,
                         ),
@@ -77,7 +87,7 @@ class FirstVisit extends StatelessWidget {
                       Text(
                         'News your way. Community first.',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: isLight ? AppColor.primaryNavyNew :Colors.white,
                           fontSize: FontSize.sp_12,
                           fontWeight: FontWeight.w900,
                         ),
@@ -85,14 +95,14 @@ class FirstVisit extends StatelessWidget {
                       SizedBox(height: Dimensions.h_8),
                       Row(
                         children: [
-                          Icon(CupertinoIcons.book, size: Dimensions.h_10),
+                          Icon(CupertinoIcons.book, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew :Colors.white,),
                           SizedBox(width: Dimensions.w_4),
                           Text(
                             'Stay informed about what matters.',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: isLight ? AppColor.primaryNavyNew :Colors.white,
                               fontSize: FontSize.sp_9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -100,14 +110,14 @@ class FirstVisit extends StatelessWidget {
                       SizedBox(height: Dimensions.h_3),
                       Row(
                         children: [
-                          Icon(CupertinoIcons.chat_bubble, size: Dimensions.h_10),
+                          Icon(CupertinoIcons.chat_bubble, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew :Colors.white,),
                           SizedBox(width: Dimensions.w_4),
                           Text(
                             'Share your voice in Town Talk.',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: isLight ? AppColor.primaryNavyNew :Colors.white,
                               fontSize: FontSize.sp_9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -115,14 +125,14 @@ class FirstVisit extends StatelessWidget {
                       SizedBox(height: Dimensions.h_3),
                       Row(
                         children: [
-                          Icon(CupertinoIcons.heart, size: Dimensions.h_10),
+                          Icon(CupertinoIcons.heart, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew :Colors.white,),
                           SizedBox(width: Dimensions.w_4),
                           Text(
                             'Help shape the future of your community.',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: isLight ? AppColor.primaryNavyNew :Colors.white,
                               fontSize: FontSize.sp_9,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ],
@@ -130,7 +140,8 @@ class FirstVisit extends StatelessWidget {
                       SizedBox(height: Dimensions.h_15),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: ()=> TownSearch.show(context),
+                        onTap: () {
+                        },
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: Dimensions.w_30,
@@ -146,6 +157,7 @@ class FirstVisit extends StatelessWidget {
                               Icon(
                                 CupertinoIcons.location_solid,
                                 size: Dimensions.h_12,
+                                color: AppColor.white,
                               ),
                               SizedBox(width: Dimensions.w_2),
                               Text(
@@ -204,16 +216,16 @@ class FirstVisit extends StatelessWidget {
                             Text(
                               'Already have an account?',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: isLight ? AppColor.primaryNavyNew :Colors.white,
                                 fontSize: FontSize.sp_9,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                             SizedBox(width: Dimensions.w_4),
                             Text(
                               'Sign in',
                               style: TextStyle(
-                                color: Colors.blueAccent,
+                                color: AppColor.darkBlue,
                                 fontSize: FontSize.sp_9,
                                 fontWeight: FontWeight.w900,
                               ),
@@ -224,117 +236,48 @@ class FirstVisit extends StatelessWidget {
                     ],
                   ),
                 ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: -2,
-                  child: IgnorePointer(
-                    child: Container(
-                      height: Dimensions.h_30,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.white.withValues(alpha: 0.0),
-                            Colors.white.withValues(alpha: 0.0),
-                            Colors.white,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: -4,
-                  child: IgnorePointer(
-                    child: Container(
-                      height: Dimensions.h_20,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.white.withValues(alpha: 0.0),
-                            Colors.white.withValues(alpha: 0.0),
-                            Colors.white,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
+            SizedBox(height: Dimensions.h_2),
             Padding(
-              padding: EdgeInsets.only(left: Dimensions.w_6,right: Dimensions.w_6),
-              child: GridView.count(
-                crossAxisCount: 2,
+              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6),
+              child: GridView.builder(
                 shrinkWrap: true,
-                padding: EdgeInsets.zero,
                 physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: Dimensions.w_5,
-                crossAxisSpacing: Dimensions.w_5,
-                childAspectRatio: 2.4,
-                children: const [
-                  _ExploreCard(
-                    image: Images.firstVisitLocalNews,
-                    title: 'LOCAL NEWS',
-                    subtitle: 'Real stories.\nReal people.',
-                    icon: Icons.article_rounded,
-                    iconColor: Color(0xFF2563EB),
-                  ),
-                  _ExploreCard(
-                    image: Images.firstVisitSeattle,
-                    title: 'WEATHER',
-                    subtitle: 'Live updates.\nPlan your day.',
-                    icon: CupertinoIcons.cloud_sun_fill,
-                    iconColor: Color(0xFF1D4ED8),
-                  ),
-                  _ExploreCard(
-                    image: Images.firstVisitTownTalk,
-                    title: 'TOWN TALK',
-                    subtitle: 'Conversations\nthat matter.',
-                    icon: CupertinoIcons.chat_bubble_fill,
-                    iconColor: Color(0xFF16A34A),
-                  ),
-                  _ExploreCard(
-                    image: Images.firstVisitTownHall,
-                    title: 'TOWN HALL',
-                    subtitle: 'Transparent.\nAccountable.',
-                    icon: Icons.account_balance_rounded,
-                    iconColor: Color(0xFF2563EB),
-                  ),
-                  _ExploreCard(
-                    image: Images.firstVisitEvents,
-                    title: 'EVENTS',
-                    subtitle: "What's happening\nin your town.",
-                    icon: Icons.calendar_month_rounded,
-                    iconColor: Color(0xFF7E22CE),
-                  ),
-                  _ExploreCard(
-                    image: Images.firstVisitTownMemory,
-                    title: 'TOWN MEMORY',
-                    subtitle: 'Discover the stories\nthat shaped us.',
-                    icon: Icons.history_rounded,
-                    iconColor: Color(0xFFF97316),
-                    sepia: true,
-                  ),
-                ],
+                padding: EdgeInsets.zero,
+                itemCount: exploreCards.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: Dimensions.w_5,
+                  crossAxisSpacing: Dimensions.w_5,
+                  childAspectRatio: 2.4,
+                ),
+                itemBuilder: (context, index) {
+                  final item = exploreCards[index];
+
+                  return ExploreCard(
+                    image: item.image,
+                    title: item.title,
+                    subtitle: item.subtitle,
+                    icon: item.icon,
+                    iconColor: item.iconColor,
+                    sepia: item.sepia,
+                    isCommunity: item.isCommunity,
+                    actionTitle: item.actionTitle,
+                  );
+                },
               ),
             ),
             Padding(
               padding:  EdgeInsets.only(left: Dimensions.w_12,top: Dimensions.h_8),
               child: Row(
                 children: [
-                  Icon(CupertinoIcons.rocket_fill,size: Dimensions.h_15,color:  Colors.black87),
+                  Icon(CupertinoIcons.rocket_fill,size: Dimensions.h_15,color:  Theme.of(context).highlightColor),
                   SizedBox(width: Dimensions.w_5),
                   Text(
                     "Join in minutes. It's free.",
                     style: TextStyle(
-                      color: Colors.black87,
+                      color: Theme.of(context).highlightColor,
                       fontSize: FontSize.sp_13,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w700,
@@ -491,7 +434,7 @@ class FirstVisit extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: Dimensions.h_4),
       decoration: BoxDecoration(
-        color: const Color(0xffF8FAFC),
+        color: Theme.of(Get.context!).cardColor,
         borderRadius: BorderRadius.circular(4),
       ),
       child: SingleChildScrollView(
@@ -520,7 +463,7 @@ class FirstVisit extends StatelessWidget {
                           style: TextStyle(
                             fontSize: FontSize.sp_9,
                             fontWeight: FontWeight.w700,
-                            color: Colors.black87,
+                            color: Theme.of(Get.context!).highlightColor,
                           ),
                         ),
                         Text(
@@ -529,18 +472,10 @@ class FirstVisit extends StatelessWidget {
                           style: TextStyle(
                             fontSize: FontSize.sp_8,
                             fontWeight: FontWeight.w500,
-                            color: Colors.black87,
+                            color: Theme.of(Get.context!).highlightColor,
                           ),
                         ),
-                        // SizedBox(height: Dimensions.h_2),
-                        // Text(
-                        //   item["desc"] as String,
-                        //   textAlign: TextAlign.center,
-                        //   style: TextStyle(
-                        //     fontSize: FontSize.sp_7,
-                        //     color: Colors.grey.shade700,
-                        //   ),
-                        // ),
+
                       ],
                     ),
                   ),
@@ -593,7 +528,7 @@ class FirstVisit extends StatelessWidget {
                   title,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black87,
+                    color: Theme.of(Get.context!).highlightColor,
                     fontSize: FontSize.sp_9,
                     fontWeight: FontWeight.w700,
                   ),
@@ -603,7 +538,7 @@ class FirstVisit extends StatelessWidget {
                   description,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black87,
+                    color: Theme.of(Get.context!).highlightColor,
                     fontSize: FontSize.sp_8_5,
                     fontWeight: FontWeight.w500,
                   ),
@@ -643,14 +578,16 @@ class FirstVisit extends StatelessWidget {
   }
 }
 
-class _ExploreCard extends StatelessWidget {
-  const _ExploreCard({
+class ExploreCard extends StatelessWidget {
+  const ExploreCard({super.key,
     required this.image,
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.iconColor,
     this.sepia = false,
+    this.isCommunity = false,
+    required this.actionTitle
   });
 
   final String image;
@@ -659,104 +596,232 @@ class _ExploreCard extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final bool sepia;
+  final bool isCommunity;
+  final String actionTitle;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(Dimensions.w_5),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            image,
-            fit: BoxFit.cover,
-            color: sepia ? const Color(0x99704A2A) : null,
-            colorBlendMode: sepia ? BlendMode.color : null,
-          ),
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Color(0xE6000718),
-                  Color(0x99000718),
-                  Color(0x11000718),
-                ],
-                stops: [0, 0.55, 1],
+    bool isLight = Theme.of(context).brightness == Brightness.light;
+    return isCommunity ? Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: isLight? Colors.transparent: AppColor.white,width: 0.5),
+        borderRadius: BorderRadius.circular(Dimensions.h_6),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(Dimensions.h_6),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              image,
+              fit: BoxFit.cover,
+              color: sepia ? const Color(0x99704A2A) : null,
+              colorBlendMode: sepia ? BlendMode.color : null,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: .99),
+                    Colors.black.withValues(alpha: .70),
+                    Colors.black.withValues(alpha: .01),
+                    Colors.transparent,
+                  ],
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(Dimensions.w_8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: Dimensions.w_23,
-                  height: Dimensions.w_23,
-                  decoration: BoxDecoration(
-                    color: iconColor,
-                    borderRadius: BorderRadius.circular(Dimensions.w_4),
+            Positioned(
+              left: Dimensions.w_5,
+              right: Dimensions.w_4,
+              bottom: Dimensions.h_6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title.toUpperCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: FontSize.sp_11,
+                    ),
                   ),
-                  child: Icon(icon, color: Colors.white, size: Dimensions.w_15),
-                ),
-                SizedBox(width: Dimensions.w_6),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  SizedBox(height: Dimensions.h_1),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: FontSize.sp_9,
+                    ),
+                  ),
+                  SizedBox(height: Dimensions.h_4),
+                  Container(
+                    height: 0.5,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: Dimensions.h_5),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                      Container(
+                        width: Dimensions.h_10,
+                        height: Dimensions.h_10,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF6C4EFF),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.edit_rounded,
                           color: Colors.white,
-                          fontSize: FontSize.sp_11,
-                          fontWeight: FontWeight.w900,
+                          size: Dimensions.h_8,
                         ),
                       ),
-                      SizedBox(height: Dimensions.h_3),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: FontSize.sp_9,
-                          height: 1.35,
-                          fontWeight: FontWeight.w700,
+                      SizedBox(width: Dimensions.w_5),
+                      Expanded(
+                        child: Text(
+                          actionTitle,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: FontSize.sp_9,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Dimensions.w_3,
+                          vertical: Dimensions.h_1,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3BF00),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          "Earn +2 pts",
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.w700,
+                            fontSize: FontSize.sp_8,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Positioned(
-            right: Dimensions.w_6,
-            bottom: Dimensions.h_6,
-            child: Container(
-              width: Dimensions.w_20,
-              height: Dimensions.w_20,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0x66000000),
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
+          ],
+        ),
+      ),
+    ) : Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: isLight? Colors.transparent: AppColor.white,width: 0.5),
+        borderRadius: BorderRadius.circular(Dimensions.w_5),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(Dimensions.w_5),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              image,
+              fit: BoxFit.cover,
+              color: sepia ? const Color(0x99704A2A) : null,
+              colorBlendMode: sepia ? BlendMode.color : null,
+            ),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color(0xE6000718),
+                    Color(0x99000718),
+                    Color(0x11000718),
+                  ],
+                  stops: [0, 0.55, 1],
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(Dimensions.w_8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: Dimensions.w_23,
+                    height: Dimensions.w_23,
+                    decoration: BoxDecoration(
+                      color: iconColor,
+                      borderRadius: BorderRadius.circular(Dimensions.w_4),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: Dimensions.w_15),
+                  ),
+                  SizedBox(width: Dimensions.w_6),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: FontSize.sp_11,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        SizedBox(height: Dimensions.h_3),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: FontSize.sp_9,
+                            height: 1.35,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-              child: Icon(
-                CupertinoIcons.chevron_right,
-                size: Dimensions.w_10,
-                color: const Color(0xFF111827),
+            ),
+            Positioned(
+              right: Dimensions.w_6,
+              bottom: Dimensions.h_6,
+              child: Container(
+                width: Dimensions.w_20,
+                height: Dimensions.w_20,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x66000000),
+                      blurRadius: 5,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  CupertinoIcons.chevron_right,
+                  size: Dimensions.w_10,
+                  color: const Color(0xFF111827),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

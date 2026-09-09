@@ -50,6 +50,14 @@ dependencies:
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
   flutter_tts: ^4.2.5
+  font_awesome_flutter: ^11.0.0
+  percent_indicator: ^4.2.5
+  url_launcher: ^6.3.2
+  intl: ^0.20.3
+  smooth_page_indicator: ^2.0.1
+  carousel_slider_plus: ^7.1.2
+  flutter_svg: ^2.3.0
+  syncfusion_flutter_charts: ^34.2.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -92,6 +100,20 @@ flutter:
         - asset: assets/fonts/Poppins-SemiBold.ttf
           weight: 600
         - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter_18pt-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Inter_18pt-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Inter_18pt-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter_18pt-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter_18pt-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter_18pt-Bold.ttf
           weight: 700
 
   # An image asset can refer to one or more resolution-specific "variants", see

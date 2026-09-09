@@ -1,59 +1,95 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:wikixm/Presentation/auth/sign_in.dart';
+import 'package:wikixm/Presentation/command_center/command_center.dart';
 import 'package:wikixm/Presentation/dashboard/dashboard.dart';
 import 'package:wikixm/Presentation/first_visit/first_visit.dart';
 import 'package:wikixm/Presentation/guide/ask_guide.dart';
+import 'package:wikixm/Presentation/politics/politics.dart';
+import 'package:wikixm/Presentation/school/school_screen.dart';
+import 'package:wikixm/Presentation/sports/sports_screen.dart';
+import 'package:wikixm/Presentation/town_hall/town_hall_screen.dart';
+import 'package:wikixm/Presentation/weather/weather.dart';
 import '../../approutes.dart';
 import '../auth/sign_up.dart';
+import '../business/business.dart';
 import '../home/home.dart';
 import '../splash/splash_screen.dart';
 
 class AppPages {
-  static const Duration duration = Duration(milliseconds: 500);
+  static const Duration duration = Duration(milliseconds: 1000);
   static const Transition transition = Transition.cupertinoDialog;
   static var list = [
     GetPage(
       transitionDuration: duration,
       transition: transition,
       name: AppRoutes.splashScreen,
-      page: () => const SplashScreen(),
-    ),
+      page: () => const SplashScreen()),
     GetPage(
       transitionDuration: duration,
       transition: transition,
       name: AppRoutes.home,
-      page: () => const Home(),
-    ),
+      page: () => const Home()),
     GetPage(
       transitionDuration: duration,
       transition: transition,
       name: AppRoutes.dashboard,
-      page: () => const DashboardScreen(),
-    ),
+      page: () => const DashboardScreen()),
     GetPage(
       transitionDuration: duration,
       transition: transition,
       name: AppRoutes.askGuide,
-      page: () => const AskGuide(),
-    ),
+      page: () => const AskGuide()),
     GetPage(
       transitionDuration: duration,
       transition: Transition.cupertinoDialog,
       name: AppRoutes.firstTime,
-      page: () => const FirstVisit(),
-    ),
+      page: () => const FirstVisit()),
     GetPage(
       transitionDuration: duration,
       transition: Transition.cupertinoDialog,
       name: AppRoutes.signIn,
-      page: () => const SignInScreen(),
-    ),
+      page: () => const SignInScreen()),
     GetPage(
       transitionDuration: duration,
       transition: Transition.cupertinoDialog,
       name: AppRoutes.signUp,
-      page: () => const SignUpScreen(),
+      page: () => const SignUpScreen()),
+    GetPage(
+      transitionDuration: duration,
+      transition: Transition.cupertinoDialog,
+      name: AppRoutes.sports,
+      page: () => const SportsScreen()),
+    GetPage(
+      transitionDuration: duration,
+      transition: Transition.cupertinoDialog,
+      name: AppRoutes.business,
+      page: () => const BusinessScreen()),
+    GetPage(
+      transitionDuration: duration,
+      transition: Transition.cupertinoDialog,
+      name: AppRoutes.weather,
+      page: () => const WeatherScreen(),
     ),
+    GetPage(
+      transitionDuration: duration,
+      transition: Transition.cupertinoDialog,
+      name: AppRoutes.townHall,
+      page: () => const TownHallScreen()),
+    GetPage(
+      transitionDuration: duration,
+      transition: Transition.cupertinoDialog,
+      name: AppRoutes.school,
+      page: () => const SchoolScreen()),
+    GetPage(
+      transitionDuration: duration,
+      transition: Transition.cupertinoDialog,
+      name: AppRoutes.politics,
+      page: () => const PoliticsScreen()),
+    GetPage(
+        transitionDuration: duration,
+        transition: Transition.cupertinoDialog,
+        name: AppRoutes.commandCenter,
+        page: () => const CommandCenterScreen()),
   ];
 }

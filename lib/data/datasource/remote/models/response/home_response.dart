@@ -1,6 +1,12 @@
+// To parse this JSON data, do
+//
+//     final homeResponse = homeResponseFromJson(jsonString);
+
 import 'dart:convert';
 
 HomeResponse homeResponseFromJson(String str) => HomeResponse.fromJson(json.decode(str));
+
+String homeResponseToJson(HomeResponse data) => json.encode(data.toJson());
 
 class HomeResponse {
   final bool? success;
@@ -19,135 +25,218 @@ class HomeResponse {
     data: json["data"] == null ? null : HomeData.fromJson(json["data"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "success": success,
+    "message": message,
+    "data": data?.toJson(),
+  };
 }
 
 class HomeData {
-  final String? sectionGroup;
-  final String? username;
-  final HeroBanner? heroBanner;
-  final LiveInTown? liveInTown;
-  final TopConversation? topConversation;
-  final WhatMattersMost? whatMattersMost;
-  final TopStoryToday? topStoryToday;
+  final Header? header;
+  final Hero? hero;
+  final SummaryCards? summaryCards;
+  final List<FeatureStat>? featureStats;
+  final LiveFeed? liveFeed;
+  final BottomNavigation? bottomNavigation;
+  final Holiday? holiday;
 
   HomeData({
-    this.sectionGroup,
-    this.username,
-    this.heroBanner,
-    this.liveInTown,
-    this.topConversation,
-    this.whatMattersMost,
-    this.topStoryToday,
+    this.header,
+    this.hero,
+    this.summaryCards,
+    this.featureStats,
+    this.liveFeed,
+    this.bottomNavigation,
+    this.holiday
   });
 
   factory HomeData.fromJson(Map<String, dynamic> json) => HomeData(
-    sectionGroup: json["section_group"],
-    username: json["username"],
-    heroBanner: json["hero_banner"] == null ? null : HeroBanner.fromJson(json["hero_banner"]),
-    liveInTown: json["live_in_town"] == null ? null : LiveInTown.fromJson(json["live_in_town"]),
-    topConversation: json["top_conversation"] == null ? null : TopConversation.fromJson(json["top_conversation"]),
-    whatMattersMost: json["what_matters_most"] == null ? null : WhatMattersMost.fromJson(json["what_matters_most"]),
-    topStoryToday: json["top_story_today"] == null ? null : TopStoryToday.fromJson(json["top_story_today"]),
+    header: json["header"] == null ? null : Header.fromJson(json["header"]),
+    hero: json["hero"] == null ? null : Hero.fromJson(json["hero"]),
+    summaryCards: json["summary_cards"] == null ? null : SummaryCards.fromJson(json["summary_cards"]),
+    featureStats: json["feature_stats"] == null ? [] : List<FeatureStat>.from(json["feature_stats"]!.map((x) => FeatureStat.fromJson(x))),
+    liveFeed: json["live_feed"] == null ? null : LiveFeed.fromJson(json["live_feed"]),
+    bottomNavigation: json["bottom_navigation"] == null ? null : BottomNavigation.fromJson(json["bottom_navigation"]),
+    holiday: json["holiday"] == null ? null : Holiday.fromJson(json["holiday"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "header": header?.toJson(),
+    "hero": hero?.toJson(),
+    "summary_cards": summaryCards?.toJson(),
+    "feature_stats": featureStats == null ? [] : List<dynamic>.from(featureStats!.map((x) => x.toJson())),
+    "live_feed": liveFeed?.toJson(),
+    "bottom_navigation": bottomNavigation?.toJson(),
+  };
 }
 
-class HeroBanner {
-  final String? title;
-  final Location? location;
-  final String? backgroundImage;
-  final LeadStory? leadStory;
-  final Stats? stats;
+class BottomNavigation {
+  final Desktop? desktop;
+  final Mobile? mobile;
 
-  HeroBanner({
-    this.title,
-    this.location,
-    this.backgroundImage,
-    this.leadStory,
-    this.stats,
+  BottomNavigation({
+    this.desktop,
+    this.mobile,
   });
 
-  HeroBanner copyWith({
-    String? title,
-    Location? location,
-    String? backgroundImage,
-    Weather? weather,
-    LeadStory? leadStory,
-    Stats? stats,
-    List<dynamic>? alerts,
-  }) =>
-      HeroBanner(
-        title: title ?? this.title,
-        location: location ?? this.location,
-        backgroundImage: backgroundImage ?? this.backgroundImage,
-        leadStory: leadStory ?? this.leadStory,
-        stats: stats ?? this.stats,
-      );
-
-  factory HeroBanner.fromJson(Map<String, dynamic> json) => HeroBanner(
-    title: json["title"],
-    location: json["location"] == null ? null : Location.fromJson(json["location"]),
-    backgroundImage: json["background_image"],
-    leadStory: json["lead_story"] == null ? null : LeadStory.fromJson(json["lead_story"]),
-    stats: json["stats"] == null ? null : Stats.fromJson(json["stats"]),
+  factory BottomNavigation.fromJson(Map<String, dynamic> json) => BottomNavigation(
+    desktop: json["desktop"] == null ? null : Desktop.fromJson(json["desktop"]),
+    mobile: json["mobile"] == null ? null : Mobile.fromJson(json["mobile"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "desktop": desktop?.toJson(),
+    "mobile": mobile?.toJson(),
+  };
 }
 
-class LeadStory {
-  final int? id;
-  final String? title;
+class Desktop {
+  final List<Cta>? items;
+  final Cta? cta;
+
+  Desktop({
+    this.items,
+    this.cta,
+  });
+
+  factory Desktop.fromJson(Map<String, dynamic> json) => Desktop(
+    items: json["items"] == null ? [] : List<Cta>.from(json["items"]!.map((x) => Cta.fromJson(x))),
+    cta: json["cta"] == null ? null : Cta.fromJson(json["cta"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+    "cta": cta?.toJson(),
+  };
+}
+
+class Cta {
+  final String? label;
   final String? description;
-  final String? image;
-  final String? categoryTitle;
-  final String? homeUrl;
-  final String? categoryUrl;
-  final String? reporterName;
-  final String? profileImage;
-  final int? totalComments;
-  final int? totalViews;
-  final int? totalLikes;
-  final String? formattedPublishedDate;
-  final String? location;
-  final int? rank;
+  final String? slug;
+  final String? iconClass;
+  final String? arrowIconClass;
+  final int? badgeCount;
 
-  LeadStory({
-    this.id,
-    this.title,
+  Cta({
+    this.label,
     this.description,
-    this.image,
-    this.categoryTitle,
-    this.homeUrl,
-    this.categoryUrl,
-    this.reporterName,
-    this.profileImage,
-    this.totalComments,
-    this.totalViews,
-    this.totalLikes,
-    this.formattedPublishedDate,
-    this.location,
-    this.rank,
+    this.slug,
+    this.iconClass,
+    this.arrowIconClass,
+    this.badgeCount,
   });
 
-
-  factory LeadStory.fromJson(Map<String, dynamic> json) => LeadStory(
-    id: json["id"],
-    title: json["title"],
+  factory Cta.fromJson(Map<String, dynamic> json) => Cta(
+    label: json["label"],
     description: json["description"],
-    image: json["image"],
-    categoryTitle: json["category_title"],
-    homeUrl: json["home_url"],
-    categoryUrl: json["category_url"],
-    reporterName: json["reporter_name"],
-    profileImage: json["profile_image"],
-    totalComments: json["total_comments"],
-    totalViews: json["total_views"],
-    totalLikes: json["total_likes"],
-    formattedPublishedDate: json["formatted_published_date"],
-    location: json["location"],
-    rank: json["rank"],
+    slug: json["slug"],
+    iconClass: json["icon_class"],
+    arrowIconClass: json["arrow_icon_class"],
+    badgeCount: json["badge_count"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "description": description,
+    "slug": slug,
+    "icon_class": iconClass,
+    "arrow_icon_class": arrowIconClass,
+    "badge_count": badgeCount,
+  };
+}
+
+class Mobile {
+  final List<MobileItem>? items;
+
+  Mobile({
+    this.items,
+  });
+
+  factory Mobile.fromJson(Map<String, dynamic> json) => Mobile(
+    items: json["items"] == null ? [] : List<MobileItem>.from(json["items"]!.map((x) => MobileItem.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+  };
+}
+
+class MobileItem {
+  final String? label;
+  final String? slug;
+  final String? iconImage;
+  final bool? active;
+  final bool? postAction;
+
+  MobileItem({
+    this.label,
+    this.slug,
+    this.iconImage,
+    this.active,
+    this.postAction,
+  });
+
+  factory MobileItem.fromJson(Map<String, dynamic> json) => MobileItem(
+    label: json["label"],
+    slug: json["slug"],
+    iconImage: json["icon_image"],
+    active: json["active"],
+    postAction: json["post_action"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "slug": slug,
+    "icon_image": iconImage,
+    "active": active,
+    "post_action": postAction,
+  };
+}
+
+class FeatureStat {
+  final String? label;
+  final String? iconClass;
+  final String? toneClass;
+
+  FeatureStat({
+    this.label,
+    this.iconClass,
+    this.toneClass,
+  });
+
+  factory FeatureStat.fromJson(Map<String, dynamic> json) => FeatureStat(
+    label: json["label"],
+    iconClass: json["icon_class"],
+    toneClass: json["tone_class"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "icon_class": iconClass,
+    "tone_class": toneClass,
+  };
+}
+
+class Header {
+  final Location? location;
+  final User? user;
+
+  Header({
+    this.location,
+    this.user,
+  });
+
+  factory Header.fromJson(Map<String, dynamic> json) => Header(
+    location: json["location"] == null ? null : Location.fromJson(json["location"]),
+    user: json["user"] == null ? null : User.fromJson(json["user"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "location": location?.toJson(),
+    "user": user?.toJson(),
+  };
 }
 
 class Location {
@@ -185,200 +274,305 @@ class Location {
     image: json["image"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "region_type": regionType,
+    "name": name,
+    "header": header,
+    "city_id": cityId,
+    "state_id": stateId,
+    "country_id": countryId,
+    "abbreviations": abbreviations,
+    "image": image,
+  };
 }
 
-class Stats {
-  final int? neighborsOnline;
-  final int? storiesToday;
-  final int? activeAlerts;
-
-  Stats({
-    this.neighborsOnline,
-    this.storiesToday,
-    this.activeAlerts,
-  });
-
-  factory Stats.fromJson(Map<String, dynamic> json) => Stats(
-    neighborsOnline: json["neighbors_online"],
-    storiesToday: json["stories_today"],
-    activeAlerts: json["active_alerts"],
-  );
-
-}
-
-class Weather {
-  final int? temperatureCelsius;
-  final String? temperatureText;
-  final String? condition;
-  final String? icon;
-
-  Weather({
-    this.temperatureCelsius,
-    this.temperatureText,
-    this.condition,
-    this.icon,
-  });
-
-  factory Weather.fromJson(Map<String, dynamic> json) => Weather(
-    temperatureCelsius: json["temperature_celsius"],
-    temperatureText: json["temperature_text"],
-    condition: json["condition"],
-    icon: json["icon"],
-  );
-
-}
-
-class LiveInTown {
-  final String? title;
-  final List<Item>? items;
-
-  LiveInTown({
-    this.title,
-    this.items,
-  });
-
-  factory LiveInTown.fromJson(Map<String, dynamic> json) => LiveInTown(
-    title: json["title"],
-    items: json["items"] == null
-        ? []
-        : List<Item>.from(
-      json["items"].map((x) => Item.fromJson(x)),
-    ),
-  );
-
-}
 class User {
+  final int? id;
   final String? name;
-  final String? image;
+  final String? avatar;
 
   User({
+    this.id,
     this.name,
-    this.image,
+    this.avatar,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json["id"],
     name: json["name"],
-    image: json["image"],
+    avatar: json["avatar"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "avatar": avatar,
+  };
 }
 
-class Item {
+class Hero {
+  final String? greeting;
+  final String? backgroundImage;
+
+  Hero({
+    this.greeting,
+    this.backgroundImage,
+  });
+
+  factory Hero.fromJson(Map<String, dynamic> json) => Hero(
+    greeting: json["greeting"],
+    backgroundImage: json["background_image"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "greeting": greeting,
+    "background_image": backgroundImage,
+  };
+}
+
+class LiveFeed {
+  final String? title;
+  final Button? button;
+  final List<LiveFeedItem>? items;
+
+  LiveFeed({
+    this.title,
+    this.button,
+    this.items,
+  });
+
+  factory LiveFeed.fromJson(Map<String, dynamic> json) => LiveFeed(
+    title: json["title"],
+    button: json["button"] == null ? null : Button.fromJson(json["button"]),
+    items: json["items"] == null ? [] : List<LiveFeedItem>.from(json["items"]!.map((x) => LiveFeedItem.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "button": button?.toJson(),
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+  };
+}
+
+class Button {
+  final String? text;
+  final String? url;
+
+  Button({
+    this.text,
+    this.url,
+  });
+
+  factory Button.fromJson(Map<String, dynamic> json) => Button(
+    text: json["text"],
+    url: json["url"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "text": text,
+    "url": url,
+  };
+}
+
+class Holiday {
+  final int? id;
+  final String? name;
+  final String? image;
+  final String? logo;
+  final String? url;
+  final String? displayDate;
+  final String? dateMessage;
+  final Countdown? countdown;
+
+  Holiday({
+    this.id,
+    this.name,
+    this.image,
+    this.logo,
+    this.url,
+    this.displayDate,
+    this.dateMessage,
+    this.countdown,
+  });
+
+  factory Holiday.fromJson(Map<String, dynamic> json) => Holiday(
+    id: json["id"],
+    name: json["name"],
+    image: json["image"],
+    logo: json["logo"],
+    url: json["url"],
+    displayDate: json["display_date"],
+    dateMessage: json["date_message"],
+    countdown: json["countdown"] == null
+        ? null
+        : Countdown.fromJson(json["countdown"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "image": image,
+    "logo": logo,
+    "url": url,
+    "display_date": displayDate,
+    "date_message": dateMessage,
+    "countdown": countdown?.toJson(),
+  };
+}
+
+class Countdown {
+  final int? days;
+  final int? hours;
+  final int? minutes;
+  final int? seconds;
+
+  Countdown({
+    this.days,
+    this.hours,
+    this.minutes,
+    this.seconds,
+  });
+
+  factory Countdown.fromJson(Map<String, dynamic> json) => Countdown(
+    days: json["days"],
+    hours: json["hours"],
+    minutes: json["minutes"],
+    seconds: json["seconds"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "days": days,
+    "hours": hours,
+    "minutes": minutes,
+    "seconds": seconds,
+  };
+}
+
+class LiveFeedItem {
   final int? id;
   final String? module;
+  final int? moduleId;
   final String? activity;
   final String? title;
   final String? description;
-  final User? user;
-  final String? createdAt;
+  final String? image;
+  final dynamic icon;
+  final String? userName;
+  final String? profileImage;
+  final String? postedAt;
+  final List<dynamic>? metadata;
 
-  Item({
+  LiveFeedItem({
     this.id,
     this.module,
+    this.moduleId,
     this.activity,
     this.title,
     this.description,
-    this.user,
-    this.createdAt,
+    this.image,
+    this.icon,
+    this.userName,
+    this.profileImage,
+    this.postedAt,
+    this.metadata,
   });
 
-  factory Item.fromJson(Map<String, dynamic> json) => Item(
+  factory LiveFeedItem.fromJson(Map<String, dynamic> json) => LiveFeedItem(
     id: json["id"],
     module: json["module"],
+    moduleId: json["module_id"],
     activity: json["activity"],
     title: json["title"],
     description: json["description"],
-    user: json["user"] == null ? null : User.fromJson(json["user"]),
-    createdAt: json["created_at"],
-  );
-
-}
-
-class TopConversation {
-  final String? title;
-  final Conversation? conversation;
-
-  TopConversation({
-    this.title,
-    this.conversation,
-  });
-
-
-  factory TopConversation.fromJson(Map<String, dynamic> json) => TopConversation(
-    title: json["title"],
-    conversation: json["conversation"] == null ? null : Conversation.fromJson(json["conversation"]),
-  );
-
-}
-
-class Conversation {
-  final int? id;
-  final String? headline;
-  final String? summary;
-  final String? image;
-  final String? actorName;
-  final String? actorAvatar;
-  final int? totalComments;
-  final int? totalLikes;
-  final String? relativeTime;
-  final DateTime? publishedAt;
-
-  Conversation({
-    this.id,
-    this.headline,
-    this.summary,
-    this.image,
-    this.actorName,
-    this.actorAvatar,
-    this.totalComments,
-    this.totalLikes,
-    this.relativeTime,
-    this.publishedAt,
-  });
-
-  factory Conversation.fromJson(Map<String, dynamic> json) => Conversation(
-    id: json["id"],
-    headline: json["headline"],
-    summary: json["summary"],
     image: json["image"],
-    actorName: json["actor_name"],
-    actorAvatar: json["actor_avatar"],
-    totalComments: json["total_comments"],
-    totalLikes: json["total_likes"],
-    relativeTime: json["relative_time"],
-    publishedAt: json["published_at"] == null ? null : DateTime.parse(json["published_at"]),
+    icon: json["icon"],
+    userName: json["user_name"],
+    profileImage: json["profile_image"],
+    postedAt: json["posted_at"],
+    metadata: json["metadata"] == null ? [] : List<dynamic>.from(json["metadata"]!.map((x) => x)),
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "module": module,
+    "module_id": moduleId,
+    "activity": activity,
+    "title": title,
+    "description": description,
+    "image": image,
+    "icon": icon,
+    "user_name": userName,
+    "profile_image": profileImage,
+    "posted_at": postedAt,
+    "metadata": metadata == null ? [] : List<dynamic>.from(metadata!.map((x) => x)),
+  };
 }
 
-class TopStoryToday {
-  final String? title;
-  final LeadStory? story;
+class SummaryCards {
+  final Announcements? neighborsActive;
+  final Announcements? discussionsGrowing;
+  final Announcements? newArticlesToday;
+  final Announcements? repResponses;
+  final Announcements? announcements;
 
-  TopStoryToday({
-    this.title,
-    this.story,
+  SummaryCards({
+    this.neighborsActive,
+    this.discussionsGrowing,
+    this.newArticlesToday,
+    this.repResponses,
+    this.announcements,
   });
 
-  factory TopStoryToday.fromJson(Map<String, dynamic> json) => TopStoryToday(
-    title: json["title"],
-    story: json["story"] == null ? null : LeadStory.fromJson(json["story"]),
+  factory SummaryCards.fromJson(Map<String, dynamic> json) => SummaryCards(
+    neighborsActive: json["neighbors_active"] == null ? null : Announcements.fromJson(json["neighbors_active"]),
+    discussionsGrowing: json["discussions_growing"] == null ? null : Announcements.fromJson(json["discussions_growing"]),
+    newArticlesToday: json["new_articles_today"] == null ? null : Announcements.fromJson(json["new_articles_today"]),
+    repResponses: json["rep_responses"] == null ? null : Announcements.fromJson(json["rep_responses"]),
+    announcements: json["announcements"] == null ? null : Announcements.fromJson(json["announcements"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "neighbors_active": neighborsActive?.toJson(),
+    "discussions_growing": discussionsGrowing?.toJson(),
+    "new_articles_today": newArticlesToday?.toJson(),
+    "rep_responses": repResponses?.toJson(),
+    "announcements": announcements?.toJson(),
+  };
 }
 
-class WhatMattersMost {
-  final String? title;
-  final List<LeadStory>? storyCards;
+class Announcements {
+  final String? label;
+  final int? value;
+  final String? iconClass;
+  final String? toneClass;
+  final String? trend;
+  final String? iconImage;
 
-  WhatMattersMost({
-    this.title,
-    this.storyCards,
+  Announcements({
+    this.label,
+    this.value,
+    this.iconClass,
+    this.toneClass,
+    this.trend,
+    this.iconImage,
   });
 
-  factory WhatMattersMost.fromJson(Map<String, dynamic> json) => WhatMattersMost(
-    title: json["title"],
-    storyCards: json["story_cards"] == null ? [] : List<LeadStory>.from(json["story_cards"]!.map((x) => LeadStory.fromJson(x))),
+  factory Announcements.fromJson(Map<String, dynamic> json) => Announcements(
+    label: json["label"],
+    value: json["value"],
+    iconClass: json["icon_class"],
+    toneClass: json["tone_class"],
+    trend: json["trend"],
+    iconImage: json["icon_image"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "value": value,
+    "icon_class": iconClass,
+    "tone_class": toneClass,
+    "trend": trend,
+    "icon_image": iconImage,
+  };
 }

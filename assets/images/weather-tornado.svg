@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="1200 0 100 90"><defs>
+    <linearGradient id="weather-sun-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8c6" /><stop offset=".4" stop-color="#ffd54f" /><stop offset="1" stop-color="#f57c00" />
+    </linearGradient>
+    <linearGradient id="weather-cloud-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" /><stop offset=".55" stop-color="#eef4f7" /><stop offset="1" stop-color="#b9c7cf" />
+    </linearGradient>
+    <linearGradient id="weather-cloud-back" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8eef2" /><stop offset="1" stop-color="#8fa3ae" />
+    </linearGradient>
+    <linearGradient id="weather-storm-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#78909c" /><stop offset="1" stop-color="#263238" />
+    </linearGradient>
+    <linearGradient id="weather-moon-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" /><stop offset="1" stop-color="#aebcc4" />
+    </linearGradient>
+    
+    <radialGradient id="weather-hurricane-cloud" gradientUnits="userSpaceOnUse" cx="0" cy="0" r="26">
+      <stop offset=".18" stop-color="#37474f" /><stop offset=".62" stop-color="#546e7a" /><stop offset="1" stop-color="#90a4ae" />
+    </radialGradient>
+    
+  </defs>
+  
+  <path d="M1230 30h40a2 2 0 0 1 0 4h-40a2 2 0 0 1 0-4zm5 10h30a2 2 0 0 1 0 4h-30a2 2 0 0 1 0-4zm5 10h20a2 2 0 0 1 0 4h-20a2 2 0 0 1 0-4zm5 10h10a2 2 0 0 1 0 4h-10a2 2 0 0 1 0-4zm3 10h4a2 2 0 0 1 0 4h-4a2 2 0 0 1 0-4z" fill="#78909c" stroke="#cfd8dc" stroke-width=".45" />
+  </svg>

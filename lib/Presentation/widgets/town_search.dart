@@ -7,27 +7,32 @@ import 'package:wikixm/Presentation/dashboard/controller.dart';
 import 'package:wikixm/approutes.dart';
 import 'package:wikixm/constants/constants.dart';
 import 'package:wikixm/constants/fontsize.dart';
+import 'package:wikixm/data/datasource/remote/models/response/search_town.dart';
 
 class TownSearch extends StatefulWidget {
-  const TownSearch({super.key});
+  final bool isSignIn;
+  const TownSearch({super.key,this.isSignIn = false});
 
-  static Future<void> show(BuildContext context) async {
-    await showModalBottomSheet(
+  static Future<Town?> show(BuildContext context,bool isSign) {
+    return showModalBottomSheet<Town>(
       context: context,
       isScrollControlled: true,
       enableDrag: false,
       isDismissible: true,
       backgroundColor: Colors.transparent,
-      builder: (context) {
-        return FractionallySizedBox(
-          heightFactor: 1,
-          child: Container(
-            decoration: const BoxDecoration(color: Colors.white),
-            clipBehavior: Clip.antiAlias,
-            child: const TownSearch(),
+      builder: (_) => FractionallySizedBox(
+        heightFactor: isSign == true ? 0.6:1,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: isSign ? BorderRadius.only(
+                topRight: Radius.circular(Dimensions.h_20),
+                topLeft: Radius.circular(Dimensions.h_20)
+            ) : null,
+            color: Colors.white,
           ),
-        );
-      },
+          child: TownSearch(isSignIn: isSign),
+        ),
+      ),
     );
   }
 
@@ -60,7 +65,7 @@ class _TownSearchState extends State<TownSearch> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: Dimensions.h_55),
+            SizedBox(height: widget.isSignIn  ? Dimensions.h_10:Dimensions.h_55),
             Row(
               children: [
                 Expanded(
@@ -115,7 +120,7 @@ class _TownSearchState extends State<TownSearch> {
             ),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: ()=> Get.toNamed(AppRoutes.dashboard),
+              onTap: ()=> widget.isSignIn ?  Navigator.pop(context) : Get.toNamed(AppRoutes.dashboard),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: Dimensions.h_6),
                 margin: EdgeInsets.only(top: Dimensions.h_15),

@@ -42,17 +42,46 @@ class AskGuide extends StatelessWidget {
                         },
                       ),
               ),
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: CommonBlurAppBar(
-                  topPadding: topPadding,
-                  blurOpacity: 1,
-                  foregroundColor: Colors.black,
-                  child: _GuideAppBar(),
-                ),
-              ),
+              // Positioned(
+              //   top: 0,
+              //   left: 0,
+              //   right: 0,
+              //   child: CommonBlurAppBar(
+              //     controller: _scrollController,
+              //     child: Padding(
+              //       padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10),
+              //       child: Row(
+              //         children: [
+              //           Platform.isIOS
+              //               ? CNButton.icon(
+              //             icon: CNSymbol(
+              //               'chevron.left',
+              //               size: Dimensions.h_10,
+              //             ),
+              //             size: Dimensions.h_25,
+              //             onPressed: () => Get.back(),
+              //           )
+              //               : GestureDetector(
+              //             behavior: HitTestBehavior.opaque,
+              //             onTap: () => Get.back(),
+              //             child: Container(
+              //               padding: const EdgeInsets.all(8),
+              //               decoration: const BoxDecoration(
+              //                 shape: BoxShape.circle,
+              //                 color: Color(0xFF0B6030),
+              //               ),
+              //               child: Icon(
+              //                 Icons.arrow_back_ios_new,
+              //                 color: Colors.white,
+              //                 size: Dimensions.h_11,
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
               Positioned(
                 left: Dimensions.w_18,
                 right: Dimensions.w_18,

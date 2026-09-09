@@ -1,19 +1,33 @@
 import 'package:flutter/material.dart';
 
 class SizeConfig {
-  static late double _screenWidth;
-  static late double _screenHeight;
+  static double _screenWidth = 360.0;
+  static double _screenHeight = 690.0;
+  static double _widthScale = 1.0;
+  static double _heightScale = 1.0;
+  static double _textScale = 1.0;
+  static bool _initialized = false;
+
   static const double _baseWidth = 360.0;
   static const double _baseHeight = 690.0;
+  static const double _minScale = 0.75;
+  static const double _maxScale = 1.35;
 
   static void init(BuildContext context) {
-    _screenWidth = MediaQuery.of(context).size.width;
-    _screenHeight = MediaQuery.of(context).size.height;
+    final mq = MediaQuery.of(context);
+    _screenWidth = mq.size.width;
+    _screenHeight = mq.size.height;
+    _widthScale = (_screenWidth / _baseWidth).clamp(_minScale, _maxScale);
+    _heightScale = (_screenHeight / _baseHeight).clamp(_minScale, _maxScale);
+    _textScale = (_widthScale < _heightScale ? _widthScale : _heightScale).clamp(_minScale, _maxScale);
+    _initialized = true;
   }
 
-  static double w(double value) => value * (_screenWidth / _baseWidth);
-  static double h(double value) => value * (_screenHeight / _baseHeight);
-  static double sp(double value) => value * (_screenWidth / _baseWidth);
+  static double w(double value) => value * _widthScale;
+  static double h(double value) => value * _heightScale;
+  static double sp(double value) => value * _textScale;
+
+  static bool get isInitialized => _initialized;
 }
 
 class FontSize {
@@ -25,7 +39,8 @@ class FontSize {
   static double get sp_10 => SizeConfig.sp(10.0);
   static double get sp_11 => SizeConfig.sp(11.0);
   static double get sp_12 => SizeConfig.sp(12.0);
-  static double get sp_13 => SizeConfig.sp(13.0);
+  static double get sp_13 => SizeConfig.sp(12);
+  static double get sp_13_5 => SizeConfig.sp(13);
   static double get sp_14 => SizeConfig.sp(14.0);
   static double get sp_15 => SizeConfig.sp(15.0);
   static double get sp_16 => SizeConfig.sp(16.0);
@@ -37,13 +52,12 @@ class FontSize {
   static double get sp_26 => SizeConfig.sp(26.0);
   static double get sp_30 => SizeConfig.sp(30.0);
   static double get sp_50 => SizeConfig.sp(50.0);
+  static double get sp_60 => SizeConfig.sp(60.0);
 }
 
 class Dimensions {
   static double get deviceWidth  => SizeConfig.w(360.0);
   static double get deviceHeight => SizeConfig.h(690.0);
-
-  // Width
   static double get w_1   => SizeConfig.w(1.0);
   static double get w_2   => SizeConfig.w(2.0);
   static double get w_3   => SizeConfig.w(3.0);
@@ -69,6 +83,7 @@ class Dimensions {
   static double get w_40  => SizeConfig.w(40.0);
   static double get w_43  => SizeConfig.w(43.0);
   static double get w_45  => SizeConfig.w(45.0);
+  static double get w_48  => SizeConfig.w(48.0);
   static double get w_50  => SizeConfig.w(50.0);
   static double get w_55  => SizeConfig.w(55.0);
   static double get w_60  => SizeConfig.w(60.0);
@@ -78,6 +93,7 @@ class Dimensions {
   static double get w_80  => SizeConfig.w(80.0);
   static double get w_85  => SizeConfig.w(85.0);
   static double get w_90  => SizeConfig.w(90.0);
+  static double get w_97  => SizeConfig.w(97.0);
   static double get w_100 => SizeConfig.w(100.0);
   static double get w_105 => SizeConfig.w(105.0);
   static double get w_110 => SizeConfig.w(110.0);
@@ -98,13 +114,13 @@ class Dimensions {
   static double get w_320 => SizeConfig.w(320.0);
   static double get w_336 => SizeConfig.w(336.0);
   static double get w_360 => SizeConfig.w(360.0);
-
-  // Height
   static double get h_05  => SizeConfig.h(0.5);
   static double get h_1   => SizeConfig.h(1.0);
   static double get h_2   => SizeConfig.h(2.0);
+  static double get h_2_6   => SizeConfig.h(2.6);
   static double get h_3   => SizeConfig.h(3.0);
   static double get h_4   => SizeConfig.h(4.0);
+  static double get h_3_9   => SizeConfig.h(3.5);
   static double get h_4_5   => SizeConfig.h(4.5);
   static double get h_5   => SizeConfig.h(5.0);
   static double get h_6   => SizeConfig.h(6.0);
@@ -140,9 +156,12 @@ class Dimensions {
   static double get h_68  => SizeConfig.h(68.0);
   static double get h_70  => SizeConfig.h(70.0);
   static double get h_75  => SizeConfig.h(75.0);
+  static double get h_76  => SizeConfig.h(76.0);
   static double get h_80  => SizeConfig.h(80.0);
   static double get h_85  => SizeConfig.h(85.0);
+  static double get h_88  => SizeConfig.h(88.0);
   static double get h_90  => SizeConfig.h(90.0);
+  static double get h_95  => SizeConfig.h(95.0);
   static double get h_98  => SizeConfig.h(98.0);
   static double get h_100 => SizeConfig.h(100.0);
   static double get h_105 => SizeConfig.h(105.0);
@@ -154,6 +173,7 @@ class Dimensions {
   static double get h_130 => SizeConfig.h(130.0);
   static double get h_135 => SizeConfig.h(135.0);
   static double get h_140 => SizeConfig.h(140.0);
+  static double get h_144 => SizeConfig.h(144.0);
   static double get h_146 => SizeConfig.h(146.0);
   static double get h_150 => SizeConfig.h(150.0);
   static double get h_155 => SizeConfig.h(155.0);
@@ -168,15 +188,23 @@ class Dimensions {
   static double get h_200 => SizeConfig.h(200.0);
   static double get h_210 => SizeConfig.h(210.0);
   static double get h_220 => SizeConfig.h(220.0);
+  static double get h_226 => SizeConfig.h(226.0);
+  static double get h_228 => SizeConfig.h(228.0);
   static double get h_230 => SizeConfig.h(230.0);
   static double get h_233 => SizeConfig.h(233.0);
+  static double get h_235 => SizeConfig.h(235.0);
   static double get h_240 => SizeConfig.h(240.0);
-  static double get h_246 => SizeConfig.h(246.0);
+  static double get h_246 => SizeConfig.h(245.0);
   static double get h_250 => SizeConfig.h(250.0);
+  static double get h_256 => SizeConfig.h(256.0);
   static double get h_260 => SizeConfig.h(260.0);
+  static double get h_270 => SizeConfig.h(270.0);
   static double get h_280 => SizeConfig.h(280.0);
   static double get h_290 => SizeConfig.h(290.0);
+  static double get h_295 => SizeConfig.h(295.0);
   static double get h_300 => SizeConfig.h(300.0);
+  static double get h_310 => SizeConfig.h(310.0);
+  static double get h_312 => SizeConfig.h(312.0);
   static double get h_316 => SizeConfig.h(316.0);
   static double get h_330 => SizeConfig.h(330.0);
   static double get h_335 => SizeConfig.h(335.0);
@@ -198,4 +226,6 @@ class Dimensions {
   static double get h_450 => SizeConfig.h(450.0);
   static double get h_470 => SizeConfig.h(470.0);
   static double get h_500 => SizeConfig.h(500.0);
+  static double get h_550 => SizeConfig.h(550.0);
+  static double get h_580 => SizeConfig.h(580.0);
 }

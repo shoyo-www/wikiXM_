@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/Presentation/dashboard/controller.dart';
+import 'package:wikixm/Presentation/news/news_screen.dart';
+import '../events/events_screen.dart';
 import '../home/home.dart';
 import '../menu/menu.dart';
 import '../widgets/common_scaffold.dart';
@@ -19,9 +21,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   final List<Widget Function()> screens = [
     () => Home(),
+    () => NewsScreen(),
     () => Home(),
-    () => Home(),
-    () => Home(),
+    () => EventsScreen(),
     () => Menu(),
   ];
 
@@ -40,13 +42,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               scale: isActive ? 1.0 : 0.95,
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
-              child: AnimatedOpacity(
-                opacity: isActive ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: IgnorePointer(
-                  ignoring: !isActive,
-                  child: isActive ? screens[index]() : const SizedBox.shrink(),
-                ),
+              child: IgnorePointer(
+                ignoring: !isActive,
+                child: isActive ? screens[index]() : const SizedBox.shrink(),
               ),
             );
           }),

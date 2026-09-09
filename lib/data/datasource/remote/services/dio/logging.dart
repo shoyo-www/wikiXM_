@@ -12,7 +12,8 @@ class Logging extends Interceptor {
       ) async {
     options.headers.addAll({
       'Authorization':
-      'Bearer 1661|mhdb6AM328K8OjBE9yvybDl9GDvjd9GuNCtkzlXf7a0b5082',
+      'Bearer 1|meNehxlZ9828SthQm4ID5K80oQxr7gRT0uBl0ZNwebd8cbcc',
+      // 'Bearer ${LocalStorage.getAuthToken()}',
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       'Accept-Language': 'en-US',
@@ -20,6 +21,8 @@ class Logging extends Interceptor {
       'Connection': 'keep-alive',
       'Cache-Control': 'no-cache',
       'Pragma': 'no-cache',
+      if(LocalStorage.getString('rToken').isNotEmpty)
+      'X-Registration-Token' : LocalStorage.getString('rToken')
     });
 
     if (kDebugMode) {

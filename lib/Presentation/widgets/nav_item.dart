@@ -82,37 +82,38 @@ class _NavItemState extends State<NavItem> {
           onTap: _handleTap,
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: Dimensions.w_10,
-              vertical: Dimensions.h_5,
-            ),
+              horizontal: Dimensions.w_5,
+              vertical: Dimensions.h_4),
             child: Row(
               children: [
-                widget.isIcon == true
-                    ? Icon(
-                        widget.isIconName ??
-                            CupertinoIcons.cloud_bolt_rain_fill,
-                        size: Dimensions.h_16,
-                        color: Colors.grey.shade700,
-                      )
-                    : widget.isPng == true
-                    ? Image.asset(
-                        widget.icon,
-                        color: Colors.black87,
-                        height: Dimensions.h_15,
-                        width: Dimensions.h_15,
-                      )
-                    : Icon(
-                        iconData,
-                        size: Dimensions.h_16,
-                        color: Colors.grey.shade700,
-                      ),
+                Container(
+                  padding: EdgeInsets.all(Dimensions.h_4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    shape: BoxShape.circle),
+                  child: widget.isIcon == true
+                      ? Icon(
+                    widget.isIconName ??
+                        CupertinoIcons.cloud_bolt_rain_fill,
+                    size: Dimensions.h_12,
+                    color: Theme.of(context).primaryColor)
+                      : widget.isPng == true
+                      ? Image.asset(
+                    widget.icon,
+                    color: Theme.of(context).primaryColor,
+                    height: Dimensions.h_12,
+                    width: Dimensions.h_12)
+                      : Icon(
+                    iconData,
+                    size: Dimensions.h_12,
+                    color: Theme.of(context).primaryColor)),
                 SizedBox(width: Dimensions.w_10),
                 Text(
                   widget.title.toUpperCase(),
                   style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w700,
-                    fontSize: SizeConfig.sp(12.5),
+                    color: Theme.of(context).highlightColor,
+                    fontWeight: FontWeight.w500,
+                    fontSize: FontSize.sp_11,
                   ),
                 ),
                 Spacer(),
@@ -122,8 +123,8 @@ class _NavItemState extends State<NavItem> {
                     duration: Duration(milliseconds: 200),
                     child: Icon(
                       Icons.keyboard_arrow_down,
-                      size: Dimensions.h_20,
-                      color: Colors.black87,
+                      size: Dimensions.h_16,
+                      color: Theme.of(context).highlightColor,
                     ),
                   ),
               ],
@@ -144,7 +145,7 @@ class _NavItemState extends State<NavItem> {
                       decoration: BoxDecoration(
                         border: Border(
                           left: BorderSide(
-                            color: Colors.grey.shade500,
+                            color: Theme.of(context).focusColor,
                             width: 0.5,
                           ),
                         ),
@@ -169,8 +170,8 @@ class _NavItemState extends State<NavItem> {
                                     child: Text(
                                       sub.title,
                                       style: TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: SizeConfig.sp(12.5),
+                                        color: Theme.of(context).highlightColor,
+                                        fontSize: FontSize.sp_12,
                                       ),
                                     ),
                                   ),

@@ -1,38 +1,117 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
+import 'package:wikixm/approutes.dart';
+import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/fontsize.dart';
 
+import '../../constants/constants.dart';
+import '../../data/datasource/local/local_storage.dart';
 import '../widgets/nav_item.dart';
 
-class Menu extends StatelessWidget {
+class Menu extends StatefulWidget {
   const Menu({super.key});
 
   @override
+  State<Menu> createState() => _MenuState();
+}
+
+class _MenuState extends State<Menu> {
+  @override
   Widget build(BuildContext context) {
+    bool isLight = Theme.of(context).brightness == Brightness.light;
     return AppScaffold(
+      backgroundColor: Theme.of(context).cardColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: Dimensions.h_50),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  height: Dimensions.h_25,
-                  width: Dimensions.h_25,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(Icons.close, size: Dimensions.h_15),
+          SizedBox(height: Dimensions.h_20),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: Dimensions.h_55,
+            height: Dimensions.h_55,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Theme.of(context).highlightColor,
+                width: 2,
+              ),
+              image: const DecorationImage(
+                image: CachedNetworkImageProvider(
+                  'https://imgs.search.brave.com/IUfYd2HftVW3FCpGctrtu7cogsOex4KbSkTYx7ZhM4o/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJhY2Nlc3Mu/Y29tL2Z1bGwvOTQw/NDAzMi5qcGc'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: Dimensions.w_12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Shoyo',
+                  style: TextStyle(
+                    fontSize: FontSize.sp_18,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).highlightColor,
                   ),
                 ),
-              ),
-            ],
+                Text(
+                  'shoyo@example.com',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: FontSize.sp_11,
+                    color: Theme.of(context).highlightColor,
+                  ),
+                ),
+                SizedBox(height: Dimensions.h_5),
+                GestureDetector(
+                  onTap: () {
+                    // Get.toNamed(AppRoutes.profile);
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'View Profile',
+                        style: TextStyle(
+                          fontSize: FontSize.sp_9_5,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.darkBlue,
+                        ),
+                      ),
+                      Icon(
+                        CupertinoIcons.chevron_right,
+                        size: FontSize.sp_10,
+                        color: AppColor.darkBlue,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              height: Dimensions.h_20,
+              width: Dimensions.h_20,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Icon(Icons.close, size: Dimensions.h_12),
+              ),
+            ),
+          ),
+        ],
+      ),
           SizedBox(height: Dimensions.h_8),
           Container(
             margin: EdgeInsets.symmetric(vertical: Dimensions.h_1),
@@ -44,18 +123,75 @@ class Menu extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: Dimensions.h_8),
+                  Padding(
+                    padding: EdgeInsets.only(left: Dimensions.w_6),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(Dimensions.h_4),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            !isLight
+                                ? CupertinoIcons.moon_stars
+                                : CupertinoIcons.sun_max,
+                            size: Dimensions.h_12,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                        SizedBox(width: Dimensions.w_10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${isLight ? 'Light' : 'Dark'} Appearance'.toUpperCase(),
+                              style: TextStyle(
+                                color: Theme.of(context).highlightColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: FontSize.sp_11,
+                              ),
+                            ),
+                            SizedBox(height: Dimensions.h_1),
+                            Text(
+                              'You can change your theme anytime from here',
+                              style: TextStyle(
+                                color: Theme.of(context).highlightColor,
+                                fontWeight: FontWeight.w500,
+                                fontSize: FontSize.sp_9,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        Transform.scale(
+                          scale: 0.6,
+                          child: CupertinoSwitch(
+                            value: !isLight,
+                            onChanged: (value) {
+                              LocalStorage().changeTheme();
+                              LocalStorage.writeBool(GetXStorageConstants.day, !value);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: Dimensions.h_3),
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.home_outlined,
+                    isIconName: CupertinoIcons.house,
                     title: 'Home',
                     onTap: () {},
                   ),
-                  SizedBox(height: Dimensions.h_10),
+                  SizedBox(height: Dimensions.h_5),
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.location_city_outlined,
+                    isIconName: CupertinoIcons.building_2_fill,
                     title: 'Town Overview',
                     onTap: () {},
                     subItems: [
@@ -64,27 +200,31 @@ class Menu extends StatelessWidget {
                       NavSubItem(title: 'Founders', onTap: () {}),
                     ],
                   ),
-                  SizedBox(height: Dimensions.h_10),
+                  SizedBox(height: Dimensions.h_5),
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.article_outlined,
-                    title: 'My Content',
-                    onTap: () {},
+                    isIconName: CupertinoIcons.doc_text,
+                    title: 'Civic Command Center',
+                    onTap: () {
+                      Get.toNamed(AppRoutes.commandCenter);
+                    },
                   ),
-                  SizedBox(height: Dimensions.h_10),
+                  SizedBox(height: Dimensions.h_5),
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.forum_outlined,
+                    isIconName: CupertinoIcons.chat_bubble_2_fill,
                     title: 'Town Hall',
-                    onTap: () {},
+                    onTap: () {
+                      Get.toNamed(AppRoutes.townHall);
+                    },
                   ),
-                  SizedBox(height: Dimensions.h_10),
+                  SizedBox(height: Dimensions.h_5),
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.business_center_outlined,
+                    isIconName: CupertinoIcons.briefcase,
                     title: 'My Business',
                     onTap: () {},
                     subItems: [
@@ -93,31 +233,33 @@ class Menu extends StatelessWidget {
                       NavSubItem(title: 'Analytics', onTap: () {}),
                     ],
                   ),
-                  SizedBox(height: Dimensions.h_10),
+                  SizedBox(height: Dimensions.h_5),
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.campaign_outlined,
-                    title: 'Town feed',
+                    isIconName: CupertinoIcons.search,
+                    title: 'Town Feed',
                     onTap: () {},
                     subItems: [
                       NavSubItem(title: 'Obituaries', onTap: () {}),
                       NavSubItem(title: 'Announcements', onTap: () {}),
                     ],
                   ),
-                  SizedBox(height: Dimensions.h_10),
+                  SizedBox(height: Dimensions.h_5),
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.home_repair_service_outlined,
+                    isIconName: CupertinoIcons.archivebox,
                     title: 'Town Essentials',
                     onTap: () {},
                   ),
-                  SizedBox(height: Dimensions.h_10),
+
+                  SizedBox(height: Dimensions.h_5),
+
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.directions_car_outlined,
+                    isIconName: CupertinoIcons.car_detailed,
                     title: 'Garage',
                     onTap: () {},
                     subItems: [
@@ -125,79 +267,122 @@ class Menu extends StatelessWidget {
                       NavSubItem(title: 'Town Garage', onTap: () {}),
                     ],
                   ),
-                  SizedBox(height: Dimensions.h_10),
+
+                  SizedBox(height: Dimensions.h_5),
+
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.mail_outline,
+                    isIconName: CupertinoIcons.mail,
                     title: 'Messages',
                     onTap: () {},
                   ),
-                  SizedBox(height: Dimensions.h_10),
+
+                  SizedBox(height: Dimensions.h_5),
+
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.warning_amber_outlined,
+                    isIconName: CupertinoIcons.exclamationmark_triangle,
                     title: 'Alerts',
                     onTap: () {},
                   ),
-                  SizedBox(height: Dimensions.h_10),
+
+                  SizedBox(height: Dimensions.h_5),
+
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.bookmark_border,
+                    isIconName: CupertinoIcons.bookmark,
                     title: 'Bookmarks',
                     onTap: () {},
                   ),
-                  SizedBox(height: Dimensions.h_10),
+
+                  SizedBox(height: Dimensions.h_5),
+
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.archive_outlined,
+                    isIconName: CupertinoIcons.archivebox,
                     title: 'Archives',
                     onTap: () {},
                   ),
-                  SizedBox(height: Dimensions.h_10),
+
+                  SizedBox(height: Dimensions.h_5),
+
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.group_add_outlined,
+                    isIconName: CupertinoIcons.person_add,
                     title: 'Invites',
                     onTap: () {},
                   ),
-                  SizedBox(height: Dimensions.h_10),
+
+                  SizedBox(height: Dimensions.h_5),
+
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.notifications_none,
+                    isIconName: CupertinoIcons.bell,
                     title: 'Notifications',
                     onTap: () {},
                   ),
+
                   SizedBox(height: Dimensions.h_5),
+
                   NavItem(
                     icon: '',
                     isIcon: true,
-                    isIconName: Icons.attach_money,
+                    isIconName: CupertinoIcons.money_dollar,
                     title: 'Subscriptions',
                     onTap: () {},
                   ),
+
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: Dimensions.h_5),
+                    margin: EdgeInsets.symmetric(
+                      vertical: Dimensions.h_5,
+                    ),
                     height: Dimensions.h_1,
                     color: Colors.grey.shade300,
                   ),
+
                   SizedBox(height: Dimensions.h_10),
-                  _MenuText(title: 'Profile'),
+
+                  _MenuText(
+                    title: 'Profile',
+                  ),
+
                   SizedBox(height: Dimensions.h_10),
-                  _MenuText(title: 'Settings'),
+
+                  _MenuText(
+                    title: 'Settings',
+                  ),
+
                   SizedBox(height: Dimensions.h_10),
-                  _MenuText(title: 'App Lock'),
+
+                  _MenuText(
+                    title: 'App Lock',
+                  ),
+
                   SizedBox(height: Dimensions.h_10),
-                  _MenuText(title: 'Privacy Policy'),
+
+                  _MenuText(
+                    title: 'Privacy Policy',
+                  ),
+
                   SizedBox(height: Dimensions.h_10),
-                  _MenuText(title: 'Contact Us'),
+
+                  _MenuText(
+                    title: 'Contact Us',
+                  ),
+
                   SizedBox(height: Dimensions.h_10),
-                  _MenuText(title: 'Sign In', color: Colors.redAccent),
+
+                  _MenuText(
+                    title: 'Sign In',
+                    color: Colors.redAccent,
+                  ),
+
                   SizedBox(height: Dimensions.h_70),
                 ],
               ),

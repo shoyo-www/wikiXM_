@@ -4,6 +4,7 @@ import 'package:cupertino_native/style/sf_symbol.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/fontsize.dart';
 import '../dashboard/controller.dart';
 
@@ -17,6 +18,7 @@ class AppScaffold extends StatelessWidget {
     this.backgroundColor,
     this.bodyPadding,
     this.isNavbar,
+    this.drawer,
     this.bottomNavigationBar,
   });
 
@@ -28,13 +30,14 @@ class AppScaffold extends StatelessWidget {
   final Color? backgroundColor;
   final EdgeInsetsGeometry? bodyPadding;
   final Widget? bottomNavigationBar;
+  final Widget? drawer;
 
   @override
   Widget build(BuildContext context) {
     final DashboardController controller = Get.find<DashboardController>();
-
+    bool isLight = Theme.of(context).brightness == Brightness.light;
     return ColoredBox(
-      color: Colors.white,
+      color: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       child: SafeArea(
         top: top ?? true,
         bottom: Platform.isAndroid ? true:bottom ?? false,
@@ -44,6 +47,7 @@ class AppScaffold extends StatelessWidget {
                   Positioned.fill(
                     child: Scaffold(
                       appBar: appBar,
+                      drawer: drawer,
                       body: GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -54,7 +58,7 @@ class AppScaffold extends StatelessWidget {
                           child: body,
                         ),
                       ),
-                      backgroundColor: Colors.white,
+                      backgroundColor: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
                     ),
                   ),
                   Obx(
@@ -69,20 +73,16 @@ class AppScaffold extends StatelessWidget {
                           height: Dimensions.h_42,
                           padding: EdgeInsets.all(Dimensions.h_3),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: isLight ? Theme.of(context).cardColor :Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(40),
                             border: Border.all(
-                              color: Colors.grey.shade400,
-                              width: 0.4,
-                            ),
+                              color: Theme.of(context).focusColor,
+                              width: 0.4),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: .06),
                                 blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
+                                offset: const Offset(0, 4))]),
                           child: Row(
                             children: List.generate(_tabs.length, (index) {
                               final selected = controller.tabIndex.value == index;
@@ -90,12 +90,10 @@ class AppScaffold extends StatelessWidget {
                                 child: GestureDetector(
                                   onTap: () => controller.changeTabIndex(index),
                                   behavior: HitTestBehavior.opaque,
-                                  child: AnimatedContainer(
-                                    duration: const Duration(milliseconds: 250),
-                                    curve: Curves.easeInOut,
+                                  child: Container(
                                     decoration: BoxDecoration(
                                       color: selected
-                                          ? const Color(0xFF4318E8).withValues(alpha: .12)
+                                          ? isLight ? Theme.of(context).scaffoldBackgroundColor :Theme.of(context).cardColor
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(35),
                                     ),
@@ -105,8 +103,8 @@ class AppScaffold extends StatelessWidget {
                                         Icon(
                                           _tabs[index].icon,
                                           color: selected
-                                              ? const Color(0xFF4318E8)
-                                              : Colors.black87,
+                                              ? Theme.of(context).primaryColorDark
+                                              : Theme.of(context).highlightColor,
                                           size:index == 3 ? Dimensions.h_20: Dimensions.h_18,
                                         ),
                                         Text(
@@ -116,8 +114,8 @@ class AppScaffold extends StatelessWidget {
                                             fontWeight:
                                             selected ? FontWeight.w700 : FontWeight.w600,
                                             color: selected
-                                                ? const Color(0xFF4318E8)
-                                                : Colors.black87,
+                                                ? Theme.of(context).primaryColorDark
+                                                : Theme.of(context).highlightColor,
                                           ),
                                         ),
                                       ],
@@ -133,29 +131,24 @@ class AppScaffold extends StatelessWidget {
                           items: const [
                             CNTabBarItem(
                               label: 'Home',
-                              icon: CNSymbol('house.fill'),
-                            ),
+                              icon: CNSymbol('house.fill')),
                             CNTabBarItem(
                               label: 'News',
-                              icon: CNSymbol('newspaper.fill'),
-                            ),
+                              icon: CNSymbol('newspaper.fill')),
                             CNTabBarItem(
                               label: 'Post',
-                              icon: CNSymbol('square.and.pencil'),
-                            ),
+                              icon: CNSymbol('square.and.pencil')),
                             CNTabBarItem(
-                              label: 'Town Talk',
-                              icon: CNSymbol('message.badge'),
-                            ),
+                              label: 'Events',
+                              icon: CNSymbol('music.note')),
                             CNTabBarItem(
                               label: 'Menu',
-                              icon: CNSymbol('line.3.horizontal'),
-                            ),
+                              icon: CNSymbol('line.3.horizontal')),
                           ],
                           iconSize: Dimensions.h_11,
                           currentIndex: controller.tabIndex.value,
                           split: false,
-                          tint: const Color(0xFF4318E8),
+                          tint: AppColor.darkBlue,
                           backgroundColor: Colors.transparent,
                           splitSpacing: Dimensions.w_10,
                           rightCount: 0,
@@ -169,6 +162,7 @@ class AppScaffold extends StatelessWidget {
               )
             : Scaffold(
                 appBar: appBar,
+                drawer: drawer,
                 body: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -179,7 +173,7 @@ class AppScaffold extends StatelessWidget {
                     child: body,
                   ),
                 ),
-                backgroundColor: Colors.white,
+                backgroundColor: backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
                 bottomNavigationBar: bottomNavigationBar,
               ),
       ),
@@ -212,8 +206,8 @@ const List<BottomTab> _tabs = [
     icon: CupertinoIcons.square_pencil_fill,
   ),
   BottomTab(
-    title: 'Town Talk',
-    icon: CupertinoIcons.chat_bubble_2_fill,
+    title: 'Events',
+    icon: CupertinoIcons.music_note,
   ),
   BottomTab(
     title: 'Menu',

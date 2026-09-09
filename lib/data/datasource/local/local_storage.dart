@@ -29,7 +29,7 @@ class LocalStorage {
   }
 
   ThemeMode getTheme() {
-    return savedTheme() ? ThemeMode.light : ThemeMode.dark;
+    return savedTheme() ? ThemeMode.dark : ThemeMode.light;
   }
 
   void saveTheme(bool v) {

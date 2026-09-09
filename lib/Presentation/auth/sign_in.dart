@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:wikixm/Presentation/auth/auth_controller.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/Presentation/widgets/social_button.dart';
+import 'package:wikixm/approutes.dart';
 import '../../constants/fontsize.dart';
 import '../../constants/images.dart';
 import '../widgets/cache_image.dart';
@@ -31,7 +32,7 @@ class SignInScreen extends StatelessWidget {
                     Color(0xFF001e67),
                     Color(0xFF14327b),
                     Colors.white,
-                  ],   stops: [0.1,0.2, 0.33, 0.5,0.75])
+                  ],   stops: [0.01,0.012, 0.20, 0.3,0.75])
                 ),
                 child: Column(
                   children: [
@@ -57,7 +58,7 @@ class SignInScreen extends StatelessWidget {
                                   Color(0x00000000),
                                   Color(0x00000000),
                                 ],
-                                stops: [0.35, 0.55, 0.78, 1],
+                                stops: [0.08, 0.35, 0.78, 1],
                               ),
                             ),
                           ),
@@ -132,7 +133,7 @@ class SignInScreen extends StatelessWidget {
                       ],
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: Dimensions.h_280,left: Dimensions.w_8,right: Dimensions.w_8),
+                      margin: EdgeInsets.only(top: Dimensions.h_295,left: Dimensions.w_8,right: Dimensions.w_8),
                       padding: EdgeInsets.symmetric(
                           horizontal: Dimensions.w_4,
                           vertical: Dimensions.h_5
@@ -1081,7 +1082,7 @@ class SignInScreen extends StatelessWidget {
             ),
             SizedBox(height: Dimensions.h_8),
             SocialLoginButtons(),
-            SizedBox(height: Dimensions.h_10),
+            SizedBox(height: Dimensions.h_15),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -1094,26 +1095,30 @@ class SignInScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: Dimensions.w_4),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Create a free account',
-                      style: TextStyle(
-                        color: Color(0xff0607fa),
-                        fontSize: FontSize.sp_10,
-                        fontWeight: FontWeight.w600),
-                    ),
-                     SizedBox(width: Dimensions.w_1),
-                    Padding(
-                      padding:  EdgeInsets.only(bottom: Dimensions.h_1),
-                      child: Icon(
-                        CupertinoIcons.arrow_right,
-                        size: Dimensions.h_10,
-                        color: Color(0xff0607fa)),
-                    ),
-                  ],
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: ()=> Get.toNamed(AppRoutes.signUp),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Create a free account',
+                        style: TextStyle(
+                          color: Color(0xff0607fa),
+                          fontSize: FontSize.sp_10,
+                          fontWeight: FontWeight.w600),
+                      ),
+                       SizedBox(width: Dimensions.w_1),
+                      Padding(
+                        padding:  EdgeInsets.only(bottom: Dimensions.h_1),
+                        child: Icon(
+                          CupertinoIcons.arrow_right,
+                          size: Dimensions.h_10,
+                          color: Color(0xff0607fa)),
+                      ),
+                    ],
+                  ),
                 )
         
               ],

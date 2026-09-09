@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'Presentation/getx/appPages.dart';
 import 'approutes.dart';
 import 'constants/Theme.dart';
@@ -14,7 +15,6 @@ import 'di/di.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   HttpOverrides.global = MyHttpOverrides();
   await GetStorage.init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -26,27 +26,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig.init(context);
-    return GetMaterialApp(
+    return  GetMaterialApp(
       initialBinding: InitialBinding(),
       builder: EasyLoading.init(
-        builder: (context,child) {
-          SystemChrome.setSystemUIOverlayStyle(
-            const SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.dark,
-              statusBarBrightness: Brightness.light,
-              systemNavigationBarColor: Colors.white,
-              systemNavigationBarDividerColor: Colors.white,
-              systemNavigationBarIconBrightness: Brightness.dark,
-            ),
-          );
+        builder: (context, child) {
+          SizeConfig.init(context);
           return child!;
         },
       ),
       debugShowCheckedModeBanner: false,
-      theme: AppTheme().lightTheme,
-      darkTheme: AppTheme().darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: LocalStorage().getTheme(),
       initialRoute: AppRoutes.splashScreen,
       getPages: AppPages.list,
