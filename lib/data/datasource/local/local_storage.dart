@@ -32,13 +32,14 @@ class LocalStorage {
     return savedTheme() ? ThemeMode.dark : ThemeMode.light;
   }
 
-  void saveTheme(bool v) {
-    box.write(GetXStorageConstants.darkTheme, v);
+  void saveTheme(bool isDark) {
+    box.write(GetXStorageConstants.darkTheme, isDark);
   }
 
   void changeTheme() {
-    Get.changeThemeMode(savedTheme() ? ThemeMode.dark : ThemeMode.light);
-    saveTheme(!savedTheme());
+    final isDark = !savedTheme();
+    saveTheme(isDark);
+    Get.changeThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
   }
 
   static void clearValueByKey(String key) {

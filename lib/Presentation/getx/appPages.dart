@@ -4,6 +4,8 @@ import 'package:wikixm/Presentation/auth/sign_in.dart';
 import 'package:wikixm/Presentation/command_center/command_center.dart';
 import 'package:wikixm/Presentation/dashboard/dashboard.dart';
 import 'package:wikixm/Presentation/first_visit/first_visit.dart';
+import 'package:wikixm/Presentation/garage/add_item.dart';
+import 'package:wikixm/Presentation/garage/garage_screen.dart';
 import 'package:wikixm/Presentation/guide/ask_guide.dart';
 import 'package:wikixm/Presentation/politics/politics.dart';
 import 'package:wikixm/Presentation/school/school_screen.dart';
@@ -25,11 +27,6 @@ class AppPages {
       transition: transition,
       name: AppRoutes.splashScreen,
       page: () => const SplashScreen()),
-    GetPage(
-      transitionDuration: duration,
-      transition: transition,
-      name: AppRoutes.home,
-      page: () => const Home()),
     GetPage(
       transitionDuration: duration,
       transition: transition,
@@ -91,5 +88,15 @@ class AppPages {
         transition: Transition.cupertinoDialog,
         name: AppRoutes.commandCenter,
         page: () => const CommandCenterScreen()),
+    GetPage(
+        transitionDuration: duration,
+        transition: Transition.cupertinoDialog,
+        name: AppRoutes.garage,
+        page: () => const GarageScreen()),
+    GetPage(
+        transitionDuration: duration,
+        transition: Transition.cupertinoDialog,
+        name: AppRoutes.addItem,
+        page: () => const AddItemScreen()),
   ];
 }

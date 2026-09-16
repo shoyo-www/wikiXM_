@@ -1803,7 +1803,7 @@ class CommunityJourneyWidget extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 12,
-          backgroundColor: color.withOpacity(.12),
+          backgroundColor: color.withValues(alpha: .12),
           child: Icon(
             icon,
             color: color,

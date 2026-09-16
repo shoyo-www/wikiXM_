@@ -10,6 +10,7 @@ class CommonCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final double? radius;
   final Color? color;
+  final bool? isBorder;
 
   const CommonCard({
     super.key,
@@ -18,7 +19,8 @@ class CommonCard extends StatelessWidget {
     this.padding,
     this.margin,
     this.radius,
-    this.color
+    this.color,
+    this.isBorder
   });
 
   @override
@@ -36,9 +38,9 @@ class CommonCard extends StatelessWidget {
           ),
       decoration: BoxDecoration(
         color: color ?? Theme.of(context).cardColor,
-        border: Border.all(
+        border: isBorder == false ? null : Border.all(
           color: isLight ? Colors.grey : Colors.white24,
-          width: isLight ? 0.4: 0.4),
+          width: isLight ? 0.4: 0.4) ,
         borderRadius: BorderRadius.circular(radius ?? Dimensions.h_10)),
         child: child);
   }

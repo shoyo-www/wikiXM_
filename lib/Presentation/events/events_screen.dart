@@ -2321,7 +2321,7 @@ class _EventsScreenState extends State<EventsScreen> {
                               borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xff5B34EA).withOpacity(0.55),
+                                  color: const Color(0xff5B34EA).withValues(alpha: 0.55),
                                   offset: const Offset(0, 10),
                                   blurRadius: 22,
                                   spreadRadius: -8,

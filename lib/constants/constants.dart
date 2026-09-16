@@ -30,6 +30,8 @@ class ControllerBuilders {
   static String educationController = 'EducationController';
   static String entertainmentController = 'EntertainmentController';
   static String politicsController = 'PoliticsController';
+  static String commandCenterController = 'CommandCenterController';
+  static String townHallController = 'TownHallController';
 
 }
 

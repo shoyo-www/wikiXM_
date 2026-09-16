@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wikixm/Presentation/politics/controller.dart';
+import 'package:wikixm/Presentation/command_center/controller.dart';
+import 'package:wikixm/Presentation/events/events_screen_shimmer.dart';
 import 'package:wikixm/Presentation/widgets/common_card.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
 import 'package:wikixm/constants/appcolor.dart';
+import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
 import '../widgets/AnimatedImage.dart';
 import '../widgets/cache_image.dart';
@@ -20,8 +22,7 @@ class CommandCenterScreen extends StatefulWidget {
 }
 
 class _CommandCenterScreenState extends State<CommandCenterScreen> {
-
-  List<String> filters = ['All', "City", "County", "State", "Federal"];
+  final CommandCenterController commandCenterController = Get.put(CommandCenterController());
 
   @override
   Widget build(BuildContext context) {
@@ -31,48 +32,54 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
         bottom: false,
         bodyPadding: EdgeInsets.zero,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: CommonScrollBlurScaffold(
-            showBack: true,
-            expandedHeight: Dimensions.h_256,
-            expandedColor: Colors.white,
-            collapsedColor: Theme.of(context).highlightColor,
-            hero: buildHeroHeader(isLight),
-            slivers: [
-              SliverToBoxAdapter(
-                  child: Column(
-                      children: [
-                        SizedBox(height: Dimensions.h_5),
-                        aiBrief()
-                      ])),
-              SliverToBoxAdapter(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Dimensions.w_8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: Dimensions.h_15),
-                        topPriorities(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        activeBills(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        civicActivePlan(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        liveCivic(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        communityTownHall(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        communityProgress(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        topRepresentatives(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        upcomingMeeting(isLight),
-                        SizedBox(height: Dimensions.h_20)
-                      ],
-                    ),
+        body: GetBuilder(
+          id: ControllerBuilders.commandCenterController,
+          init: commandCenterController,
+          builder: (controller) {
+            return controller.isLoading ? EventsScreenShimmer() : CommonScrollBlurScaffold(
+                showBack: true,
+                expandedHeight: Dimensions.h_256,
+                expandedColor: Colors.white,
+                collapsedColor: Theme.of(context).highlightColor,
+                hero: buildHeroHeader(isLight),
+                slivers: [
+                  SliverToBoxAdapter(
+                      child: Column(
+                          children: [
+                            SizedBox(height: Dimensions.h_5),
+                            aiBrief()
+                          ])),
+                  SliverToBoxAdapter(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Dimensions.w_8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: Dimensions.h_15),
+                            topPriorities(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            activeBills(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            civicActivePlan(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            liveCivic(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            communityTownHall(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            communityProgress(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            topRepresentatives(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            upcomingMeeting(isLight),
+                            SizedBox(height: Dimensions.h_20)
+                          ],
+                        ),
+                      )
                   )
-              )
-            ]));
+                ]);
+          }
+        ));
   }
 
 

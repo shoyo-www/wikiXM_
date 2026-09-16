@@ -2,11 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wikixm/Presentation/dashboard/controller.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/approutes.dart';
-import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/fontsize.dart';
-
 import '../../constants/constants.dart';
 import '../../data/datasource/local/local_storage.dart';
 import '../widgets/nav_item.dart';
@@ -22,6 +21,7 @@ class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     bool isLight = Theme.of(context).brightness == Brightness.light;
+    final DashboardController dashboardController = Get.find<DashboardController>();
     return AppScaffold(
       backgroundColor: Theme.of(context).cardColor,
       body: Column(
@@ -82,13 +82,13 @@ class _MenuState extends State<Menu> {
                         style: TextStyle(
                           fontSize: FontSize.sp_9_5,
                           fontWeight: FontWeight.w600,
-                          color: AppColor.darkBlue,
+                          color: Theme.of(context).primaryColorDark,
                         ),
                       ),
                       Icon(
                         CupertinoIcons.chevron_right,
                         size: FontSize.sp_10,
-                        color: AppColor.darkBlue,
+                        color: Theme.of(context).primaryColorDark,
                       ),
                     ],
                   ),
@@ -97,7 +97,9 @@ class _MenuState extends State<Menu> {
             ),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              dashboardController.changeTabIndex(0);
+            },
             child: Container(
               height: Dimensions.h_20,
               width: Dimensions.h_20,
@@ -185,7 +187,9 @@ class _MenuState extends State<Menu> {
                     isIcon: true,
                     isIconName: CupertinoIcons.house,
                     title: 'Home',
-                    onTap: () {},
+                    onTap: () {
+                      dashboardController.changeTabIndex(0);
+                    },
                   ),
                   SizedBox(height: Dimensions.h_5),
                   NavItem(
@@ -261,15 +265,11 @@ class _MenuState extends State<Menu> {
                     isIcon: true,
                     isIconName: CupertinoIcons.car_detailed,
                     title: 'Garage',
-                    onTap: () {},
-                    subItems: [
-                      NavSubItem(title: 'My Garage', onTap: () {}),
-                      NavSubItem(title: 'Town Garage', onTap: () {}),
-                    ],
+                    onTap: () {
+                      Get.toNamed(AppRoutes.garage);
+                    },
                   ),
-
                   SizedBox(height: Dimensions.h_5),
-
                   NavItem(
                     icon: '',
                     isIcon: true,
@@ -277,9 +277,7 @@ class _MenuState extends State<Menu> {
                     title: 'Messages',
                     onTap: () {},
                   ),
-
                   SizedBox(height: Dimensions.h_5),
-
                   NavItem(
                     icon: '',
                     isIcon: true,
@@ -287,9 +285,7 @@ class _MenuState extends State<Menu> {
                     title: 'Alerts',
                     onTap: () {},
                   ),
-
                   SizedBox(height: Dimensions.h_5),
-
                   NavItem(
                     icon: '',
                     isIcon: true,
@@ -339,80 +335,50 @@ class _MenuState extends State<Menu> {
                   ),
 
                   Container(
-                    margin: EdgeInsets.symmetric(
-                      vertical: Dimensions.h_5,
-                    ),
-                    height: Dimensions.h_1,
-                    color: Colors.grey.shade300,
-                  ),
-
+                    margin: EdgeInsets.symmetric(vertical: Dimensions.h_5),
+                    height: 0.3,
+                    color: Colors.grey.shade300),
                   SizedBox(height: Dimensions.h_10),
-
-                  _MenuText(
-                    title: 'Profile',
-                  ),
-
+                  MenuText(title: 'Profile'),
                   SizedBox(height: Dimensions.h_10),
-
-                  _MenuText(
-                    title: 'Settings',
-                  ),
-
+                  MenuText(title: 'Settings'),
                   SizedBox(height: Dimensions.h_10),
-
-                  _MenuText(
-                    title: 'App Lock',
-                  ),
-
+                  MenuText(title: 'App Lock'),
                   SizedBox(height: Dimensions.h_10),
-
-                  _MenuText(
-                    title: 'Privacy Policy',
-                  ),
-
+                  MenuText(title: 'Privacy Policy'),
                   SizedBox(height: Dimensions.h_10),
-
-                  _MenuText(
-                    title: 'Contact Us',
-                  ),
-
+                  MenuText(title: 'Contact Us'),
                   SizedBox(height: Dimensions.h_10),
-
-                  _MenuText(
-                    title: 'Sign In',
-                    color: Colors.redAccent,
-                  ),
-
+                  MenuText(title: 'Sign In',color: Colors.redAccent),
                   SizedBox(height: Dimensions.h_70),
                 ],
               ),
             ),
           ),
-          SizedBox(height: Dimensions.h_30),
         ],
       ),
     );
   }
 }
 
-class _MenuText extends StatelessWidget {
-  const _MenuText({required this.title, this.color = Colors.black87});
+class MenuText extends StatelessWidget {
+  const MenuText({super.key, required this.title, this.color});
 
   final String title;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
       child: Text(
-        title,
+        title.toUpperCase(),
         style: TextStyle(
-          color: color,
+          color: color ?? Theme.of(context).highlightColor,
           fontWeight: color == Colors.redAccent
-              ? FontWeight.w700
+              ? FontWeight.w900
               : FontWeight.w500,
-          fontSize: FontSize.sp_13,
+          fontSize: FontSize.sp_11,
         ),
       ),
     );

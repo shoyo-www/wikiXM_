@@ -447,7 +447,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                               height: Dimensions.h_30,
                                               color: _isDay !=
                                                   true
-                                                  ? Colors.white.withOpacity(.15)
+                                                  ? Colors.white.withValues(alpha: .15)
                                                   : const Color(0xFFE1E5EC),
                                             ),
 
@@ -465,7 +465,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                               height: Dimensions.h_30,
                                               color: _isDay !=
                                                   true
-                                                  ? Colors.white.withOpacity(.15)
+                                                  ? Colors.white.withValues(alpha: .15)
                                                   : const Color(0xFFE1E5EC),
                                             ),
 
@@ -1051,7 +1051,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.transparent,
-                                  Colors.black.withOpacity(0.75),
+                                  Colors.black.withValues(alpha: 0.75),
                                 ],
                               ),
                             ),
@@ -2510,7 +2510,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         vertical: Dimensions.h_5,
       ),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.94),
+        color: Colors.white.withValues(alpha: 0.94),
         borderRadius: BorderRadius.circular(Dimensions.h_6),
         border: Border.all(
           color: const Color(0xFFE1E5EC),
@@ -2518,7 +2518,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 3,
             offset: const Offset(0, 1),
           ),

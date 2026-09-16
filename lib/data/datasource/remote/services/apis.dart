@@ -26,5 +26,7 @@ class Apis {
   static const education = '$baseUrl/education/home';
   static const entertainment = '$baseUrl/entertainment/home';
   static const politics = '$baseUrl/politics/home';
+  static const commandCenter = '$baseUrl/civic-command-center/home';
+  static const townHall = '$baseUrl/town-hall/home';
 }
 

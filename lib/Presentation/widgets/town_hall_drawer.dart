@@ -93,34 +93,6 @@ class CommonSliderDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            // SizedBox(height: Dimensions.h_10),
-            //
-            // Padding(
-            //   padding: EdgeInsets.symmetric(
-            //     horizontal: Dimensions.w_4,
-            //   ),
-            //   child: Row(
-            //     children: [
-            //       Icon(
-            //         CupertinoIcons.location_solid,
-            //         color: isLight
-            //             ? const Color(0xFF3341D8)
-            //             : const Color(0xFF6AA4FF),
-            //         size: Dimensions.h_12,
-            //       ),
-            //       SizedBox(width: Dimensions.w_5),
-            //       Text(
-            //         'Issaquah, WA',
-            //         style: TextStyle(
-            //           color: theme.hintColor,
-            //           fontSize: FontSize.sp_8,
-            //           fontWeight: FontWeight.w600,
-            //           height: 1,
-            //         ),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             SizedBox(height: Dimensions.h_10),
             _menuItem(
               context,
@@ -428,7 +400,7 @@ class CommonSliderDrawer extends StatelessWidget {
             context,
             icon: Icons.account_balance_outlined,
             title: 'County Government',
-            location: 'King County, WA',
+            location: 'King County',
             projects: '16',
             iconColor: isLight
                 ? const Color(0xFF3341D8)
@@ -445,7 +417,7 @@ class CommonSliderDrawer extends StatelessWidget {
             context,
             icon: Icons.account_balance_outlined,
             title: 'State',
-            location: 'Washington State',
+            location: 'Washington ',
             projects: '31',
             iconColor: isLight
                 ? const Color(0xFF6D28E0)
@@ -548,10 +520,11 @@ class CommonSliderDrawer extends StatelessWidget {
                         ),
                       ),
                       if (projects.isNotEmpty) ...[
-                        SizedBox(width: Dimensions.w_4),
+                        SizedBox(width: Dimensions.w_5
+                        ),
                         Row(
                           children: [
-                            SizedBox(width: Dimensions.w_4),
+                            SizedBox(width: Dimensions.w_1),
                             Text(
                               projects,
                               style: TextStyle(

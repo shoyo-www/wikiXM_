@@ -3157,8 +3157,7 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
                 return Padding(
                   padding: EdgeInsets.only(bottom: Dimensions.h_6),
                   child: CommonBulletItem(
-                      text: controller.politicsData?.hero?.aiBrief?.items?[i] ??
-                          ''),
+                      text: controller.politicsData?.hero?.aiBrief?.items?[i] ?? ''),
                 );
               }),
           SizedBox(height: Dimensions.h_5),

@@ -17,6 +17,7 @@ import '../../data/datasource/remote/models/response/entertainment_response.dart
 import '../../data/datasource/remote/models/response/home_cat.dart';
 import '../../data/datasource/remote/models/response/home_insights.dart';
 import '../../data/datasource/remote/models/response/search_town.dart';
+import 'dashboard.dart';
 
 class DashboardController extends GetxController {
   bool isLoading = false;
@@ -70,8 +71,12 @@ class DashboardController extends GetxController {
       getHomeMarket()
     ]);
   }
+
   void changeTabIndex(int index) {
     tabIndex.value = index;
+    if (Get.currentRoute != '/dashboard') {
+      Get.back();
+    }
   }
 
   Future<void> getCommunityOverview() async {
@@ -95,8 +100,7 @@ class DashboardController extends GetxController {
       update([ControllerBuilders.entertainmentController]);
     }
     final data = await homeRepository.getEntertainment();
-    data.fold(
-          (l) {
+    data.fold((l) {
         isLoading = false;
         update([ControllerBuilders.entertainmentController]);
       }, (r) {

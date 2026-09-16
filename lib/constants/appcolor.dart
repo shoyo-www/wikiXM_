@@ -57,4 +57,15 @@ class AppColor {
   static const sportsActiveColor = Color(0xFF84610a);
   static const townHallGreen =  Color(0xff0d6b3f);
   static const townHallGreenDark =  Color(0xFF62D99B);
+
+  static const garageRedSoft = Color(0xFFFFF0F1);
+  static const garageSurface = Color(0xFFFFFFFF);
+  static const garageDarkRedSoft = Color(0xFF48242B);
+  static const garageDarkSurface = Color(0xFF0B2035);
+  static const garageGreen = Color(0xFF087C4B);
+  static const garageGreenDeep = Color(0xFF05633B);
+  static const garageGreenSoft = Color(0xFFE8F7EF);
+  static const garageGreenDark = Color(0xFF64D9A2);
+  static const garageGreenDeepDark = Color(0xFF45BF86);
+  static const garageGreenSoftDark = Color(0xFF123D36);
 }

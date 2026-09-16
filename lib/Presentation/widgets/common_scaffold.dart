@@ -148,7 +148,7 @@ class AppScaffold extends StatelessWidget {
                           iconSize: Dimensions.h_11,
                           currentIndex: controller.tabIndex.value,
                           split: false,
-                          tint: AppColor.darkBlue,
+                          tint: isLight ? AppColor.darkBlue : const Color(0xFF73aaff),
                           backgroundColor: Colors.transparent,
                           splitSpacing: Dimensions.w_10,
                           rightCount: 0,

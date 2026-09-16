@@ -1983,7 +1983,7 @@ class _SportsScreenState extends State<SportsScreen> {
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xff08733f).withOpacity(0.18),
+                        color: const Color(0xff08733f).withValues(alpha: 0.18),
                         offset: const Offset(0, 7),
                         blurRadius: 16,
                         spreadRadius: 0,
@@ -2296,7 +2296,7 @@ class _SportsScreenState extends State<SportsScreen> {
                               borderRadius: BorderRadius.circular(4),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xff08733f).withOpacity(0.18),
+                                  color: const Color(0xff08733f).withValues(alpha: 0.18),
                                   offset: const Offset(0, 7),
                                   blurRadius: 16,
                                   spreadRadius: 0,

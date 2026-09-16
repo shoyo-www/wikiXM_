@@ -107,6 +107,7 @@ class Dimensions {
   static double get w_185 => SizeConfig.w(185.0);
   static double get w_200 => SizeConfig.w(200.0);
   static double get w_220 => SizeConfig.w(220.0);
+  static double get w_260 => SizeConfig.w(260.0);
   static double get w_270 => SizeConfig.w(270.0);
   static double get w_290 => SizeConfig.w(290.0);
   static double get w_300 => SizeConfig.w(300.0);

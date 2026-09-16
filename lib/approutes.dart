@@ -14,5 +14,7 @@ class AppRoutes {
   static const String school = '/school';
   static const String politics = '/politics';
   static const String commandCenter = '/commandCenter';
+  static const String garage = '/garage';
+  static const String addItem = '/addItem';
 
 }

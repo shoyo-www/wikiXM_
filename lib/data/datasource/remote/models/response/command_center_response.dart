@@ -5,7 +5,7 @@ CommandCenterResponse commandCenterResponseFromJson(String str) => CommandCenter
 class CommandCenterResponse {
   final bool? success;
   final String? message;
-  final Data? data;
+  final CommandCenterData? data;
 
   CommandCenterResponse({
     this.success,
@@ -16,11 +16,11 @@ class CommandCenterResponse {
   factory CommandCenterResponse.fromJson(Map<String, dynamic> json) => CommandCenterResponse(
     success: json["success"],
     message: json["message"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    data: json["data"] == null ? null : CommandCenterData.fromJson(json["data"]),
   );
 }
 
-class Data {
+class CommandCenterData {
   final Location? location;
   final Hero? hero;
   final List<Priority>? priorities;
@@ -33,7 +33,7 @@ class Data {
   final CommunityBottom? communityBottom;
   final CommunityInsights? communityInsights;
 
-  Data({
+  CommandCenterData({
     this.location,
     this.hero,
     this.priorities,
@@ -47,7 +47,7 @@ class Data {
     this.communityInsights,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory CommandCenterData.fromJson(Map<String, dynamic> json) => CommandCenterData(
     location: json["location"] == null ? null : Location.fromJson(json["location"]),
     hero: json["hero"] == null ? null : Hero.fromJson(json["hero"]),
     priorities: json["priorities"] == null ? [] : List<Priority>.from(json["priorities"]!.map((x) => Priority.fromJson(x))),

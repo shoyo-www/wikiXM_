@@ -331,9 +331,9 @@ class WeatherOverlayPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Colors.white.withOpacity(.60),
-          Colors.white.withOpacity(.35),
-          Colors.white.withOpacity(.065),
+          Colors.white.withValues(alpha: .60),
+          Colors.white.withValues(alpha: .35),
+          Colors.white.withValues(alpha: .065),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -347,9 +347,9 @@ class WeatherOverlayPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Colors.white.withOpacity(.80),
-          Colors.white.withOpacity(.60),
-          Colors.white.withOpacity(.055),
+          Colors.white.withValues(alpha: .80),
+          Colors.white.withValues(alpha: .60),
+          Colors.white.withValues(alpha: .055),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -363,9 +363,9 @@ class WeatherOverlayPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Colors.white.withOpacity(.50),
-          Colors.white.withOpacity(.10),
-          Colors.white.withOpacity(.005),
+          Colors.white.withValues(alpha: .50),
+          Colors.white.withValues(alpha: .10),
+          Colors.white.withValues(alpha: .005),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -379,9 +379,9 @@ class WeatherOverlayPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          const Color(0xFF20232A).withOpacity(.85),
-          const Color(0xFF15171D).withOpacity(.60),
-          const Color(0xFF20232A).withOpacity(.40),
+          const Color(0xFF20232A).withValues(alpha: .85),
+          const Color(0xFF15171D).withValues(alpha: .60),
+          const Color(0xFF20232A).withValues(alpha: .40),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
@@ -399,8 +399,8 @@ class WeatherOverlayPainter extends CustomPainter {
       ..shader =
           RadialGradient(
             colors: [
-              const Color(0xFFFFD54F).withOpacity(.40),
-              const Color(0xFFFFC107).withOpacity(.30),
+              const Color(0xFFFFD54F).withValues(alpha: .40),
+              const Color(0xFFFFC107).withValues(alpha: .30),
               Colors.transparent,
             ],
             stops: const [.0, .45, 1.0],
@@ -414,8 +414,8 @@ class WeatherOverlayPainter extends CustomPainter {
       ..isAntiAlias = true
       ..shader = RadialGradient(
         colors: [
-          const Color(0xFFFFF176).withOpacity(.40),
-          const Color(0xFFFFD54F).withOpacity(.18),
+          const Color(0xFFFFF176).withValues(alpha: .40),
+          const Color(0xFFFFD54F).withValues(alpha: .18),
           Colors.transparent,
         ],
         stops: const [.0, .55, 1.0],
@@ -436,7 +436,7 @@ class WeatherOverlayPainter extends CustomPainter {
 
     final Paint highlightPaint = Paint()
       ..isAntiAlias = true
-      ..color = Colors.white.withOpacity(.22)
+      ..color = Colors.white.withValues(alpha: .22)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
 
     canvas.drawCircle(
@@ -456,8 +456,8 @@ class WeatherOverlayPainter extends CustomPainter {
       ..shader =
           RadialGradient(
             colors: [
-              const Color(0xFFF5F3CE).withOpacity(.32),
-              const Color(0xFFDDE7F0).withOpacity(.15),
+              const Color(0xFFF5F3CE).withValues(alpha: .32),
+              const Color(0xFFDDE7F0).withValues(alpha: .15),
               Colors.transparent,
             ],
             stops: const [0.0, .45, 1.0],
@@ -479,7 +479,7 @@ class WeatherOverlayPainter extends CustomPainter {
 
     final Paint craterPaint = Paint()
       ..isAntiAlias = true
-      ..color = const Color(0xFFBFC0B2).withOpacity(.25);
+      ..color = const Color(0xFFBFC0B2).withValues(alpha: .25);
 
     canvas.drawCircle(
       Offset(center.dx + radius * .28, center.dy + radius * .15),
@@ -495,7 +495,7 @@ class WeatherOverlayPainter extends CustomPainter {
 
     final Paint highlightPaint = Paint()
       ..isAntiAlias = true
-      ..color = Colors.white.withOpacity(.28)
+      ..color = Colors.white.withValues(alpha: .28)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
 
     canvas.drawCircle(
@@ -712,14 +712,14 @@ class WeatherOverlayPainter extends CustomPainter {
 
       final Paint paint = Paint()
         ..isAntiAlias = true
-        ..color = Colors.white.withOpacity(snow.opacity);
+        ..color = Colors.white.withValues(alpha: snow.opacity);
 
       canvas.drawCircle(Offset(x, y), radius, paint);
 
       if (snow.size >= .005) {
         final Paint glowPaint = Paint()
           ..isAntiAlias = true
-          ..color = Colors.white.withOpacity(snow.opacity * .12)
+          ..color = Colors.white.withValues(alpha: snow.opacity * .12)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
 
         canvas.drawCircle(Offset(x, y), radius * 2.2, glowPaint);
@@ -758,8 +758,8 @@ class WeatherOverlayPainter extends CustomPainter {
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.white.withOpacity(opacity * .30),
-            const Color(0xFFE0F2FF).withOpacity(opacity),
+            Colors.white.withValues(alpha: opacity * .30),
+            const Color(0xFFE0F2FF).withValues(alpha: opacity),
           ],
         ).createShader(Rect.fromLTWH(x, y, 2, length));
 
@@ -787,7 +787,7 @@ class WeatherOverlayPainter extends CustomPainter {
     if (flashOpacity <= 0) return;
 
     final Paint flashPaint = Paint()
-      ..color = Colors.white.withOpacity(flashOpacity * .25);
+      ..color = Colors.white.withValues(alpha: flashOpacity * .25);
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), flashPaint);
 
@@ -812,7 +812,7 @@ class WeatherOverlayPainter extends CustomPainter {
       ..strokeWidth = 9.0
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
-      ..color = Colors.white.withOpacity(flashOpacity * .28)
+      ..color = Colors.white.withValues(alpha: flashOpacity * .28)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
     canvas.drawPath(lightning, glowPaint);
@@ -822,7 +822,7 @@ class WeatherOverlayPainter extends CustomPainter {
       ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
-      ..color = Colors.white.withOpacity(flashOpacity);
+      ..color = Colors.white.withValues(alpha: flashOpacity);
 
     canvas.drawPath(lightning, boltPaint);
   }

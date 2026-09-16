@@ -1,6 +1,12 @@
+// To parse this JSON data, do
+//
+//     final entertainmentResponse = entertainmentResponseFromJson(jsonString);
+
 import 'dart:convert';
 
 EntertainmentResponse entertainmentResponseFromJson(String str) => EntertainmentResponse.fromJson(json.decode(str));
+
+String entertainmentResponseToJson(EntertainmentResponse data) => json.encode(data.toJson());
 
 class EntertainmentResponse {
   final bool? success;
@@ -18,12 +24,19 @@ class EntertainmentResponse {
     message: json["message"],
     data: json["data"] == null ? null : EntertainmentData.fromJson(json["data"]),
   );
+
+  Map<String, dynamic> toJson() => {
+    "success": success,
+    "message": message,
+    "data": data?.toJson(),
+  };
 }
 
 class EntertainmentData {
   final Location? location;
   final Hero? hero;
   final Events? events;
+  final Planner? planner;
   final Today? today;
   final Categories? categories;
   final Contributors? contributors;
@@ -31,7 +44,6 @@ class EntertainmentData {
   final News? news;
   final NewsWide? newsWide;
   final Ads? ads;
-  final Planner? planner;
   final Calendar? calendar;
   final Newsletter? newsletter;
   final Involve? involve;
@@ -42,6 +54,7 @@ class EntertainmentData {
     this.location,
     this.hero,
     this.events,
+    this.planner,
     this.today,
     this.categories,
     this.contributors,
@@ -49,7 +62,6 @@ class EntertainmentData {
     this.news,
     this.newsWide,
     this.ads,
-    this.planner,
     this.calendar,
     this.newsletter,
     this.involve,
@@ -61,6 +73,7 @@ class EntertainmentData {
     location: json["location"] == null ? null : Location.fromJson(json["location"]),
     hero: json["hero"] == null ? null : Hero.fromJson(json["hero"]),
     events: json["events"] == null ? null : Events.fromJson(json["events"]),
+    planner: json["planner"] == null ? null : Planner.fromJson(json["planner"]),
     today: json["today"] == null ? null : Today.fromJson(json["today"]),
     categories: json["categories"] == null ? null : Categories.fromJson(json["categories"]),
     contributors: json["contributors"] == null ? null : Contributors.fromJson(json["contributors"]),
@@ -68,7 +81,6 @@ class EntertainmentData {
     news: json["news"] == null ? null : News.fromJson(json["news"]),
     newsWide: json["news_wide"] == null ? null : NewsWide.fromJson(json["news_wide"]),
     ads: json["ads"] == null ? null : Ads.fromJson(json["ads"]),
-    planner: json["planner"] == null ? null : Planner.fromJson(json["planner"]),
     calendar: json["calendar"] == null ? null : Calendar.fromJson(json["calendar"]),
     newsletter: json["newsletter"] == null ? null : Newsletter.fromJson(json["newsletter"]),
     involve: json["involve"] == null ? null : Involve.fromJson(json["involve"]),
@@ -76,6 +88,24 @@ class EntertainmentData {
     celebrate: json["celebrate"] == null ? null : Celebrate.fromJson(json["celebrate"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "location": location?.toJson(),
+    "hero": hero?.toJson(),
+    "events": events?.toJson(),
+    "planner": planner?.toJson(),
+    "today": today?.toJson(),
+    "categories": categories?.toJson(),
+    "contributors": contributors?.toJson(),
+    "featured_news": featuredNews?.toJson(),
+    "news": news?.toJson(),
+    "news_wide": newsWide?.toJson(),
+    "ads": ads?.toJson(),
+    "calendar": calendar?.toJson(),
+    "newsletter": newsletter?.toJson(),
+    "involve": involve?.toJson(),
+    "explore": explore?.toJson(),
+    "celebrate": celebrate?.toJson(),
+  };
 }
 
 class Ads {
@@ -88,6 +118,10 @@ class Ads {
   factory Ads.fromJson(Map<String, dynamic> json) => Ads(
     items: json["items"] == null ? [] : List<AdsItem>.from(json["items"]!.map((x) => AdsItem.fromJson(x))),
   );
+
+  Map<String, dynamic> toJson() => {
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+  };
 }
 
 class AdsItem {
@@ -125,6 +159,17 @@ class AdsItem {
     cta: json["cta"] == null ? null : ItemCta.fromJson(json["cta"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "variant": variant,
+    "label": label,
+    "url": url,
+    "image": image,
+    "image_alt": imageAlt,
+    "headline": headline?.toJson(),
+    "brand": brand?.toJson(),
+    "cta": cta?.toJson(),
+  };
 }
 
 class ItemBrand {
@@ -144,6 +189,11 @@ class ItemBrand {
     icon: json["icon"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "secondary_name": secondaryName,
+    "icon": icon,
+  };
 }
 
 class ItemCta {
@@ -157,6 +207,9 @@ class ItemCta {
     label: json["label"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+  };
 }
 
 class Title {
@@ -173,6 +226,10 @@ class Title {
     line2: json["line2"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "line1": line1,
+    "line2": line2,
+  };
 }
 
 class Calendar {
@@ -204,6 +261,15 @@ class Calendar {
     legend: json["legend"] == null ? [] : List<Legend>.from(json["legend"]!.map((x) => Legend.fromJson(x))),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "views": views == null ? [] : List<dynamic>.from(views!.map((x) => x.toJson())),
+    "actions": actions?.toJson(),
+    "month": month,
+    "navigation": navigation?.toJson(),
+    "weekdays": weekdays == null ? [] : List<dynamic>.from(weekdays!.map((x) => x.toJson())),
+    "legend": legend == null ? [] : List<dynamic>.from(legend!.map((x) => x.toJson())),
+  };
 }
 
 class Actions {
@@ -220,6 +286,10 @@ class Actions {
     viewAll: json["view_all"] == null ? null : Link.fromJson(json["view_all"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "submit_event": submitEvent?.toJson(),
+    "view_all": viewAll?.toJson(),
+  };
 }
 
 class Link {
@@ -245,6 +315,13 @@ class Link {
     value: json["value"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "url": url,
+    "icon": icon,
+    "id": id,
+    "value": value,
+  };
 }
 
 class Legend {
@@ -264,6 +341,11 @@ class Legend {
     type: json["type"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "label": label,
+    "type": type,
+  };
 }
 
 class Navigation {
@@ -280,6 +362,10 @@ class Navigation {
     next: json["next"] == null ? null : Next.fromJson(json["next"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "previous": previous?.toJson(),
+    "next": next?.toJson(),
+  };
 }
 
 class Next {
@@ -296,6 +382,10 @@ class Next {
     icon: json["icon"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "icon": icon,
+  };
 }
 
 class View {
@@ -315,6 +405,11 @@ class View {
     active: json["active"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "label": label,
+    "active": active,
+  };
 }
 
 class Weekday {
@@ -331,6 +426,10 @@ class Weekday {
     label: json["label"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "short": short,
+    "label": label,
+  };
 }
 
 class Categories {
@@ -350,6 +449,11 @@ class Categories {
     link: json["link"] == null ? null : Link.fromJson(json["link"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+    "link": link?.toJson(),
+  };
 }
 
 class LinkElement {
@@ -378,6 +482,14 @@ class LinkElement {
     value: json["value"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "label": label,
+    "url": url,
+    "icon": icon,
+    "tone": tone,
+    "value": value,
+  };
 }
 
 class Celebrate {
@@ -397,6 +509,11 @@ class Celebrate {
     items: json["items"] == null ? [] : List<CelebrateItem>.from(json["items"]!.map((x) => CelebrateItem.fromJson(x))),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "subtitle": subtitle,
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+  };
 }
 
 class CelebrateItem {
@@ -428,6 +545,15 @@ class CelebrateItem {
     action: json["action"] == null ? null : LinkElement.fromJson(json["action"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "title": title,
+    "description": description,
+    "url": url,
+    "icon": icon,
+    "tone": tone,
+    "action": action?.toJson(),
+  };
 }
 
 class Contributors {
@@ -447,6 +573,11 @@ class Contributors {
     note: json["note"] == null ? null : Note.fromJson(json["note"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+    "note": note?.toJson(),
+  };
 }
 
 class ContributorsItem {
@@ -478,6 +609,15 @@ class ContributorsItem {
     beat: json["beat"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "rank": rank,
+    "name": name,
+    "url": url,
+    "image": image,
+    "alt": alt,
+    "beat": beat,
+  };
 }
 
 class Note {
@@ -494,6 +634,10 @@ class Note {
     icon: json["icon"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "text": text,
+    "icon": icon,
+  };
 }
 
 class Events {
@@ -516,6 +660,12 @@ class Events {
     advertisement: json["advertisement"] == null ? null : Advertisement.fromJson(json["advertisement"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "links": links == null ? [] : List<dynamic>.from(links!.map((x) => x.toJson())),
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+    "advertisement": advertisement?.toJson(),
+  };
 }
 
 class Advertisement {
@@ -547,6 +697,15 @@ class Advertisement {
     cta: json["cta"] == null ? null : ItemCta.fromJson(json["cta"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "url": url,
+    "image": image,
+    "image_alt": imageAlt,
+    "headline": headline?.toJson(),
+    "brand": brand?.toJson(),
+    "cta": cta?.toJson(),
+  };
 }
 
 class AdvertisementBrand {
@@ -563,10 +722,14 @@ class AdvertisementBrand {
     icon: json["icon"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "icon": icon,
+  };
 }
 
 class PurpleItem {
-  final String? id;
+  final int? id;
   final String? title;
   final String? url;
   final String? image;
@@ -609,6 +772,20 @@ class PurpleItem {
     savedIcon: json["saved_icon"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "title": title,
+    "url": url,
+    "image": image,
+    "image_alt": imageAlt,
+    "date": date?.toJson(),
+    "category": category?.toJson(),
+    "location": location?.toJson(),
+    "time": time?.toJson(),
+    "time_icon": timeIcon,
+    "saved_count": savedCount,
+    "saved_icon": savedIcon,
+  };
 }
 
 class Date {
@@ -630,9 +807,14 @@ class Date {
     value: json["value"] == null ? null : DateTime.parse(json["value"]),
     weekday: json["weekday"],
   );
+
+  Map<String, dynamic> toJson() => {
+    "month": month,
+    "day": day,
+    "value": value == null ? null : "${value!.year.toString().padLeft(4, '0')}-${value!.month.toString().padLeft(2, '0')}-${value!.day.toString().padLeft(2, '0')}",
+    "weekday": weekday,
+  };
 }
-
-
 
 class PublishedAt {
   final String? label;
@@ -648,6 +830,10 @@ class PublishedAt {
     value: json["value"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "value": value,
+  };
 }
 
 class Explore {
@@ -673,6 +859,13 @@ class Explore {
     businesses: json["businesses"] == null ? null : Businesses.fromJson(json["businesses"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "weekend": weekend?.toJson(),
+    "deals": deals?.toJson(),
+    "venues": venues?.toJson(),
+    "businesses": businesses?.toJson(),
+  };
 }
 
 class Businesses {
@@ -692,6 +885,11 @@ class Businesses {
     action: json["action"] == null ? null : Action.fromJson(json["action"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+    "action": action?.toJson(),
+  };
 }
 
 class Action {
@@ -711,6 +909,11 @@ class Action {
     icon: json["icon"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "url": url,
+    "icon": icon,
+  };
 }
 
 class BusinessesItem {
@@ -739,6 +942,14 @@ class BusinessesItem {
     imageAlt: json["image_alt"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "title": title,
+    "subtitle": subtitle,
+    "url": url,
+    "image": image,
+    "image_alt": imageAlt,
+  };
 }
 
 class Weekend {
@@ -767,6 +978,14 @@ class Weekend {
     action: json["action"] == null ? null : LinkElement.fromJson(json["action"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "eyebrow": eyebrow,
+    "dates": dates,
+    "description": description,
+    "image": image,
+    "image_alt": imageAlt,
+    "action": action?.toJson(),
+  };
 }
 
 class FeaturedNews {
@@ -807,6 +1026,18 @@ class FeaturedNews {
     stats: json["stats"] == null ? [] : List<LinkElement>.from(json["stats"]!.map((x) => LinkElement.fromJson(x))),
   );
 
+  Map<String, dynamic> toJson() => {
+    "image": image,
+    "image_alt": imageAlt,
+    "kicker": kicker,
+    "title": title,
+    "url": url,
+    "author": author?.toJson(),
+    "published_at": publishedAt?.toJson(),
+    "read_time": readTime,
+    "excerpt": excerpt,
+    "stats": stats == null ? [] : List<dynamic>.from(stats!.map((x) => x.toJson())),
+  };
 }
 
 class Author {
@@ -820,6 +1051,9 @@ class Author {
     name: json["name"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "name": name,
+  };
 }
 
 class Hero {
@@ -851,6 +1085,15 @@ class Hero {
     aiBrief: json["ai_brief"] == null ? null : AiBrief.fromJson(json["ai_brief"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "eyebrow": eyebrow,
+    "title": title?.toJson(),
+    "description": description,
+    "image": image,
+    "stats": stats == null ? [] : List<dynamic>.from(stats!.map((x) => x.toJson())),
+    "actions": actions == null ? [] : List<dynamic>.from(actions!.map((x) => x.toJson())),
+    "ai_brief": aiBrief?.toJson(),
+  };
 }
 
 class AiBrief {
@@ -891,6 +1134,18 @@ class AiBrief {
     cta: json["cta"] == null ? null : AiBriefCta.fromJson(json["cta"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "badge": badge,
+    "guide": guide?.toJson(),
+    "greeting": greeting,
+    "event_count": eventCount,
+    "location": location,
+    "highlight": highlight,
+    "description": description,
+    "updated": updated?.toJson(),
+    "cta": cta?.toJson(),
+  };
 }
 
 class AiBriefCta {
@@ -907,6 +1162,10 @@ class AiBriefCta {
     url: json["url"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "url": url,
+  };
 }
 
 class Guide {
@@ -923,6 +1182,10 @@ class Guide {
     alt: json["alt"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "image": image,
+    "alt": alt,
+  };
 }
 
 class Involve {
@@ -938,6 +1201,11 @@ class Involve {
     title: json["title"],
     items: json["items"] == null ? [] : List<CelebrateItem>.from(json["items"]!.map((x) => CelebrateItem.fromJson(x))),
   );
+
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+  };
 }
 
 class Location {
@@ -965,6 +1233,15 @@ class Location {
     header: json["header"],
     image: json["image"],
   );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "state": state,
+    "stateCode": stateCode,
+    "header": header,
+    "image": image,
+  };
 }
 
 class News {
@@ -978,6 +1255,9 @@ class News {
     items: json["items"] == null ? [] : List<NewsItem>.from(json["items"]!.map((x) => NewsItem.fromJson(x))),
   );
 
+  Map<String, dynamic> toJson() => {
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+  };
 }
 
 class NewsItem {
@@ -1017,6 +1297,19 @@ class NewsItem {
     excerpt: json["excerpt"],
     stats: json["stats"] == null ? [] : List<Link>.from(json["stats"]!.map((x) => Link.fromJson(x))),
   );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "image": image,
+    "image_alt": imageAlt,
+    "kicker": kicker,
+    "title": title,
+    "url": url,
+    "author": author,
+    "published_at": publishedAt?.toJson(),
+    "excerpt": excerpt,
+    "stats": stats == null ? [] : List<dynamic>.from(stats!.map((x) => x.toJson())),
+  };
 }
 
 class NewsWide {
@@ -1030,6 +1323,9 @@ class NewsWide {
     items: json["items"] == null ? [] : List<NewsWideItem>.from(json["items"]!.map((x) => NewsWideItem.fromJson(x))),
   );
 
+  Map<String, dynamic> toJson() => {
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+  };
 }
 
 class NewsWideItem {
@@ -1073,6 +1369,19 @@ class NewsWideItem {
     stats: json["stats"] == null ? [] : List<LinkElement>.from(json["stats"]!.map((x) => LinkElement.fromJson(x))),
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "variant": variant,
+    "image": image,
+    "image_alt": imageAlt,
+    "kicker": kicker,
+    "title": title,
+    "url": url,
+    "author": author,
+    "published_at": publishedAt?.toJson(),
+    "excerpt": excerpt,
+    "stats": stats == null ? [] : List<dynamic>.from(stats!.map((x) => x.toJson())),
+  };
 }
 
 class Newsletter {
@@ -1095,6 +1404,12 @@ class Newsletter {
     form: json["form"] == null ? null : Form.fromJson(json["form"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "subtitle": subtitle,
+    "icon": icon,
+    "form": form?.toJson(),
+  };
 }
 
 class Form {
@@ -1123,6 +1438,14 @@ class Form {
     submitLabel: json["submit_label"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "action": action,
+    "method": method,
+    "email_label": emailLabel,
+    "email_name": emailName,
+    "email_placeholder": emailPlaceholder,
+    "submit_label": submitLabel,
+  };
 }
 
 class Planner {
@@ -1145,6 +1468,12 @@ class Planner {
     items: json["items"] == null ? [] : List<PlannerItem>.from(json["items"]!.map((x) => PlannerItem.fromJson(x))),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "subtitle": subtitle,
+    "filters": filters == null ? [] : List<dynamic>.from(filters!.map((x) => x.toJson())),
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+  };
 }
 
 class Filter {
@@ -1160,11 +1489,15 @@ class Filter {
     id: json["id"],
     label: json["label"],
   );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "label": label,
+  };
 }
 
-
 class PlannerItem {
-  final String? id;
+  final int? id;
   final Date? date;
   final String? image;
   final String? title;
@@ -1206,10 +1539,25 @@ class PlannerItem {
     tag: json["tag"] == null ? null : Tag.fromJson(json["tag"]),
     cost: json["cost"],
     distance: json["distance"],
-    filterIds: json["filter_ids"] == null ? [] : List<String>.from(json["filter_ids"]),
+    filterIds: json["filter_ids"] == null ? [] : List<String>.from(json["filter_ids"]!.map((x) => x)),
     icons: json["icons"] == null ? null : Icons.fromJson(json["icons"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "date": date?.toJson(),
+    "image": image,
+    "title": title,
+    "url": url,
+    "time": time,
+    "location": location,
+    "note": note,
+    "tag": tag?.toJson(),
+    "cost": cost,
+    "distance": distance,
+    "filter_ids": filterIds == null ? [] : List<dynamic>.from(filterIds!.map((x) => x)),
+    "icons": icons?.toJson(),
+  };
 }
 
 class Icons {
@@ -1229,6 +1577,11 @@ class Icons {
     favorite: json["favorite"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "tickets": tickets,
+    "pin": pin,
+    "favorite": favorite,
+  };
 }
 
 class Tag {
@@ -1245,6 +1598,10 @@ class Tag {
     type: json["type"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "label": label,
+    "type": type,
+  };
 }
 
 class Today {
@@ -1264,6 +1621,11 @@ class Today {
     link: json["link"] == null ? null : Link.fromJson(json["link"]),
   );
 
+  Map<String, dynamic> toJson() => {
+    "title": title,
+    "items": items == null ? [] : List<dynamic>.from(items!.map((x) => x.toJson())),
+    "link": link?.toJson(),
+  };
 }
 
 class TodayItem {
@@ -1292,4 +1654,12 @@ class TodayItem {
     tone: json["tone"],
   );
 
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "label": label,
+    "count": count,
+    "count_label": countLabel,
+    "icon": icon,
+    "tone": tone,
+  };
 }

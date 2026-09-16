@@ -3,16 +3,21 @@ import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wikixm/Presentation/town_hall/controller.dart';
 import '../../constants/appcolor.dart';
 import '../../constants/fontsize.dart';
+import '../../data/datasource/remote/models/response/command_center_response.dart';
+import '../../data/datasource/remote/models/response/town_hall_response.dart';
 
 class LegislativeBillsSection extends StatefulWidget {
   const LegislativeBillsSection({
     super.key,
     required this.isLight,
+    this.bills,
   });
 
   final bool isLight;
+  final TownHallBills? bills;
 
   @override
   State<LegislativeBillsSection> createState() =>
@@ -20,66 +25,19 @@ class LegislativeBillsSection extends StatefulWidget {
 }
 
 class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
-  final CarouselSliderController _carouselController = CarouselSliderController();
+  final CarouselSliderController _carouselController =
+  CarouselSliderController();
+
   int _currentIndex = 0;
+  String _selectedFilter = 'all';
+
   bool get isLight => widget.isLight;
-  final List<Map<String, dynamic>> _bills = [
-    {
-      'type': 'priority',
-    },
-    {
-      'type': 'bill',
-      'title': 'Transportation Benefit District Act',
-      'billNumber': 'S.B. 5442',
-      'tags': ['HIGH ACTIVITY', 'CITY'],
-      'status': 'In Committee',
-      'date': 'Yesterday',
-      'description':
-      'Creates a Transportation Benefit District for local transportation improvements.',
-      'impact': 'High',
-      'responses': '6 of 8',
-      'followers': '1.2K following',
-      'approachingVote': false,
-    },
-    {
-      'type': 'bill',
-      'title': 'Middle Housing Expansion',
-      'billNumber': 'ORD. 2024-27',
-      'tags': [
-        'VOTE APPROACHING',
-        'NEW THIS WEEK',
-        'COUNTY',
-      ],
-      'status': 'Approaching Vote',
-      'date': '2 days ago',
-      'description':
-      'Expands middle housing options in unincorporated areas.',
-      'impact': 'High',
-      'responses': '5 of 5',
-      'followers': '1.1K following',
-      'approachingVote': true,
-    },
-    {
-      'type': 'bill',
-      'title': 'Clean Water Infrastructure Act',
-      'billNumber': 'H.R. 3922',
-      'tags': [
-        'HIGH ACTIVITY',
-        'FEDERAL',
-      ],
-      'status': 'In Committee',
-      'date': '3 days ago',
-      'description':
-      'Invests in clean water infrastructure and protection programs.',
-      'impact': 'Medium',
-      'responses': '2 of 5',
-      'followers': '1.1K following',
-      'approachingVote': false,
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
+    final bills = widget.bills;
+    final items = bills?.items ?? [];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -87,50 +45,62 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
           children: [
             Expanded(
               child: Text(
-                'LEGISLATIVE BILLS IMPACTING ISSAQUAH',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                bills?.title ?? '',
                 style: TextStyle(
                   color: isLight
                       ? AppColor.townHallGreen
                       : AppColor.townHallGreenDark,
-                  fontSize: FontSize.sp_11,
+                  fontSize: FontSize.sp_13_5,
                   fontWeight: FontWeight.w800,
                   height: 1,
                 ),
               ),
             ),
             SizedBox(width: Dimensions.w_5),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: Dimensions.w_8,
-                vertical: Dimensions.h_4,
-              ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(Dimensions.h_4)),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'All Levels',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: FontSize.sp_9,
-                      fontWeight: FontWeight.w800,
-                      height: 1,
+            if (bills?.filters?.isNotEmpty ?? false)
+              GestureDetector(
+                onTap: () {
+                  _showBillFilters(bills?.filters ?? []);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Dimensions.w_8,
+                    vertical: Dimensions.h_4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(
+                      Dimensions.h_4,
                     ),
                   ),
-                  SizedBox(width: Dimensions.w_2),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    size: Dimensions.h_13,
-                    color:
-                    Theme.of(context).primaryColorDark,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        bills?.filters?.firstWhere(
+                              (filter) =>
+                          filter.value == _selectedFilter,
+                          orElse: () => bills.filters!.first,
+                        )
+                            .label ??
+                            '',
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: FontSize.sp_9,
+                          fontWeight: FontWeight.w800,
+                          height: 1,
+                        ),
+                      ),
+                      SizedBox(width: Dimensions.w_2),
+                      Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: Dimensions.h_13,
+                        color: Theme.of(context).primaryColorDark,
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
           ],
         ),
         SizedBox(height: Dimensions.h_6),
@@ -141,7 +111,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
             children: [
               CarouselSlider.builder(
                 controller: _carouselController,
-                itemCount: _bills.length,
+                itemCount: items.length + 1,
                 options: CarouselOptions(
                   height: Dimensions.h_220,
                   viewportFraction: 0.7,
@@ -160,60 +130,61 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
                     int index,
                     int realIndex,
                     ) {
-                  final bill = _bills[index];
-                  if (bill['type'] == 'priority') {
-                    return _buildPriorityCard();
+                  if (index == 0) {
+                    return _buildPriorityCard(bills?.featured);
                   }
 
+                  final bill = items[index - 1];
+
                   return CommonBillCard(
-                    title: bill['title'],
-                    billNumber: bill['billNumber'],
-                    tags: List<String>.from(
-                      bill['tags'],
+                    title: bill.title ?? '',
+                    billNumber: bill.id ?? '',
+                    tags: _buildBillTags(bill),
+                    status: bill.status?.label ?? '',
+                    date: bill.age ?? '',
+                    description: bill.description ?? '',
+                    impact: bill.impact?.value ?? '',
+                    responses: bill.responses ?? '',
+                    followers: _formatFollowers(bill.following),
+                    isApproachingVote: _hasRibbon(
+                      bill,
+                      'VOTE APPROACHING',
                     ),
-                    status: bill['status'],
-                    date: bill['date'],
-                    description: bill['description'],
-                    impact: bill['impact'],
-                    responses: bill['responses'],
-                    followers: bill['followers'],
-                    isApproachingVote:
-                    bill['approachingVote'] ?? false,
                     onFollow: () {
-                      _onFollow(index);
+                      _onFollow(bill);
                     },
                     onDetails: () {
-                      _onDetails(index);
+                      _onDetails(bill);
                     },
                   );
                 },
               ),
-                Positioned(
-                  left: -Dimensions.w_6,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: _navigationButton(
-                      icon: Icons.chevron_left_rounded,
-                      onTap: () {
-                        _carouselController.previousPage();
-                      },
-                    ),
+              Positioned(
+                left: -Dimensions.w_6,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: _navigationButton(
+                    icon: Icons.chevron_left_rounded,
+                    onTap: () {
+                      _carouselController.previousPage();
+                    },
                   ),
                 ),
-                Positioned(
-                  right: -Dimensions.w_6,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: _navigationButton(
-                      icon: Icons.chevron_right_rounded,
-                      onTap: () {
-                        _carouselController.nextPage();
-                      },
-                    ),
+              ),
+              Positioned(
+                right: -Dimensions.w_6,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: _navigationButton(
+                    icon: Icons.chevron_right_rounded,
+                    onTap: () {
+                      _carouselController.nextPage();
+                    },
                   ),
                 ),
+              ),
             ],
           ),
         ),
@@ -221,13 +192,12 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            _bills.length,
+            items.length + 1,
                 (index) {
               final selected = index == _currentIndex;
+
               return AnimatedContainer(
-                duration: const Duration(
-                  milliseconds: 180,
-                ),
+                duration: const Duration(milliseconds: 180),
                 margin: EdgeInsets.symmetric(
                   horizontal: Dimensions.w_2,
                 ),
@@ -241,8 +211,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
                       : Theme.of(context)
                       .highlightColor
                       .withValues(alpha: 0.20),
-                  borderRadius:
-                  BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               );
             },
@@ -252,7 +221,49 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
     );
   }
 
-  Widget _buildPriorityCard() {
+  List<String> _buildBillTags(dynamic bill) {
+    final tags = <String>[];
+
+    for (final ribbon in bill.ribbons ?? []) {
+      if (ribbon.label != null) {
+        tags.add(ribbon.label!);
+      }
+    }
+
+    if (bill.tag?.label != null) {
+      tags.add(bill.tag!.label!);
+    }
+
+    return tags;
+  }
+
+  bool _hasRibbon(dynamic bill, String value) {
+    return (bill.ribbons ?? []).any(
+          (ribbon) =>
+      ribbon.label?.toUpperCase() == value.toUpperCase(),
+    );
+  }
+
+  String _formatFollowers(dynamic following) {
+    if (following == null) return '';
+
+    final value = following is num
+        ? following.toInt()
+        : int.tryParse(following.toString()) ?? 0;
+
+    if (value >= 1000) {
+      final formatted = value / 1000;
+
+      return '${formatted.toStringAsFixed(
+        formatted % 1 == 0 ? 0 : 1,
+      )}K following';
+    }
+
+    return '$value following';
+  }
+
+  Widget _buildPriorityCard(dynamic featured) {
+    final legend = widget.bills?.priorityLegend ?? [];
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: Dimensions.w_2,
@@ -262,51 +273,58 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(Dimensions.h_6),
-        border: Border.all(color: Theme.of(context).focusColor)),
+        borderRadius: BorderRadius.circular(
+          Dimensions.h_6,
+        ),
+        border: Border.all(
+          color: Theme.of(context).focusColor,
+        ),
+      ),
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'PRIORITY (Urgency)',
             style: TextStyle(
-              color:
-              Theme.of(context).primaryColorDark,
+              color: Theme.of(context).primaryColorDark,
               fontSize: FontSize.sp_10,
               fontWeight: FontWeight.w800,
             ),
           ),
           SizedBox(height: Dimensions.h_8),
-          _priorityRow(
-            color: Colors.red,
-            title: 'Vote Approaching',
-            trailing: '< 30 days',
-          ),
-
-          SizedBox(height: Dimensions.h_6),
-          _priorityRow(
-            color: Colors.green,
-            title: 'Public Hearing',
-            trailing: '30–60 days',
-          ),
-          SizedBox(height: Dimensions.h_6),
-          _priorityRow(
-            color: Theme.of(context)
-                .primaryColorDark,
-            title: 'Early Stage',
-            trailing: '60+ days',
-          ),
+          if (legend.isNotEmpty)
+            _priorityRow(
+              color: Colors.red,
+              title: legend[0].label ?? '',
+              trailing: legend[0].timing ?? '',
+            ),
+          if (legend.length > 1) ...[
+            SizedBox(height: Dimensions.h_6),
+            _priorityRow(
+              color: Colors.green,
+              title: legend[1].label ?? '',
+              trailing: legend[1].timing ?? '',
+            ),
+          ],
+          if (legend.length > 2) ...[
+            SizedBox(height: Dimensions.h_6),
+            _priorityRow(
+              color: Theme.of(context).primaryColorDark,
+              title: legend[2].label ?? '',
+              trailing: legend[2].timing ?? '',
+            ),
+          ],
           SizedBox(height: Dimensions.h_8),
           Padding(
-            padding:  EdgeInsets.only(left: Dimensions.w_8),
+            padding: EdgeInsets.only(
+              left: Dimensions.w_8,
+            ),
             child: Text(
-              'Proposes increased funding for parks maintenance and improvements.',
+              featured?.description ?? '',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color:
-                Theme.of(context).highlightColor,
+                color: Theme.of(context).highlightColor,
                 fontSize: FontSize.sp_9_5,
                 fontWeight: FontWeight.w500,
                 height: 1.3,
@@ -319,42 +337,39 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
               Expanded(
                 child: _infoItem(
                   title: 'Impact',
-                  value: 'High',
+                  value: featured?.impact?.value ?? '',
                 ),
               ),
               Expanded(
                 child: _infoItem(
                   title: 'Rep. Responses',
-                  value: '5 of 7',
+                  value: featured?.responses ?? '',
                 ),
               ),
             ],
           ),
-
           SizedBox(height: Dimensions.h_6),
-
           Row(
             children: [
               Icon(
                 CupertinoIcons.person_2_fill,
-                color: AppColor.townHallGreen,
+                color: isLight
+                    ? AppColor.townHallGreen
+                    : AppColor.townHallGreenDark,
                 size: Dimensions.h_12,
               ),
               SizedBox(width: Dimensions.w_3),
               Text(
-                '865 following',
+                _formatFollowers(featured?.following),
                 style: TextStyle(
-                  color:
-                  Theme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColor,
                   fontSize: FontSize.sp_9_5,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-
           SizedBox(height: Dimensions.h_7),
-
           _actionButtons(
             onFollow: () {},
             onDetails: () {},
@@ -374,14 +389,17 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
         Container(
           width: Dimensions.h_6,
           height: Dimensions.h_6,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
         SizedBox(width: Dimensions.w_5),
         Expanded(
           child: Text(
             title,
             style: TextStyle(
-              color:
-              Theme.of(context).primaryColor,
+              color: Theme.of(context).primaryColor,
               fontSize: FontSize.sp_9_5,
               fontWeight: FontWeight.w600,
             ),
@@ -390,8 +408,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
         Text(
           trailing,
           style: TextStyle(
-            color: Theme.of(context)
-                .primaryColorDark,
+            color: Theme.of(context).primaryColorDark,
             fontSize: FontSize.sp_9_5,
             fontWeight: FontWeight.w600,
           ),
@@ -405,14 +422,12 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
     required String value,
   }) {
     return Column(
-      crossAxisAlignment:
-      CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
           style: TextStyle(
-            color:
-            Theme.of(context).highlightColor,
+            color: Theme.of(context).highlightColor,
             fontSize: FontSize.sp_9_5,
             fontWeight: FontWeight.w500,
           ),
@@ -421,8 +436,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
         Text(
           value,
           style: TextStyle(
-            color:
-            Theme.of(context).primaryColor,
+            color: Theme.of(context).primaryColor,
             fontSize: FontSize.sp_9_5,
             fontWeight: FontWeight.w700,
           ),
@@ -440,7 +454,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
       onTap: onTap,
       child: Container(
         width: Dimensions.w_23,
-        height: Dimensions.w_23,
+        height: Dimensions.h_23,
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           shape: BoxShape.circle,
@@ -451,8 +465,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
           ),
           boxShadow: [
             BoxShadow(
-              color:
-              Colors.black.withValues(alpha: 0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -461,26 +474,65 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
         child: Icon(
           icon,
           size: Dimensions.h_15,
-          color:
-          Theme.of(context).primaryColorDark,
+          color: Theme.of(context).primaryColorDark,
         ),
       ),
     );
   }
 
-  void _onFollow(int index) {
-    debugPrint(
-      'Follow: ${_bills[index]['title']}',
+  void _showBillFilters(List<BillsFilter> filters) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: filters.map((filter) {
+              final selected =
+                  filter.value == _selectedFilter;
+              return ListTile(
+                title: Text(
+                  filter.label ?? '',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: selected
+                        ? FontWeight.w700
+                        : FontWeight.w500,
+                  ),
+                ),
+                trailing: selected
+                    ? Icon(
+                  CupertinoIcons.checkmark,
+                  color: isLight
+                      ? AppColor.townHallGreen
+                      : AppColor.townHallGreenDark,
+                )
+                    : null,
+                onTap: () {
+                  setState(() {
+                    _selectedFilter =
+                        filter.value ?? 'all';
+                    _currentIndex = 0;
+                  });
+                  Navigator.pop(context);
+                },
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 
-  void _onDetails(int index) {
-    debugPrint(
-      'Details: ${_bills[index]['title']}',
-    );
+  void _onFollow(dynamic bill) {
+    debugPrint('Follow: ${bill.title}');
+  }
+
+  void _onDetails(dynamic bill) {
+    debugPrint('Details: ${bill.title}');
   }
 }
-
 class CommonBillCard extends StatelessWidget {
   final String title;
   final String billNumber;

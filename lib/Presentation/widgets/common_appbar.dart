@@ -18,7 +18,8 @@ class CommonBlurAppBar extends StatelessWidget {
     required this.blurOpacity,
     this.showBackButton = false,
     this.isDrawer = false,
-    this.onTap
+    this.onTap,
+    this.child
   });
 
   final Color foregroundColor;
@@ -26,6 +27,7 @@ class CommonBlurAppBar extends StatelessWidget {
   final bool showBackButton;
   final bool isDrawer;
   final void Function()? onTap;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +81,9 @@ class CommonBlurAppBar extends StatelessWidget {
               Dimensions.w_10,
               Dimensions.h_1,
             ),
-            child: showBackButton
+            child: child ?? (showBackButton
                 ? _buildBackHeader()
-                : _buildFullHeader(),
+                : _buildFullHeader()),
           ),
         ],
       ),
