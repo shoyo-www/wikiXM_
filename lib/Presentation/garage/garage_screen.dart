@@ -1540,7 +1540,9 @@ class _GarageScreenState extends State<GarageScreen> {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.only(left: Dimensions.w_8),
             shrinkWrap: true,
-            itemCount: garageController.aiGarageData?.insights?.length ?? 0,
+            itemCount: (garageController.aiGarageData?.insights?.length ?? 0) > 4
+                ? 4
+                : garageController.aiGarageData?.insights?.length ?? 0,
             itemBuilder: (c, i) {
               return Padding(
                 padding: EdgeInsets.only(bottom: Dimensions.h_6),

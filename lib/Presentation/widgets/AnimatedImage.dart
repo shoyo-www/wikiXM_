@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../constants/fontsize.dart';
 import 'cache_image.dart';
 
@@ -20,7 +19,6 @@ class _AnimatedWeatherImageState extends State<AnimatedWeatherImage> with Single
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(vsync: this, duration: const Duration(seconds: 6))..repeat(reverse: true);
   }
 
