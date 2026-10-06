@@ -1,17 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-enum WeatherAnimationType {
-  sunny,
-  clearNight,
-  rain,
-  snow,
-  thunderstorm,
-  cloudy,
-  partlyCloudy,
-  partlyCloudyNight,
-  none,
-}
+enum WeatherAnimationType { sunny, clearNight, rain, snow, thunderstorm, cloudy, partlyCloudy, partlyCloudyNight, none }
 
 WeatherAnimationType getWeatherAnimationType(String? sceneId) {
   switch (sceneId?.toLowerCase().trim()) {
@@ -66,34 +56,22 @@ class WeatherAnimationOverlay extends StatefulWidget {
   final bool animateClouds;
   final bool animateRain;
 
-  const WeatherAnimationOverlay({
-    super.key,
-    required this.type,
-    this.animateClouds = true,
-    this.animateRain = true,
-  });
+  const WeatherAnimationOverlay({super.key, required this.type, this.animateClouds = true, this.animateRain = true});
 
   @override
-  State<WeatherAnimationOverlay> createState() =>
-      _WeatherAnimationOverlayState();
+  State<WeatherAnimationOverlay> createState() => _WeatherAnimationOverlayState();
 }
 
-class _WeatherAnimationOverlayState extends State<WeatherAnimationOverlay>
-    with SingleTickerProviderStateMixin {
+class _WeatherAnimationOverlayState extends State<WeatherAnimationOverlay> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
 
-    _animationController = AnimationController.unbounded(
-      vsync: this,
-      value: 0.0,
-    );
+    _animationController = AnimationController.unbounded(vsync: this, value: 0.0);
 
-    _animationController.animateWith(
-      _ConstantVelocitySimulation(velocity: 1.0),
-    );
+    _animationController.animateWith(_ConstantVelocitySimulation(velocity: 1.0));
   }
 
   @override
@@ -114,12 +92,7 @@ class _WeatherAnimationOverlayState extends State<WeatherAnimationOverlay>
           animation: _animationController,
           builder: (context, child) {
             return CustomPaint(
-              painter: WeatherOverlayPainter(
-                progress: _animationController.value,
-                type: widget.type,
-                animateClouds: widget.animateClouds,
-                animateRain: widget.animateRain,
-              ),
+              painter: WeatherOverlayPainter(progress: _animationController.value, type: widget.type, animateClouds: widget.animateClouds, animateRain: widget.animateRain),
               size: Size.infinite,
             );
           },
@@ -156,12 +129,7 @@ class WeatherOverlayPainter extends CustomPainter {
   final bool animateClouds;
   final bool animateRain;
 
-  WeatherOverlayPainter({
-    required this.progress,
-    required this.type,
-    required this.animateClouds,
-    required this.animateRain,
-  });
+  WeatherOverlayPainter({required this.progress, required this.type, required this.animateClouds, required this.animateRain});
 
   final List<_RainDrop> _rainDrops = const [
     _RainDrop(.02, .58, .060, 1.25),
@@ -223,38 +191,10 @@ class WeatherOverlayPainter extends CustomPainter {
   ];
 
   final List<_CloudData> _clouds = const [
-    _CloudData(
-      top: .30,
-      scale: 0.90,
-      width: .38,
-      speed: .008,
-      opacity: 1.0,
-      delay: .00,
-    ),
-    _CloudData(
-      top: .48,
-      scale: .55,
-      width: .32,
-      speed: .008,
-      opacity: 1.0,
-      delay: .30,
-    ),
-    _CloudData(
-      top: .62,
-      scale: .98,
-      width: .27,
-      speed: .008,
-      opacity: 1.0,
-      delay: .60,
-    ),
-    _CloudData(
-      top: .78,
-      scale: .62,
-      width: .23,
-      speed: .008,
-      opacity: 1.0,
-      delay: .90,
-    ),
+    _CloudData(top: .30, scale: 0.90, width: .38, speed: .008, opacity: 1.0, delay: .00),
+    _CloudData(top: .48, scale: .55, width: .32, speed: .008, opacity: 1.0, delay: .30),
+    _CloudData(top: .62, scale: .98, width: .27, speed: .008, opacity: 1.0, delay: .60),
+    _CloudData(top: .78, scale: .62, width: .23, speed: .008, opacity: 1.0, delay: .90),
   ];
 
   @override
@@ -279,17 +219,11 @@ class WeatherOverlayPainter extends CustomPainter {
       _paintMoon(canvas, size);
     }
 
-    final bool showRain =
-        type == WeatherAnimationType.rain ||
-        type == WeatherAnimationType.thunderstorm;
+    final bool showRain = type == WeatherAnimationType.rain || type == WeatherAnimationType.thunderstorm;
 
     final bool showSnow = type == WeatherAnimationType.snow;
 
-    final bool showClouds =
-        type != WeatherAnimationType.snow &&
-            type != WeatherAnimationType.none &&
-            type != WeatherAnimationType.partlyCloudy &&
-            type != WeatherAnimationType.partlyCloudyNight;
+    final bool showClouds = type != WeatherAnimationType.snow && type != WeatherAnimationType.none && type != WeatherAnimationType.partlyCloudy && type != WeatherAnimationType.partlyCloudyNight;
 
     if (showRain) {
       _paintRainAtmosphere(canvas, size);
@@ -327,15 +261,7 @@ class WeatherOverlayPainter extends CustomPainter {
   void _paintRainAtmosphere(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..isAntiAlias = true
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.white.withValues(alpha: .60),
-          Colors.white.withValues(alpha: .35),
-          Colors.white.withValues(alpha: .065),
-        ],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.white.withValues(alpha: .60), Colors.white.withValues(alpha: .35), Colors.white.withValues(alpha: .065)]).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
   }
@@ -343,15 +269,7 @@ class WeatherOverlayPainter extends CustomPainter {
   void _paintSnowAtmosphere(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..isAntiAlias = true
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.white.withValues(alpha: .80),
-          Colors.white.withValues(alpha: .60),
-          Colors.white.withValues(alpha: .055),
-        ],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.white.withValues(alpha: .80), Colors.white.withValues(alpha: .60), Colors.white.withValues(alpha: .055)]).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
   }
@@ -359,15 +277,7 @@ class WeatherOverlayPainter extends CustomPainter {
   void _paintPartlyCloudlyAtmosphere(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..isAntiAlias = true
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.white.withValues(alpha: .50),
-          Colors.white.withValues(alpha: .10),
-          Colors.white.withValues(alpha: .005),
-        ],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.white.withValues(alpha: .50), Colors.white.withValues(alpha: .10), Colors.white.withValues(alpha: .005)]).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
   }
@@ -378,11 +288,7 @@ class WeatherOverlayPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          const Color(0xFF20232A).withValues(alpha: .85),
-          const Color(0xFF15171D).withValues(alpha: .60),
-          const Color(0xFF20232A).withValues(alpha: .40),
-        ],
+        colors: [const Color(0xFF20232A).withValues(alpha: .85), const Color(0xFF15171D).withValues(alpha: .60), const Color(0xFF20232A).withValues(alpha: .40)],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
@@ -396,41 +302,19 @@ class WeatherOverlayPainter extends CustomPainter {
 
     final Paint outerGlow = Paint()
       ..isAntiAlias = true
-      ..shader =
-          RadialGradient(
-            colors: [
-              const Color(0xFFFFD54F).withValues(alpha: .40),
-              const Color(0xFFFFC107).withValues(alpha: .30),
-              Colors.transparent,
-            ],
-            stops: const [.0, .45, 1.0],
-          ).createShader(
-            Rect.fromCircle(center: center, radius: radius * 2.8 * pulse),
-          );
+      ..shader = RadialGradient(colors: [const Color(0xFFFFD54F).withValues(alpha: .40), const Color(0xFFFFC107).withValues(alpha: .30), Colors.transparent], stops: const [.0, .45, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius * 2.8 * pulse));
 
     canvas.drawCircle(center, radius * 4.8 * pulse, outerGlow);
 
     final Paint innerGlow = Paint()
       ..isAntiAlias = true
-      ..shader = RadialGradient(
-        colors: [
-          const Color(0xFFFFF176).withValues(alpha: .40),
-          const Color(0xFFFFD54F).withValues(alpha: .18),
-          Colors.transparent,
-        ],
-        stops: const [.0, .55, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: radius * 1.65));
+      ..shader = RadialGradient(colors: [const Color(0xFFFFF176).withValues(alpha: .40), const Color(0xFFFFD54F).withValues(alpha: .18), Colors.transparent], stops: const [.0, .55, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius * 1.65));
 
     canvas.drawCircle(center, radius * 1.65, innerGlow);
 
     final Paint sunPaint = Paint()
       ..isAntiAlias = true
-      ..shader = RadialGradient(
-        center: const Alignment(-.25, -.30),
-        radius: 1.0,
-        colors: const [Color(0xFFFFF59D), Color(0xFFFFD54F), Color(0xFFFFC107)],
-        stops: const [.0, .48, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
+      ..shader = RadialGradient(center: const Alignment(-.25, -.30), radius: 1.0, colors: const [Color(0xFFFFF59D), Color(0xFFFFD54F), Color(0xFFFFC107)], stops: const [.0, .48, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius));
 
     canvas.drawCircle(center, radius, sunPaint);
 
@@ -439,11 +323,7 @@ class WeatherOverlayPainter extends CustomPainter {
       ..color = Colors.white.withValues(alpha: .22)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
 
-    canvas.drawCircle(
-      Offset(center.dx - radius * .28, center.dy - radius * .30),
-      radius * .22,
-      highlightPaint,
-    );
+    canvas.drawCircle(Offset(center.dx - radius * .28, center.dy - radius * .30), radius * .22, highlightPaint);
   }
 
   void _paintMoon(Canvas canvas, Size size) {
@@ -453,27 +333,13 @@ class WeatherOverlayPainter extends CustomPainter {
 
     final Paint glowPaint = Paint()
       ..isAntiAlias = true
-      ..shader =
-          RadialGradient(
-            colors: [
-              const Color(0xFFF5F3CE).withValues(alpha: .32),
-              const Color(0xFFDDE7F0).withValues(alpha: .15),
-              Colors.transparent,
-            ],
-            stops: const [0.0, .45, 1.0],
-          ).createShader(
-            Rect.fromCircle(center: center, radius: radius * 3.5 * pulse),
-          );
+      ..shader = RadialGradient(colors: [const Color(0xFFF5F3CE).withValues(alpha: .32), const Color(0xFFDDE7F0).withValues(alpha: .15), Colors.transparent], stops: const [0.0, .45, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius * 3.5 * pulse));
 
     canvas.drawCircle(center, radius * 3.5 * pulse, glowPaint);
 
     final Paint moonPaint = Paint()
       ..isAntiAlias = true
-      ..shader = RadialGradient(
-        center: const Alignment(-.35, -.35),
-        colors: const [Color(0xFFFFFFFF), Color(0xFFF1F0D8), Color(0xFFD8D7C2)],
-        stops: [0.0, .55, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: radius));
+      ..shader = RadialGradient(center: const Alignment(-.35, -.35), colors: const [Color(0xFFFFFFFF), Color(0xFFF1F0D8), Color(0xFFD8D7C2)], stops: [0.0, .55, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius));
 
     canvas.drawCircle(center, radius, moonPaint);
 
@@ -481,28 +347,16 @@ class WeatherOverlayPainter extends CustomPainter {
       ..isAntiAlias = true
       ..color = const Color(0xFFBFC0B2).withValues(alpha: .25);
 
-    canvas.drawCircle(
-      Offset(center.dx + radius * .28, center.dy + radius * .15),
-      radius * .18,
-      craterPaint,
-    );
+    canvas.drawCircle(Offset(center.dx + radius * .28, center.dy + radius * .15), radius * .18, craterPaint);
 
-    canvas.drawCircle(
-      Offset(center.dx - radius * .22, center.dy + radius * .30),
-      radius * .11,
-      craterPaint,
-    );
+    canvas.drawCircle(Offset(center.dx - radius * .22, center.dy + radius * .30), radius * .11, craterPaint);
 
     final Paint highlightPaint = Paint()
       ..isAntiAlias = true
       ..color = Colors.white.withValues(alpha: .28)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
 
-    canvas.drawCircle(
-      Offset(center.dx - radius * .28, center.dy - radius * .30),
-      radius * .20,
-      highlightPaint,
-    );
+    canvas.drawCircle(Offset(center.dx - radius * .28, center.dy - radius * .30), radius * .20, highlightPaint);
   }
 
   void _paintClouds(Canvas canvas, Size size) {
@@ -537,25 +391,17 @@ class WeatherOverlayPainter extends CustomPainter {
     }
 
     for (final cloud in _clouds) {
-      final double cloudProgress = animateClouds
-          ? ((progress * cloud.speed * 3.5) + cloud.delay) % 1.0
-          : cloud.delay;
+      final double cloudProgress = animateClouds ? ((progress * cloud.speed * 3.5) + cloud.delay) % 1.0 : cloud.delay;
 
       final double cloudWidth = size.width * cloud.width * cloud.scale;
 
       final double cloudHeight = cloudWidth * .30;
 
-      final double x =
-          -cloudWidth * 1.3 + cloudProgress * (size.width + cloudWidth * 2.6);
+      final double x = -cloudWidth * 1.3 + cloudProgress * (size.width + cloudWidth * 2.6);
 
       final double y = size.height * cloud.top;
 
-      _drawCloud(
-        canvas,
-        Offset(x, y),
-        Size(cloudWidth, cloudHeight),
-        cloud.opacity * cloudOpacity,
-      );
+      _drawCloud(canvas, Offset(x, y), Size(cloudWidth, cloudHeight), cloud.opacity * cloudOpacity);
     }
   }
 
@@ -566,17 +412,11 @@ class WeatherOverlayPainter extends CustomPainter {
 
     final bool isThunderstorm = type == WeatherAnimationType.thunderstorm;
 
-    final Color cloudLow = isThunderstorm
-        ? Color.fromRGBO(30, 31, 36, opacity)
-        : Color.fromRGBO(52, 52, 55, opacity);
+    final Color cloudLow = isThunderstorm ? Color.fromRGBO(30, 31, 36, opacity) : Color.fromRGBO(52, 52, 55, opacity);
 
-    final Color cloudMid = isThunderstorm
-        ? Color.fromRGBO(62, 63, 70, opacity)
-        : Color.fromRGBO(98, 98, 102, opacity);
+    final Color cloudMid = isThunderstorm ? Color.fromRGBO(62, 63, 70, opacity) : Color.fromRGBO(98, 98, 102, opacity);
 
-    final Color cloudHigh = isThunderstorm
-        ? Color.fromRGBO(115, 116, 124, opacity * .8)
-        : Color.fromRGBO(165, 165, 168, opacity * .8);
+    final Color cloudHigh = isThunderstorm ? Color.fromRGBO(115, 116, 124, opacity * .8) : Color.fromRGBO(165, 165, 168, opacity * .8);
 
     final double w = size.width;
     final double h = size.height;
@@ -590,109 +430,36 @@ class WeatherOverlayPainter extends CustomPainter {
 
     final Path cloudPath = Path();
 
-    final Rect baseRect = Rect.fromLTWH(
-      left,
-      top + cloudH * .48,
-      cloudW,
-      cloudH * .34,
-    );
+    final Rect baseRect = Rect.fromLTWH(left, top + cloudH * .48, cloudW, cloudH * .34);
 
-    cloudPath.addRRect(
-      RRect.fromRectAndRadius(baseRect, Radius.circular(cloudH * .17)),
-    );
+    cloudPath.addRRect(RRect.fromRectAndRadius(baseRect, Radius.circular(cloudH * .17)));
 
-    cloudPath.addOval(
-      Rect.fromCircle(
-        center: Offset(left + cloudW * .16, top + cloudH * .53),
-        radius: cloudH * .22,
-      ),
-    );
+    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .16, top + cloudH * .53), radius: cloudH * .22));
 
-    cloudPath.addOval(
-      Rect.fromCircle(
-        center: Offset(left + cloudW * .32, top + cloudH * .36),
-        radius: cloudH * .30,
-      ),
-    );
+    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .32, top + cloudH * .36), radius: cloudH * .30));
 
-    cloudPath.addOval(
-      Rect.fromCircle(
-        center: Offset(left + cloudW * .50, top + cloudH * .28),
-        radius: cloudH * .37,
-      ),
-    );
+    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .50, top + cloudH * .28), radius: cloudH * .37));
 
-    cloudPath.addOval(
-      Rect.fromCircle(
-        center: Offset(left + cloudW * .68, top + cloudH * .38),
-        radius: cloudH * .29,
-      ),
-    );
+    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .68, top + cloudH * .38), radius: cloudH * .29));
 
-    cloudPath.addOval(
-      Rect.fromCircle(
-        center: Offset(left + cloudW * .84, top + cloudH * .53),
-        radius: cloudH * .21,
-      ),
-    );
+    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .84, top + cloudH * .53), radius: cloudH * .21));
 
-    paint.shader = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [cloudHigh, cloudMid, cloudLow],
-      stops: const [0.0, 0.48, 1.0],
-    ).createShader(Rect.fromLTWH(left, top, cloudW, cloudH));
+    paint.shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [cloudHigh, cloudMid, cloudLow], stops: const [0.0, 0.48, 1.0]).createShader(Rect.fromLTWH(left, top, cloudW, cloudH));
 
     canvas.drawPath(cloudPath, paint);
 
-    paint.shader =
-        RadialGradient(
-          center: Alignment.topCenter,
-          radius: .80,
-          colors: [
-            Color.fromRGBO(205, 205, 208, opacity * .32),
-            Color.fromRGBO(175, 175, 178, opacity * .10),
-            Colors.transparent,
-          ],
-          stops: const [0.0, 0.45, 1.0],
-        ).createShader(
-          Rect.fromLTWH(left + cloudW * .12, top, cloudW * .76, cloudH * .65),
-        );
+    paint.shader = RadialGradient(
+      center: Alignment.topCenter,
+      radius: .80,
+      colors: [Color.fromRGBO(205, 205, 208, opacity * .32), Color.fromRGBO(175, 175, 178, opacity * .10), Colors.transparent],
+      stops: const [0.0, 0.45, 1.0],
+    ).createShader(Rect.fromLTWH(left + cloudW * .12, top, cloudW * .76, cloudH * .65));
 
-    canvas.drawOval(
-      Rect.fromLTWH(
-        left + cloudW * .18,
-        top + cloudH * .10,
-        cloudW * .64,
-        cloudH * .42,
-      ),
-      paint,
-    );
+    canvas.drawOval(Rect.fromLTWH(left + cloudW * .18, top + cloudH * .10, cloudW * .64, cloudH * .42), paint);
 
-    paint.shader =
-        LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            Color.fromRGBO(20, 20, 23, opacity * .16),
-          ],
-        ).createShader(
-          Rect.fromLTWH(left, top + cloudH * .42, cloudW, cloudH * .40),
-        );
+    paint.shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.transparent, Color.fromRGBO(20, 20, 23, opacity * .16)]).createShader(Rect.fromLTWH(left, top + cloudH * .42, cloudW, cloudH * .40));
 
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(
-          left + cloudW * .04,
-          top + cloudH * .48,
-          cloudW * .92,
-          cloudH * .30,
-        ),
-        Radius.circular(cloudH * .15),
-      ),
-      paint,
-    );
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(left + cloudW * .04, top + cloudH * .48, cloudW * .92, cloudH * .30), Radius.circular(cloudH * .15)), paint);
   }
 
   void _paintSnow(Canvas canvas, Size size) {
@@ -701,10 +468,7 @@ class WeatherOverlayPainter extends CustomPainter {
 
       final double y = -size.height * .08 + phase * size.height * 1.16;
 
-      final double wave =
-          math.sin(progress * 1.4 + snow.delay * math.pi * 2) *
-          size.width *
-          .018;
+      final double wave = math.sin(progress * 1.4 + snow.delay * math.pi * 2) * size.width * .018;
 
       final double x = size.width * snow.x + wave;
 
@@ -786,8 +550,7 @@ class WeatherOverlayPainter extends CustomPainter {
 
     if (flashOpacity <= 0) return;
 
-    final Paint flashPaint = Paint()
-      ..color = Colors.white.withValues(alpha: flashOpacity * .25);
+    final Paint flashPaint = Paint()..color = Colors.white.withValues(alpha: flashOpacity * .25);
 
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), flashPaint);
 
@@ -829,10 +592,7 @@ class WeatherOverlayPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant WeatherOverlayPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.type != type ||
-        oldDelegate.animateClouds != animateClouds ||
-        oldDelegate.animateRain != animateRain;
+    return oldDelegate.progress != progress || oldDelegate.type != type || oldDelegate.animateClouds != animateClouds || oldDelegate.animateRain != animateRain;
   }
 }
 
@@ -863,12 +623,5 @@ class _CloudData {
   final double opacity;
   final double delay;
 
-  const _CloudData({
-    required this.top,
-    required this.scale,
-    required this.width,
-    required this.speed,
-    required this.opacity,
-    required this.delay,
-  });
+  const _CloudData({required this.top, required this.scale, required this.width, required this.speed, required this.opacity, required this.delay});
 }

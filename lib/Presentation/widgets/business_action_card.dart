@@ -9,28 +9,15 @@ class BusinessActionCard extends StatelessWidget {
   final double? iconSize;
   final double verticalPadding;
 
-  const BusinessActionCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    this.iconColor = const Color(0xFF0b6030),
-    this.iconSize,
-    this.verticalPadding = 10,
-  });
+  const BusinessActionCard({super.key, required this.icon, required this.title, this.iconColor = const Color(0xFF0b6030), this.iconSize, this.verticalPadding = 10});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: Dimensions.w_3,
-        vertical: verticalPadding,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_3, vertical: verticalPadding),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey.shade500,
-          width: 0.3,
-        ),
+        border: Border.all(color: Colors.grey.shade500, width: 0.3),
         borderRadius: BorderRadius.circular(Dimensions.h_6),
       ),
       child: Column(
@@ -42,12 +29,7 @@ class BusinessActionCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: FontSize.sp_9,
-              fontWeight: FontWeight.w500,
-              height: 1.05,
-            ),
+            style: TextStyle(color: Colors.black87, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, height: 1.05),
           ),
         ],
       ),
@@ -56,17 +38,9 @@ class BusinessActionCard extends StatelessWidget {
 
   Widget _buildIcon() {
     if (icon is FaIconData) {
-      return FaIcon(
-        icon,
-        color: iconColor,
-        size: iconSize ?? Dimensions.h_18,
-      );
+      return FaIcon(icon, color: iconColor, size: iconSize ?? Dimensions.h_18);
     }
 
-    return Icon(
-      icon as IconData,
-      color: iconColor,
-      size: iconSize ?? Dimensions.h_18,
-    );
+    return Icon(icon as IconData, color: iconColor, size: iconSize ?? Dimensions.h_18);
   }
 }

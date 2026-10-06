@@ -17,29 +17,59 @@ class LocalStorage {
   }
 
   static void writeBool(String key, bool v) {
-    box.write(key, v );
+    box.write(key, v);
   }
 
   static bool getBool(String key) {
     return box.read(key) ?? false;
   }
 
-  static bool savedTheme() {
-    return box.read(GetXStorageConstants.darkTheme) ?? false;
+  static String get savedTheme {
+    return box.read(GetXStorageConstants.themeMode) ?? 'system';
   }
 
-  ThemeMode getTheme() {
-    return savedTheme() ? ThemeMode.dark : ThemeMode.light;
+  static ThemeMode getTheme() {
+    switch (savedTheme) {
+      case 'dark':
+        return ThemeMode.dark;
+      case 'light':
+        return ThemeMode.light;
+      default:
+        return ThemeMode.system;
+    }
   }
 
-  void saveTheme(bool isDark) {
-    box.write(GetXStorageConstants.darkTheme, isDark);
+  static void saveTheme(ThemeMode mode) {
+    String value;
+
+    switch (mode) {
+      case ThemeMode.dark:
+        value = 'dark';
+        break;
+      case ThemeMode.light:
+        value = 'light';
+        break;
+      case ThemeMode.system:
+        value = 'system';
+        break;
+    }
+
+    box.write(GetXStorageConstants.themeMode, value);
   }
 
-  void changeTheme() {
-    final isDark = !savedTheme();
-    saveTheme(isDark);
-    Get.changeThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
+  static void changeTheme() {
+    final currentMode = getTheme();
+
+    if (currentMode == ThemeMode.light) {
+      saveTheme(ThemeMode.dark);
+      Get.changeThemeMode(ThemeMode.dark);
+    } else if (currentMode == ThemeMode.dark) {
+      saveTheme(ThemeMode.system);
+      Get.changeThemeMode(ThemeMode.system);
+    } else {
+      saveTheme(ThemeMode.light);
+      Get.changeThemeMode(ThemeMode.light);
+    }
   }
 
   static void clearValueByKey(String key) {

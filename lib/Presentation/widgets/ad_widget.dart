@@ -8,11 +8,7 @@ class AdsWidget extends StatefulWidget {
   final double topPadding;
   final double bottomPadding;
 
-  const AdsWidget({
-    super.key,
-    this.topPadding = 5,
-    this.bottomPadding = 0,
-  });
+  const AdsWidget({super.key, this.topPadding = 5, this.bottomPadding = 0});
 
   @override
   State<AdsWidget> createState() => _AdsWidgetState();
@@ -32,10 +28,7 @@ class _AdsWidgetState extends State<AdsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-        top: widget.topPadding,
-        bottom: widget.bottomPadding,
-      ),
+      padding: EdgeInsets.only(top: widget.topPadding, bottom: widget.bottomPadding),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -47,15 +40,7 @@ class _AdsWidgetState extends State<AdsWidget> {
                 onTap: () {
                   debugPrint('Ad ${index + 1} clicked');
                 },
-                child: AppCacheImage(
-                  imageUrl: adsList[index],
-                  widthSize: Get.width,
-                  size: Dimensions.h_120,
-                  fit: BoxFit.fill,
-                  borderColor: Colors.grey.shade400,
-                  radius: Dimensions.h_4,
-                  isShadow: false,
-                ),
+                child: AppCacheImage(imageUrl: adsList[index], widthSize: Get.width, size: Dimensions.h_120, fit: BoxFit.fill, borderColor: Colors.grey.shade400, radius: Dimensions.h_4, isShadow: false),
               );
             },
             options: CarouselOptions(
@@ -82,17 +67,12 @@ class _AdsWidgetState extends State<AdsWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
               adsList.length,
-                  (index) => AnimatedContainer(
+              (index) => AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
                 margin: const EdgeInsets.symmetric(horizontal: 3),
                 width: currentIndex == index ? Dimensions.h_8 : Dimensions.h_4,
                 height: Dimensions.h_4,
-                decoration: BoxDecoration(
-                  color: currentIndex == index
-                      ? Theme.of(context).highlightColor
-                      : Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                decoration: BoxDecoration(color: currentIndex == index ? Theme.of(context).highlightColor : Colors.grey.shade300, borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ),

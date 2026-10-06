@@ -19,7 +19,7 @@ class AppColor {
   static const warningAmber = Color(0xFFF59E0B);
   static const alertRed = Color(0xFF8D1719);
   static const environmentalTeal = Color(0xFF0F766E);
-  static const primaryInk = Color(0xFF101828);
+  static const primaryInk = Color(0xFF061C55);
   static const slate = Color(0xFF475467);
   static const mutedGray = Color(0xFF93a89f);
   static const mutedGrayLight = Color(0xFF697588);
@@ -57,7 +57,6 @@ class AppColor {
   static const sportsActiveColor = Color(0xFF84610a);
   static const townHallGreen =  Color(0xff0d6b3f);
   static const townHallGreenDark =  Color(0xFF62D99B);
-
   static const garageRedSoft = Color(0xFFFFF0F1);
   static const garageSurface = Color(0xFFFFFFFF);
   static const garageDarkRedSoft = Color(0xFF48242B);

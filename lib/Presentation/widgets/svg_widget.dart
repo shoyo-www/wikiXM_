@@ -10,19 +10,11 @@ class SpriteSvgIcon extends StatelessWidget {
   final double? height;
   final Color? color;
 
-  const SpriteSvgIcon({
-    super.key,
-    required this.url,
-    this.width,
-    this.height,
-    this.color,
-  });
+  const SpriteSvgIcon({super.key, required this.url, this.width, this.height, this.color});
 
   static final Map<String, String> _cache = {};
 
-  static const Set<String> authRequiredHosts = {
-    'staging.wikixm.com',
-  };
+  static const Set<String> authRequiredHosts = {'staging.wikixm.com'};
 
   static Map<String, String> get _basicAuthHeaders {
     const username = 'staging';
@@ -73,8 +65,7 @@ class SpriteSvgIcon extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return SizedBox(width: width, height: height);
         }
-        final ambientColor =
-            color ?? IconTheme.of(context).color ?? DefaultTextStyle.of(context).style.color ?? Colors.black;
+        final ambientColor = color ?? IconTheme.of(context).color ?? DefaultTextStyle.of(context).style.color ?? Colors.black;
 
         return SvgPicture.string(
           snapshot.data!,
@@ -82,18 +73,13 @@ class SpriteSvgIcon extends StatelessWidget {
           height: height,
           fit: BoxFit.contain,
           theme: SvgTheme(currentColor: ambientColor),
-          colorFilter: color != null
-              ? ColorFilter.mode(color!, BlendMode.srcIn)
-              : null,
+          colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
         );
       },
     );
   }
 
-  static Future<String> _loadSvgSymbol(
-      String spriteUrl,
-      String symbolId,
-      ) async {
+  static Future<String> _loadSvgSymbol(String spriteUrl, String symbolId) async {
     final cacheKey = '$spriteUrl#$symbolId';
 
     if (_cache.containsKey(cacheKey)) {
@@ -144,10 +130,10 @@ class SpriteSvgIcon extends StatelessWidget {
     final fill = symbol.getAttribute('fill');
     final stroke = symbol.getAttribute('stroke');
     final strokeWidth = symbol.getAttribute('stroke-width');
-    final sharedDefs =
-    document.findAllElements('defs').map((e) => e.toXmlString()).join();
+    final sharedDefs = document.findAllElements('defs').map((e) => e.toXmlString()).join();
 
-    final svg = '''
+    final svg =
+        '''
 <svg
   xmlns="http://www.w3.org/2000/svg"
   ${viewBox != null ? 'viewBox="$viewBox"' : ''}
@@ -166,9 +152,7 @@ class SpriteSvgIcon extends StatelessWidget {
     return svg;
   }
 
-  static Map<String, Map<String, String>> _parseCssRules(
-      XmlDocument document,
-      ) {
+  static Map<String, Map<String, String>> _parseCssRules(XmlDocument document) {
     final rules = <String, Map<String, String>>{};
 
     final ruleBlockPattern = RegExp(r'([^{}]+)\{([^{}]+)\}');
@@ -205,10 +189,7 @@ class SpriteSvgIcon extends StatelessWidget {
     return rules;
   }
 
-  static void _inlineCssClasses(
-      XmlElement element,
-      Map<String, Map<String, String>> rules,
-      ) {
+  static void _inlineCssClasses(XmlElement element, Map<String, Map<String, String>> rules) {
     final classAttr = element.getAttribute('class');
 
     if (classAttr != null && classAttr.trim().isNotEmpty) {

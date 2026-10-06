@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
-import 'package:wikixm/data/datasource/remote/models/response/notification_response.dart'
-    as model;
+import 'package:wikixm/data/datasource/remote/models/response/notification_response.dart' as model;
 import 'package:wikixm/data/datasource/remote/services/apis.dart';
 import 'package:wikixm/data/datasource/remote/services/dio/rest_client.dart';
 
@@ -32,9 +31,7 @@ class NotificationController extends GetxController {
 
     try {
       final response = await _restClient.get(url: '${Apis.notification}1');
-      final parsed = response is Map<String, dynamic>
-          ? model.NotificationResponse.fromJson(response)
-          : model.notificationResponseFromJson(response.toString());
+      final parsed = response is Map<String, dynamic> ? model.NotificationResponse.fromJson(response) : model.notificationResponseFromJson(response.toString());
       _items
         ..clear()
         ..addAll(parsed.data?.notifications?.data ?? []);

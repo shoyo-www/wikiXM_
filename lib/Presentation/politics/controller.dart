@@ -20,21 +20,24 @@ class PoliticsController extends GetxController {
     isLoading = true;
     update([ControllerBuilders.politicsController]);
     var data = await politicsRepositoryImpl.getPoliticsData();
-    data.fold((l) {
-      if (l is ServerFailure) {
-        isLoading = false;
-        update([ControllerBuilders.politicsController]);
-      }
-    }, (r) {
-      bool status = r.success ?? false;
-      if (status == true) {
-        politicsData = r.data;
-        isLoading = false;
-        update([ControllerBuilders.politicsController]);
-      } else {
-        isLoading = false;
-        update([ControllerBuilders.politicsController]);
-      }
-    });
+    data.fold(
+      (l) {
+        if (l is ServerFailure) {
+          isLoading = false;
+          update([ControllerBuilders.politicsController]);
+        }
+      },
+      (r) {
+        bool status = r.success ?? false;
+        if (status == true) {
+          politicsData = r.data;
+          isLoading = false;
+          update([ControllerBuilders.politicsController]);
+        } else {
+          isLoading = false;
+          update([ControllerBuilders.politicsController]);
+        }
+      },
+    );
   }
 }

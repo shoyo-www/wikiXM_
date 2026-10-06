@@ -22,20 +22,11 @@ class AskGuide extends StatelessWidget {
             children: [
               Positioned.fill(
                 child: controller.isFirstTime
-                    ? _FirstTimeGuide(
-                        topPadding: topPadding,
-                        controller: controller,
-                      )
+                    ? _FirstTimeGuide(topPadding: topPadding, controller: controller)
                     : ListView.separated(
-                        padding: EdgeInsets.fromLTRB(
-                          Dimensions.w_12,
-                          topPadding + Dimensions.h_40,
-                          Dimensions.w_12,
-                          Dimensions.h_120,
-                        ),
+                        padding: EdgeInsets.fromLTRB(Dimensions.w_12, topPadding + Dimensions.h_40, Dimensions.w_12, Dimensions.h_120),
                         itemCount: controller.messages.length,
-                        separatorBuilder: (_, _) =>
-                            SizedBox(height: Dimensions.h_15),
+                        separatorBuilder: (_, _) => SizedBox(height: Dimensions.h_15),
                         itemBuilder: (context, index) {
                           final message = controller.messages[index];
                           return _GuideMessageBubble(message: message);
@@ -113,50 +104,27 @@ class _FirstTimeGuide extends StatelessWidget {
       (Icons.wb_cloudy_outlined, 'Will it rain\ntomorrow?'),
     ];
     return ListView(
-      padding: EdgeInsets.fromLTRB(
-        Dimensions.w_18,
-        topPadding + Dimensions.h_55,
-        Dimensions.w_18,
-        Dimensions.h_120,
-      ),
+      padding: EdgeInsets.fromLTRB(Dimensions.w_18, topPadding + Dimensions.h_55, Dimensions.w_18, Dimensions.h_120),
       children: [
         Text(
           'Ask me about local updates, events, businesses, weather, or anything happening around town.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.black.withValues(alpha: 0.62),
-            fontSize: FontSize.sp_12,
-            height: 1.45,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: Colors.black.withValues(alpha: 0.62), fontSize: FontSize.sp_12, height: 1.45, fontWeight: FontWeight.w500),
         ),
         SizedBox(height: Dimensions.h_45),
         Text(
           'Try asking about...',
-          style: TextStyle(
-            color: const Color(0xFF06124F),
-            fontSize: FontSize.sp_12,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: const Color(0xFF06124F), fontSize: FontSize.sp_12, fontWeight: FontWeight.w600),
         ),
         GridView.builder(
           padding: EdgeInsets.only(top: Dimensions.h_10),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: prompts.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: Dimensions.h_5,
-            crossAxisSpacing: Dimensions.w_5,
-            childAspectRatio: 3,
-          ),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: Dimensions.h_5, crossAxisSpacing: Dimensions.w_5, childAspectRatio: 3),
           itemBuilder: (context, index) {
             final item = prompts[index];
-            return _PromptCard(
-              icon: item.$1,
-              text: item.$2,
-              onTap: () => controller.sendPrompt(item.$2),
-            );
+            return _PromptCard(icon: item.$1, text: item.$2, onTap: () => controller.sendPrompt(item.$2));
           },
         ),
       ],
@@ -165,11 +133,7 @@ class _FirstTimeGuide extends StatelessWidget {
 }
 
 class _PromptCard extends StatelessWidget {
-  const _PromptCard({
-    required this.icon,
-    required this.text,
-    required this.onTap,
-  });
+  const _PromptCard({required this.icon, required this.text, required this.onTap});
 
   final IconData icon;
   final String text;
@@ -182,28 +146,16 @@ class _PromptCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(Dimensions.h_4),
-        ),
+        decoration: BoxDecoration(color: Colors.grey.shade50, borderRadius: BorderRadius.circular(Dimensions.h_4)),
         child: Row(
           children: [
             Expanded(
               child: Text(
                 text,
-                style: TextStyle(
-                  color: const Color(0xFF06124F),
-                  fontSize: FontSize.sp_11,
-                  height: 1.25,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(color: const Color(0xFF06124F), fontSize: FontSize.sp_11, height: 1.25, fontWeight: FontWeight.w500),
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              color: const Color(0xFF06124F),
-              size: Dimensions.h_15,
-            ),
+            Icon(Icons.chevron_right, color: const Color(0xFF06124F), size: Dimensions.h_15),
           ],
         ),
       ),
@@ -221,12 +173,7 @@ class _GuideMessageBubble extends StatelessWidget {
     if (!message.isUser) {
       return Text(
         message.text,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: FontSize.sp_12,
-          height: 1.55,
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(color: Colors.black, fontSize: FontSize.sp_12, height: 1.55, fontWeight: FontWeight.w500),
       );
     }
 
@@ -234,22 +181,11 @@ class _GuideMessageBubble extends StatelessWidget {
       alignment: Alignment.centerRight,
       child: Container(
         constraints: BoxConstraints(maxWidth: Dimensions.w_270),
-        padding: EdgeInsets.symmetric(
-          horizontal: Dimensions.w_12,
-          vertical: Dimensions.h_10,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(Dimensions.h_12),
-        ),
+        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_12, vertical: Dimensions.h_10),
+        decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(Dimensions.h_12)),
         child: Text(
           message.text,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: FontSize.sp_12,
-            height: 1.35,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: Colors.black, fontSize: FontSize.sp_12, height: 1.35, fontWeight: FontWeight.w500),
         ),
       ),
     );
@@ -278,10 +214,7 @@ class _GuideAppBar extends StatelessWidget {
         SizedBox(width: Dimensions.w_15),
         Text(
           'TOWN AI GUIDE',
-          style: TextStyle(
-            fontSize: FontSize.sp_14,
-            fontWeight: FontWeight.w900,
-          ),
+          style: TextStyle(fontSize: FontSize.sp_14, fontWeight: FontWeight.w900),
         ),
       ],
     );
@@ -311,18 +244,10 @@ class _AskInputBar extends StatelessWidget {
               controller: controller.textController,
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => controller.sendMessage(),
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: FontSize.sp_11,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(color: Colors.black, fontSize: FontSize.sp_11, fontWeight: FontWeight.w500),
               decoration: InputDecoration(
                 hintText: 'Ask guide...',
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: FontSize.sp_11,
-                  fontWeight: FontWeight.w500,
-                ),
+                hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: FontSize.sp_11, fontWeight: FontWeight.w500),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -339,17 +264,10 @@ class _AskInputBar extends StatelessWidget {
           Container(
             width: Dimensions.h_25,
             height: Dimensions.h_25,
-            decoration: const BoxDecoration(
-              color: Color(0xFF3BA1FF),
-              shape: BoxShape.circle,
-            ),
+            decoration: const BoxDecoration(color: Color(0xFF3BA1FF), shape: BoxShape.circle),
             child: GestureDetector(
               onTap: controller.sendMessage,
-              child: Icon(
-                Icons.arrow_upward,
-                color: Colors.white,
-                size: Dimensions.h_15,
-              ),
+              child: Icon(Icons.arrow_upward, color: Colors.white, size: Dimensions.h_15),
             ),
           ),
         ],

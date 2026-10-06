@@ -16,7 +16,8 @@ class CommonBlurScaffold extends StatefulWidget {
     this.showBack = false,
     this.isDrawer = false,
     this.onTap,
-    this.appBarchild
+    this.appBarchild,
+    this.scrollController,
   });
 
   final Widget child;
@@ -31,6 +32,8 @@ class CommonBlurScaffold extends StatefulWidget {
   final Widget? appBarchild;
   final ScrollPhysics? physics;
 
+  final ScrollController? scrollController;
+
   @override
   State<CommonBlurScaffold> createState() => _CommonBlurScaffoldState();
 }
@@ -39,18 +42,28 @@ class _CommonBlurScaffoldState extends State<CommonBlurScaffold> {
   late final ScrollController _scrollController;
   double _scrollOffset = 0;
 
+  bool get _isExternalController =>
+      widget.scrollController != null;
+
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController()..addListener(_handleScroll);
+
+    _scrollController =
+        widget.scrollController ?? ScrollController();
+
+    _scrollController.addListener(_handleScroll);
   }
 
   void _handleScroll() {
     if (!_scrollController.hasClients) return;
+
     final offset = _scrollController.offset;
+
     if ((_scrollOffset - offset).abs() < 1) {
       return;
     }
+
     setState(() {
       _scrollOffset = offset.clamp(0.0, double.infinity);
     });
@@ -60,7 +73,9 @@ class _CommonBlurScaffoldState extends State<CommonBlurScaffold> {
     if (widget.blurDistance <= 0) {
       return 1;
     }
-    return (_scrollOffset / widget.blurDistance).clamp(0.0, 1.0);
+
+    return (_scrollOffset / widget.blurDistance)
+        .clamp(0.0, 1.0);
   }
 
   Color get _foregroundColor {
@@ -73,7 +88,12 @@ class _CommonBlurScaffoldState extends State<CommonBlurScaffold> {
 
   @override
   void dispose() {
-    _scrollController..removeListener(_handleScroll)..dispose();
+    _scrollController.removeListener(_handleScroll);
+
+    if (!_isExternalController) {
+      _scrollController.dispose();
+    }
+
     super.dispose();
   }
 
@@ -88,9 +108,11 @@ class _CommonBlurScaffoldState extends State<CommonBlurScaffold> {
         children: [
           SingleChildScrollView(
             controller: _scrollController,
-            physics: widget.physics ?? const AlwaysScrollableScrollPhysics(),
+            physics: widget.physics ??
+                const AlwaysScrollableScrollPhysics(),
             child: widget.child,
           ),
+
           Positioned(
             top: Platform.isAndroid ? -10 : -20,
             left: 0,

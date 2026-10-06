@@ -61,6 +61,7 @@ class AuthController extends GetxController {
       selectedNotifications.add(id);
     }
   }
+
   void onSearchChanged(String value, {bool isPrimary = true}) {
     _debounce?.cancel();
 
@@ -102,8 +103,7 @@ class AuthController extends GetxController {
       passwordError.value = 'Password must contain at least one number';
       isValid = false;
     } else if (!RegExp(r'[A-Z]').hasMatch(password.text)) {
-      passwordError.value =
-          'Password must contain at least one uppercase letter';
+      passwordError.value = 'Password must contain at least one uppercase letter';
       isValid = false;
     }
     return isValid;
@@ -140,9 +140,7 @@ class AuthController extends GetxController {
   }
 
   void selectSecondaryTown(SearchTowns town) {
-    if (secondaryTowns.length >= 4 ||
-        _sameTown(town, selectedPrimaryTown.value) ||
-        secondaryTowns.any((item) => _sameTown(item, town))) {
+    if (secondaryTowns.length >= 4 || _sameTown(town, selectedPrimaryTown.value) || secondaryTowns.any((item) => _sameTown(item, town))) {
       return;
     }
     secondaryTowns.add(town);
@@ -159,10 +157,7 @@ class AuthController extends GetxController {
 
   bool _sameTown(SearchTowns? a, SearchTowns? b) {
     if (a == null || b == null) return false;
-    return a.cityId != null && b.cityId != null
-        ? a.cityId == b.cityId
-        : a.cityName == b.cityName &&
-              a.stateAbbreviation == b.stateAbbreviation;
+    return a.cityId != null && b.cityId != null ? a.cityId == b.cityId : a.cityName == b.cityName && a.stateAbbreviation == b.stateAbbreviation;
   }
 
   void _setSearchVisible(bool isPrimary, bool visible) {
@@ -231,14 +226,7 @@ class AuthController extends GetxController {
   Future<void> register() async {
     isLoading.value = true;
     final parts = fullName.text.trim().split(RegExp(r'\s+'));
-    var request = RegisterRequest(
-      email: email.text,
-      firstName: parts.isNotEmpty ? parts.first : '',
-      lastName: parts.length > 1 ? parts.sublist(1).join(' ') : '',
-      password: password.text,
-      passwordConfirmation: password.text,
-      termsAccepted: 1,
-    );
+    var request = RegisterRequest(email: email.text, firstName: parts.isNotEmpty ? parts.first : '', lastName: parts.length > 1 ? parts.sublist(1).join(' ') : '', password: password.text, passwordConfirmation: password.text, termsAccepted: 1);
     var data = await authRepositoryImpl.register(request);
     data.fold(
       (l) {
@@ -263,12 +251,7 @@ class AuthController extends GetxController {
 
   Future<void> verifyOtp() async {
     isLoading.value = true;
-    var request = VerifyOtpRequest(
-      identifier: registerData?.identifier ?? '',
-      type: registerData?.type ?? '',
-      purpose: registerData?.purpose ?? '',
-      otp: otp.value,
-    );
+    var request = VerifyOtpRequest(identifier: registerData?.identifier ?? '', type: registerData?.type ?? '', purpose: registerData?.purpose ?? '', otp: otp.value);
     var data = await authRepositoryImpl.verifyOtp(request);
     data.fold(
       (l) {
@@ -291,25 +274,12 @@ class AuthController extends GetxController {
 
   Future<void> resendOtp() async {
     if (!canResend.value) return;
-    var request = ResendOtpRequest(
-      identifier: registerData?.identifier ?? '',
-      type: registerData?.type ?? '',
-      purpose: registerData?.purpose ?? '',
-    );
+    var request = ResendOtpRequest(identifier: registerData?.identifier ?? '', type: registerData?.type ?? '', purpose: registerData?.purpose ?? '');
     var data = await authRepositoryImpl.resendOtp(request);
     data.fold(
       (l) {
         if (l is ServerFailure) {
-          Get.snackbar(
-            'Failed',
-            l.message ?? 'Something went wrong',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            margin: const EdgeInsets.all(16),
-            borderRadius: 8,
-            duration: const Duration(seconds: 3),
-          );
+          Get.snackbar('Failed', l.message ?? 'Something went wrong', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: const EdgeInsets.all(16), borderRadius: 8, duration: const Duration(seconds: 3));
         }
       },
       (r) {
@@ -331,30 +301,14 @@ class AuthController extends GetxController {
       (l) {
         isSearching.value = false;
         if (l is ServerFailure) {
-          Get.snackbar(
-            'Failed',
-            l.message ?? 'Something went wrong',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            margin: const EdgeInsets.all(16),
-            borderRadius: 8,
-            duration: const Duration(seconds: 3),
-          );
+          Get.snackbar('Failed', l.message ?? 'Something went wrong', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: const EdgeInsets.all(16), borderRadius: 8, duration: const Duration(seconds: 3));
         }
       },
       (r) {
         isSearching.value = false;
         bool code = r.success ?? false;
         if (code == true) {
-          searchTownsList.value = (r.data?.items ?? [])
-              .where(
-                (town) => isPrimary
-                    ? !secondaryTowns.any((item) => _sameTown(item, town))
-                    : !_sameTown(town, selectedPrimaryTown.value) &&
-                          !secondaryTowns.any((item) => _sameTown(item, town)),
-              )
-              .toList();
+          searchTownsList.value = (r.data?.items ?? []).where((town) => isPrimary ? !secondaryTowns.any((item) => _sameTown(item, town)) : !_sameTown(town, selectedPrimaryTown.value) && !secondaryTowns.any((item) => _sameTown(item, town))).toList();
           _setSearchVisible(isPrimary, searchTownsList.isNotEmpty);
         } else {
           searchTownsList.clear();
@@ -366,32 +320,22 @@ class AuthController extends GetxController {
 
   Future<void> saveCities() async {
     isLoading.value = true;
-    var req = SaveCitiesRequest(primaryTown: selectedPrimaryTown.value?.cityId ?? 0, secondaryTowns: secondaryTowns
-        .map((e) => e.cityId!)
-        .toList());
+    var req = SaveCitiesRequest(primaryTown: selectedPrimaryTown.value?.cityId ?? 0, secondaryTowns: secondaryTowns.map((e) => e.cityId!).toList());
     var data = await authRepositoryImpl.saveCities(req);
     data.fold(
-          (l) {
+      (l) {
         isSearching.value = false;
         if (l is ServerFailure) {
           isLoading.value = false;
-          Get.snackbar(
-            'Failed',
-            l.message ?? 'Something went wrong',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            margin: const EdgeInsets.all(16),
-            borderRadius: 8,
-            duration: const Duration(seconds: 3),
-          );
+          Get.snackbar('Failed', l.message ?? 'Something went wrong', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: const EdgeInsets.all(16), borderRadius: 8, duration: const Duration(seconds: 3));
         }
-      }, (r) async {
+      },
+      (r) async {
         bool code = r.success ?? false;
-        if (code == true)  {
-         await getPersonalisation();
-         nextStep();
-         isLoading.value = false;
+        if (code == true) {
+          await getPersonalisation();
+          nextStep();
+          isLoading.value = false;
         } else {
           isLoading.value = false;
         }
@@ -402,42 +346,33 @@ class AuthController extends GetxController {
   Future<void> getPersonalisation() async {
     var data = await authRepositoryImpl.getPersonalisation();
     data.fold(
-          (l) {
+      (l) {
         isSearching.value = false;
         if (l is ServerFailure) {
-          Get.snackbar(
-            'Failed',
-            l.message ?? 'Something went wrong',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            margin: const EdgeInsets.all(16),
-            borderRadius: 8,
-            duration: const Duration(seconds: 3),
-          );
+          Get.snackbar('Failed', l.message ?? 'Something went wrong', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: const EdgeInsets.all(16), borderRadius: 8, duration: const Duration(seconds: 3));
         }
-      }, (r) {
-      bool code = r.success ?? false;
-      if (code == true) {
-        personalisationData.value = r.data;
-      } else {}
-    },
+      },
+      (r) {
+        bool code = r.success ?? false;
+        if (code == true) {
+          personalisationData.value = r.data;
+        } else {}
+      },
     );
   }
 
   Future<void> completeRegistration() async {
     isLoading.value = true;
-    final request = CompleteRegistrationRequest(
-      interests: selectedCategories.toList(),
-      notifications: selectedNotifications.toList(),
-      deliveryChannels: [1]);
+    final request = CompleteRegistrationRequest(interests: selectedCategories.toList(), notifications: selectedNotifications.toList(), deliveryChannels: [1]);
     final result = await authRepositoryImpl.completeRegistration(request);
-    result.fold((l) {
+    result.fold(
+      (l) {
         isLoading.value = false;
         if (l is ServerFailure) {
           Get.snackbar("Failed", l.message ?? "Something went wrong");
         }
-      }, (r) {
+      },
+      (r) {
         isLoading.value = false;
         if (r.success == true) {
           LocalStorage.setAuthToken(r.data?.token ?? "");

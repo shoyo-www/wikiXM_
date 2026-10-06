@@ -11,24 +11,12 @@ class CommonMetricCard extends StatelessWidget {
   final Color? labelColor;
   final EdgeInsetsGeometry? padding;
 
-  const CommonMetricCard({
-    super.key,
-    required this.icon,
-    required this.value,
-    required this.label,
-    this.valueColor,
-    this.labelColor,
-    this.padding,
-  });
+  const CommonMetricCard({super.key, required this.icon, required this.value, required this.label, this.valueColor, this.labelColor, this.padding});
 
   @override
   Widget build(BuildContext context) {
     return CommonCard(
-      padding: padding ??
-          EdgeInsets.symmetric(
-            horizontal: Dimensions.w_3,
-            vertical: Dimensions.h_2,
-          ),
+      padding: padding ?? EdgeInsets.symmetric(horizontal: Dimensions.w_3, vertical: Dimensions.h_2),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -40,12 +28,7 @@ class CommonMetricCard extends StatelessWidget {
               Text(
                 value,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: valueColor ?? Theme.of(context).highlightColor,
-                  fontSize: FontSize.sp_18,
-                  fontWeight: FontWeight.w700,
-                  height: 1.05,
-                ),
+                style: TextStyle(color: valueColor ?? Theme.of(context).highlightColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700, height: 1.05),
               ),
             ],
           ),
@@ -55,12 +38,7 @@ class CommonMetricCard extends StatelessWidget {
               label,
               textAlign: TextAlign.center,
               maxLines: 2,
-              style: TextStyle(
-                color: labelColor ?? Theme.of(context).highlightColor,
-                fontSize: FontSize.sp_9,
-                fontWeight: FontWeight.w500,
-                height: 1.05,
-              ),
+              style: TextStyle(color: labelColor ?? Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, height: 1.05),
             ),
           ),
         ],

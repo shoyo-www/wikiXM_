@@ -21,10 +21,7 @@ class SportsScreenShimmer extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Transform.translate(
-                      offset: Offset(0, -Dimensions.h_28),
-                      child: _buildBriefCard(context, colors),
-                    ),
+                    Transform.translate(offset: Offset(0, -Dimensions.h_28), child: _buildBriefCard(context, colors)),
                     _buildSectionHeader(context, colors),
                     SizedBox(height: Dimensions.h_10),
                     _buildSnapshotRow(context, colors),
@@ -33,35 +30,17 @@ class SportsScreenShimmer extends StatelessWidget {
                     SizedBox(height: Dimensions.h_15),
                     _buildSectionHeader(context, colors),
                     SizedBox(height: Dimensions.h_8),
-                    _buildHorizontalCards(
-                      context,
-                      colors,
-                      itemWidth: Dimensions.w_120,
-                      itemHeight: Dimensions.h_160,
-                      itemCount: 3,
-                    ),
+                    _buildHorizontalCards(context, colors, itemWidth: Dimensions.w_120, itemHeight: Dimensions.h_160, itemCount: 3),
                     SizedBox(height: Dimensions.h_15),
                     _buildEventsCard(context, colors),
                     SizedBox(height: Dimensions.h_15),
                     _buildSectionHeader(context, colors),
                     SizedBox(height: Dimensions.h_8),
-                    _buildHorizontalCards(
-                      context,
-                      colors,
-                      itemWidth: Dimensions.w_110,
-                      itemHeight: Dimensions.h_170,
-                      itemCount: 3,
-                    ),
+                    _buildHorizontalCards(context, colors, itemWidth: Dimensions.w_110, itemHeight: Dimensions.h_170, itemCount: 3),
                     SizedBox(height: Dimensions.h_15),
                     _buildSectionHeader(context, colors),
                     SizedBox(height: Dimensions.h_8),
-                    _buildHorizontalCards(
-                      context,
-                      colors,
-                      itemWidth: Dimensions.w_145,
-                      itemHeight: Dimensions.h_170,
-                      itemCount: 2,
-                    ),
+                    _buildHorizontalCards(context, colors, itemWidth: Dimensions.w_145, itemHeight: Dimensions.h_170, itemCount: 2),
                     SizedBox(height: Dimensions.h_15),
                     _buildPartnerBanner(context, colors),
                     SizedBox(height: Dimensions.h_15),
@@ -96,12 +75,7 @@ class SportsScreenShimmer extends StatelessWidget {
 
   Widget _buildBriefCard(BuildContext context, List<Color> colors) {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-        Dimensions.w_8,
-        Dimensions.h_8,
-        Dimensions.w_8,
-        Dimensions.h_6,
-      ),
+      padding: EdgeInsets.fromLTRB(Dimensions.w_8, Dimensions.h_8, Dimensions.w_8, Dimensions.h_6),
       decoration: BoxDecoration(
         color: context.sports.card,
         borderRadius: BorderRadius.circular(Dimensions.h_10),
@@ -164,10 +138,7 @@ class SportsScreenShimmer extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(right: index == 4 ? 0 : Dimensions.w_6),
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.w_6,
-                  vertical: Dimensions.h_10,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6, vertical: Dimensions.h_10),
                 decoration: BoxDecoration(
                   color: context.sports.card,
                   borderRadius: BorderRadius.circular(Dimensions.h_8),
@@ -212,16 +183,7 @@ class SportsScreenShimmer extends StatelessWidget {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(
-                        4,
-                        (_) => _block(
-                          context,
-                          colors,
-                          height: Dimensions.h_33,
-                          width: Dimensions.h_33,
-                          radius: 8,
-                        ),
-                      ),
+                      children: List.generate(4, (_) => _block(context, colors, height: Dimensions.h_33, width: Dimensions.h_33, radius: 8)),
                     ),
                     SizedBox(height: Dimensions.h_10),
                     _block(context, colors, height: Dimensions.h_13, width: Dimensions.w_140),
@@ -237,13 +199,7 @@ class SportsScreenShimmer extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalCards(
-    BuildContext context,
-    List<Color> colors, {
-    required double itemWidth,
-    required double itemHeight,
-    required int itemCount,
-  }) {
+  Widget _buildHorizontalCards(BuildContext context, List<Color> colors, {required double itemWidth, required double itemHeight, required int itemCount}) {
     return SizedBox(
       height: itemHeight,
       child: ListView.separated(
@@ -270,7 +226,7 @@ class SportsScreenShimmer extends StatelessWidget {
                 _block(context, colors, height: Dimensions.h_10, width: itemWidth * 0.52),
                 SizedBox(height: Dimensions.h_6),
                 _block(context, colors, height: Dimensions.h_8, width: itemWidth * 0.6),
-                 const Spacer(),
+                const Spacer(),
                 _block(context, colors, height: Dimensions.h_15, width: itemWidth * 0.5, radius: 6),
               ],
             ),
@@ -342,10 +298,7 @@ class SportsScreenShimmer extends StatelessWidget {
     return SizedBox(
       height: Dimensions.h_110,
       child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF0B6030),
-          borderRadius: BorderRadius.circular(6),
-        ),
+        decoration: BoxDecoration(color: const Color(0xFF0B6030), borderRadius: BorderRadius.circular(6)),
         child: Padding(
           padding: EdgeInsets.all(Dimensions.h_10),
           child: Row(
@@ -400,10 +353,7 @@ class SportsScreenShimmer extends StatelessWidget {
         itemBuilder: (_, __) {
           return Container(
             width: Dimensions.w_100,
-            padding: EdgeInsets.symmetric(
-              horizontal: Dimensions.w_4,
-              vertical: Dimensions.h_8,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_8),
             decoration: BoxDecoration(
               color: context.sports.card,
               borderRadius: BorderRadius.circular(6),
@@ -471,14 +421,7 @@ class SportsScreenShimmer extends StatelessWidget {
     );
   }
 
-  Widget _block(
-    BuildContext context,
-    List<Color> colors, {
-    required double height,
-    required double width,
-    double radius = 6,
-    Color? fill,
-  }) {
+  Widget _block(BuildContext context, List<Color> colors, {required double height, required double width, double radius = 6, Color? fill}) {
     return Shimmer.fromColors(
       baseColor: colors[0],
       highlightColor: colors[1],
@@ -486,10 +429,7 @@ class SportsScreenShimmer extends StatelessWidget {
       child: Container(
         height: height,
         width: width,
-        decoration: BoxDecoration(
-          color: fill ?? _placeholderFill(context),
-          borderRadius: BorderRadius.circular(radius),
-        ),
+        decoration: BoxDecoration(color: fill ?? _placeholderFill(context), borderRadius: BorderRadius.circular(radius)),
       ),
     );
   }
@@ -497,10 +437,7 @@ class SportsScreenShimmer extends StatelessWidget {
   List<Color> _shimmerColors(BuildContext context) {
     final base = context.sports.card;
     final border = context.sports.border;
-    return [
-      Color.lerp(base, border, 0.55) ?? base,
-      Color.lerp(base, Colors.white, 0.35) ?? base,
-    ];
+    return [Color.lerp(base, border, 0.55) ?? base, Color.lerp(base, Colors.white, 0.35) ?? base];
   }
 
   Color _placeholderFill(BuildContext context) {

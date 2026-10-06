@@ -19,13 +19,7 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   final DashboardController controller = Get.find<DashboardController>();
 
-  final List<Widget Function()> screens = [
-    () => Home(),
-    () => NewsScreen(),
-    () => Home(),
-    () => EventsScreen(),
-    () => Menu(),
-  ];
+  final List<Widget Function()> screens = [() => Home(), () => NewsScreen(), () => Home(), () => EventsScreen(), () => Menu()];
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               scale: isActive ? 1.0 : 0.95,
               duration: const Duration(milliseconds: 800),
               curve: Curves.easeInOut,
-              child: IgnorePointer(
-                ignoring: !isActive,
-                child: isActive ? screens[index]() : const SizedBox.shrink(),
-              ),
+              child: IgnorePointer(ignoring: !isActive, child: isActive ? screens[index]() : const SizedBox.shrink()),
             );
           }),
         );

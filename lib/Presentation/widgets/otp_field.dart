@@ -7,22 +7,16 @@ class OtpInputField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onCompleted;
 
-  const OtpInputField({
-    super.key,
-    this.onChanged,
-    this.onCompleted,
-  });
+  const OtpInputField({super.key, this.onChanged, this.onCompleted});
 
   @override
   State<OtpInputField> createState() => _OtpInputFieldState();
 }
 
 class _OtpInputFieldState extends State<OtpInputField> {
-  final List<TextEditingController> controllers =
-  List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> controllers = List.generate(6, (_) => TextEditingController());
 
-  final List<FocusNode> focusNodes =
-  List.generate(6, (_) => FocusNode());
+  final List<FocusNode> focusNodes = List.generate(6, (_) => FocusNode());
 
   @override
   void dispose() {
@@ -51,42 +45,26 @@ class _OtpInputFieldState extends State<OtpInputField> {
             controller: controllers[index],
             focusNode: focusNodes[index],
             keyboardType: TextInputType.number,
-            textInputAction:
-            index == 5 ? TextInputAction.done : TextInputAction.next,
+            textInputAction: index == 5 ? TextInputAction.done : TextInputAction.next,
             textAlign: TextAlign.center,
             maxLength: 1,
             cursorColor: AppColor.primaryNavyNew,
-            style: TextStyle(
-              color: AppColor.primaryNavyNew,
-              fontSize: FontSize.sp_14,
-              fontWeight: FontWeight.w700,
-            ),
+            style: TextStyle(color: AppColor.primaryNavyNew, fontSize: FontSize.sp_14, fontWeight: FontWeight.w700),
             decoration: InputDecoration(
               counterText: '',
               isDense: true,
-              contentPadding: EdgeInsets.symmetric(
-                vertical: Dimensions.h_10,
-              ),
+              contentPadding: EdgeInsets.symmetric(vertical: Dimensions.h_10),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(
-                  color: AppColor.borderDivider,
-                  width: 1,
-                ),
+                borderSide: BorderSide(color: AppColor.borderDivider, width: 1),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(
-                  color: AppColor.primaryNavyNew,
-                  width: 1,
-                ),
+                borderSide: BorderSide(color: AppColor.primaryNavyNew, width: 1),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(
-                  color: AppColor.error,
-                  width: 1,
-                ),
+                borderSide: BorderSide(color: AppColor.error, width: 1),
               ),
             ),
             onChanged: (value) {

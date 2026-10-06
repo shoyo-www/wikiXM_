@@ -12,17 +12,7 @@ class NavItem extends StatefulWidget {
   final bool? isLogged;
   final List<NavSubItem> subItems;
 
-  const NavItem({
-    super.key,
-    required this.icon,
-    this.isPng,
-    required this.title,
-    required this.onTap,
-    this.isLogged,
-    this.isIcon,
-    this.isIconName,
-    this.subItems = const [],
-  });
+  const NavItem({super.key, required this.icon, this.isPng, required this.title, required this.onTap, this.isLogged, this.isIcon, this.isIconName, this.subItems = const []});
 
   @override
   State<NavItem> createState() => _NavItemState();
@@ -32,6 +22,7 @@ class _NavItemState extends State<NavItem> {
   bool _expanded = false;
 
   bool get hasSubItems => widget.subItems.isNotEmpty;
+
   IconData get iconData {
     switch (widget.title) {
       case 'Home':
@@ -81,51 +72,29 @@ class _NavItemState extends State<NavItem> {
           behavior: HitTestBehavior.opaque,
           onTap: _handleTap,
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: Dimensions.w_5,
-              vertical: Dimensions.h_4),
+            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_4),
             child: Row(
               children: [
                 Container(
                   padding: EdgeInsets.all(Dimensions.h_4),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    shape: BoxShape.circle),
+                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, shape: BoxShape.circle),
                   child: widget.isIcon == true
-                      ? Icon(
-                    widget.isIconName ??
-                        CupertinoIcons.cloud_bolt_rain_fill,
-                    size: Dimensions.h_12,
-                    color: Theme.of(context).primaryColor)
+                      ? Icon(widget.isIconName ?? CupertinoIcons.cloud_bolt_rain_fill, size: Dimensions.h_12, color: Theme.of(context).primaryColor)
                       : widget.isPng == true
-                      ? Image.asset(
-                    widget.icon,
-                    color: Theme.of(context).primaryColor,
-                    height: Dimensions.h_12,
-                    width: Dimensions.h_12)
-                      : Icon(
-                    iconData,
-                    size: Dimensions.h_12,
-                    color: Theme.of(context).primaryColor)),
+                      ? Image.asset(widget.icon, color: Theme.of(context).primaryColor, height: Dimensions.h_12, width: Dimensions.h_12)
+                      : Icon(iconData, size: Dimensions.h_12, color: Theme.of(context).primaryColor),
+                ),
                 SizedBox(width: Dimensions.w_10),
                 Text(
                   widget.title.toUpperCase(),
-                  style: TextStyle(
-                    color: Theme.of(context).highlightColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: FontSize.sp_11,
-                  ),
+                  style: TextStyle(color: Theme.of(context).highlightColor, fontWeight: FontWeight.w500, fontSize: FontSize.sp_11),
                 ),
                 Spacer(),
                 if (hasSubItems)
                   AnimatedRotation(
                     turns: _expanded ? 0.5 : 0,
                     duration: Duration(milliseconds: 200),
-                    child: Icon(
-                      Icons.keyboard_arrow_down,
-                      size: Dimensions.h_16,
-                      color: Theme.of(context).highlightColor,
-                    ),
+                    child: Icon(Icons.keyboard_arrow_down, size: Dimensions.h_16, color: Theme.of(context).highlightColor),
                   ),
               ],
             ),
@@ -143,12 +112,7 @@ class _NavItemState extends State<NavItem> {
                       margin: EdgeInsets.only(left: Dimensions.w_35),
                       padding: EdgeInsets.only(left: Dimensions.w_15),
                       decoration: BoxDecoration(
-                        border: Border(
-                          left: BorderSide(
-                            color: Theme.of(context).focusColor,
-                            width: 0.5,
-                          ),
-                        ),
+                        border: Border(left: BorderSide(color: Theme.of(context).focusColor, width: 0.5)),
                       ),
                       child: Column(
                         children: widget.subItems.map((sub) {
@@ -161,18 +125,13 @@ class _NavItemState extends State<NavItem> {
                               });
                             },
                             child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: Dimensions.h_6,
-                              ),
+                              padding: EdgeInsets.symmetric(vertical: Dimensions.h_6),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: Text(
                                       sub.title,
-                                      style: TextStyle(
-                                        color: Theme.of(context).highlightColor,
-                                        fontSize: FontSize.sp_12,
-                                      ),
+                                      style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12),
                                     ),
                                   ),
                                 ],

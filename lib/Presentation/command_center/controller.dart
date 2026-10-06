@@ -20,21 +20,24 @@ class CommandCenterController extends GetxController {
     isLoading = true;
     update([ControllerBuilders.commandCenterController]);
     var data = await commandCenterRepositoryImpl.getData();
-    data.fold((l) {
-      if (l is ServerFailure) {
-        isLoading = false;
-        update([ControllerBuilders.commandCenterController]);
-      }
-    }, (r) {
-      bool status = r.success ?? false;
-      if (status == true) {
-        commandCenterData = r.data;
-        isLoading = false;
-        update([ControllerBuilders.commandCenterController]);
-      } else {
-        isLoading = false;
-        update([ControllerBuilders.commandCenterController]);
-      }
-    });
+    data.fold(
+      (l) {
+        if (l is ServerFailure) {
+          isLoading = false;
+          update([ControllerBuilders.commandCenterController]);
+        }
+      },
+      (r) {
+        bool status = r.success ?? false;
+        if (status == true) {
+          commandCenterData = r.data;
+          isLoading = false;
+          update([ControllerBuilders.commandCenterController]);
+        } else {
+          isLoading = false;
+          update([ControllerBuilders.commandCenterController]);
+        }
+      },
+    );
   }
 }

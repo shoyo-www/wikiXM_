@@ -71,4 +71,5 @@ class Images {
   static const weatherTornado = 'assets/images/weather-tornado.svg';
   static const weatherWindy = 'assets/images/weather-windy.svg';
   static const weatherRain = 'assets/images/rain_drops_down.gif';
+  static const garageSale = 'assets/images/garage_sale.png';
 }

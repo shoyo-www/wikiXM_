@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  GetMaterialApp(
+    return GetMaterialApp(
       initialBinding: InitialBinding(),
       builder: EasyLoading.init(
         builder: (context, child) {
@@ -37,10 +37,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: LocalStorage().getTheme(),
+      themeMode: LocalStorage.getTheme(),
       initialRoute: AppRoutes.splashScreen,
       getPages: AppPages.list,
     );
   }
 }
-

@@ -22,13 +22,7 @@ class AskGuideController extends GetxController {
     isFirstTime = false;
     messages
       ..add(AskGuideMessage(text: text, isUser: true))
-      ..add(
-        const AskGuideMessage(
-          text:
-              'I can help with that. Here is the quick guide: check the latest town updates, compare upcoming events, and use the guide to jump into the right section.',
-          isUser: false,
-        ),
-      );
+      ..add(const AskGuideMessage(text: 'I can help with that. Here is the quick guide: check the latest town updates, compare upcoming events, and use the guide to jump into the right section.', isUser: false));
     update();
   }
 

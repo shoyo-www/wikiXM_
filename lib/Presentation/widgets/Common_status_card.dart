@@ -11,24 +11,13 @@ class CommonStatusCard extends StatelessWidget {
   final Color valueColor;
   final Color? titleColor;
 
-  const CommonStatusCard({
-    super.key,
-    required this.title,
-    required this.value,
-    required this.icon,
-    this.subtitle,
-    this.valueColor = Colors.black87,
-    this.titleColor,
-  });
+  const CommonStatusCard({super.key, required this.title, required this.value, required this.icon, this.subtitle, this.valueColor = Colors.black87, this.titleColor});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: CommonCard(
-        padding: EdgeInsets.symmetric(
-          horizontal: Dimensions.w_2,
-          vertical: Dimensions.h_3,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_2, vertical: Dimensions.h_3),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -41,12 +30,7 @@ class CommonStatusCard extends StatelessWidget {
                     title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: titleColor ?? Theme.of(context).highlightColor,
-                      fontSize: FontSize.sp_8_5,
-                      fontWeight: FontWeight.w500,
-                      height: 1.05,
-                    ),
+                    style: TextStyle(color: titleColor ?? Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, height: 1.05),
                   ),
                 ),
               ],
@@ -58,12 +42,7 @@ class CommonStatusCard extends StatelessWidget {
               padding: EdgeInsets.only(left: Dimensions.w_4),
               child: Text(
                 value,
-                style: TextStyle(
-                  color: valueColor,
-                  fontSize: FontSize.sp_10,
-                  fontWeight: FontWeight.w600,
-                  height: 1.05,
-                ),
+                style: TextStyle(color: valueColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600, height: 1.05),
               ),
             ),
 
@@ -73,12 +52,7 @@ class CommonStatusCard extends StatelessWidget {
                 padding: EdgeInsets.only(left: Dimensions.w_4),
                 child: Text(
                   subtitle!,
-                  style: TextStyle(
-                    color: valueColor,
-                    fontSize: FontSize.sp_7,
-                    fontWeight: FontWeight.w500,
-                    height: 1.0,
-                  ),
+                  style: TextStyle(color: valueColor, fontSize: FontSize.sp_7, fontWeight: FontWeight.w500, height: 1.0),
                 ),
               ),
             ],

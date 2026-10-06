@@ -16,5 +16,9 @@ class AppRoutes {
   static const String commandCenter = '/commandCenter';
   static const String garage = '/garage';
   static const String addItem = '/addItem';
+  static const String marketBrief = '/marketBrief';
+  static const String marketPlace = '/marketPlace';
+  static const String microsite = '/microsite';
+  static const String adsWidget = '/adsWidget';
 
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/Presentation/events/events_screen_shimmer.dart';
 import 'package:wikixm/Presentation/school/controller.dart';
+import 'package:wikixm/Presentation/widgets/ai_brief.dart';
 import 'package:wikixm/Presentation/widgets/common_card.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
@@ -29,252 +30,200 @@ class _SchoolScreenState extends State<SchoolScreen> {
   Widget build(BuildContext context) {
     bool isLight = Theme.of(context).brightness == Brightness.light;
     return AppScaffold(
-        top: false,
-        bottom: false,
-        bodyPadding: EdgeInsets.zero,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: GetBuilder(
-          init: schoolController,
-          id: ControllerBuilders.educationController,
-          builder: (controller) {
-            return controller.isLoading ? EventsScreenShimmer():CommonScrollBlurScaffold(
-              showBack: true,
-              expandedHeight: Dimensions.h_290,
-              expandedColor: Colors.white,
-              collapsedColor: Theme.of(context).highlightColor,
-              hero: buildHeroHeader(isLight,controller),
-              slivers: [
-              SliverToBoxAdapter(
-              child: Column(
-              children: [
-                SizedBox(height: Dimensions.h_5),
-                firstCard(isLight),
-                SizedBox(height: Dimensions.h_10),
-                aiBrief()
-              ])),
-              SliverToBoxAdapter(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: Dimensions.h_15),
-                        CommonSectionHeader(
-                          title: "What Matters Most".toUpperCase(),
-                          actionText: "View All",
-                          secondActionText: "",
-                          onActionTap: () {
-                          },
-                        ),
-                        SizedBox(height: Dimensions.h_10),
-                        upcomingEventsGrid(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        whatToday(context, isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        educationCommunityPulse(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        browseSchool(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        activeEducationTopics(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        schoolBoardDistrictSection(isLight),
-                        SizedBox(height: Dimensions.h_15),
-                        studentSpotlight(context),
-                        SizedBox(height: Dimensions.h_15),
-                        upcomingEvents(isLight, context),
-                        SizedBox(height: Dimensions.h_15),
-                        schoolMemories(context),
-                        Column(
+      top: false,
+      bottom: false,
+      bodyPadding: EdgeInsets.zero,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: GetBuilder(
+        init: schoolController,
+        id: ControllerBuilders.educationController,
+        builder: (controller) {
+          return controller.isLoading
+              ? EventsScreenShimmer()
+              : CommonScrollBlurScaffold(
+                  showBack: true,
+                  expandedHeight: Dimensions.h_290,
+                  expandedColor: Colors.white,
+                  collapsedColor: Theme.of(context).highlightColor,
+                  hero: buildHeroHeader(isLight, controller),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          SizedBox(height: Dimensions.h_5),
+                          aiBrief(),
+                          SizedBox(height: Dimensions.h_10),
+                          firstCard(isLight),
+                        ],
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            SizedBox(height: Dimensions.h_15),
+                            CommonSectionHeader(title: "What Matters Most".toUpperCase(), actionText: "View All", secondActionText: "", onActionTap: () {}),
                             SizedBox(height: Dimensions.h_10),
-                            Container(
-                              width: Get.width,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0044f3),
-                                borderRadius: BorderRadius.circular(Dimensions.h_8),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                  Dimensions.w_8,
-                                  Dimensions.h_10,
-                                  Dimensions.w_8,
-                                  Dimensions.h_5,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            upcomingEventsGrid(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            whatToday(context, isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            educationCommunityPulse(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            browseSchool(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            activeEducationTopics(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            schoolBoardDistrictSection(isLight),
+                            SizedBox(height: Dimensions.h_15),
+                            studentSpotlight(context),
+                            upcomingEvents(isLight, context),
+                            SizedBox(height: Dimensions.h_15),
+                            schoolMemories(context),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: Dimensions.h_10),
+                                Container(
+                                  width: Get.width,
+                                  decoration: BoxDecoration(color: const Color(0xFF0044f3), borderRadius: BorderRadius.circular(Dimensions.h_8)),
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(Dimensions.w_8, Dimensions.h_10, Dimensions.w_8, Dimensions.h_5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          'Stay Informed'.toUpperCase(),
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: FontSize.sp_12,
-                                            fontWeight: FontWeight.w800,
-                                            height: 1.12,
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Stay Informed'.toUpperCase(),
+                                              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800, height: 1.12),
+                                            ),
+                                            Icon(CupertinoIcons.mail, size: Dimensions.h_13, color: AppColor.white),
+                                          ],
+                                        ),
+                                        SizedBox(height: Dimensions.h_5),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: Dimensions.w_8),
+                                          child: Text(
+                                            'Get the latest education news delivered to your inbox.',
+                                            style: TextStyle(color: Colors.white, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.12),
                                           ),
                                         ),
-                                        Icon(CupertinoIcons.mail,size: Dimensions.h_13,color: AppColor.white)
-                                      ],
-                                    ),
-                                    SizedBox(height: Dimensions.h_5),
-                                    Padding(
-                                      padding:  EdgeInsets.only(left: Dimensions.w_8),
-                                      child: Text(
-                                        'Get the latest education news delivered to your inbox.',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: FontSize.sp_10,
-                                          fontWeight: FontWeight.w500,
-                                          height: 1.12,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: Dimensions.h_12),
-                                    IntrinsicHeight(
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: Dimensions.h_28,
-                                              child: TextFormField(
-                                                  decoration: InputDecoration(
-                                                      contentPadding: EdgeInsets.symmetric(vertical: Dimensions.h_1,horizontal: Dimensions.w_5),
+                                        SizedBox(height: Dimensions.h_12),
+                                        IntrinsicHeight(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: SizedBox(
+                                                  height: Dimensions.h_28,
+                                                  child: TextFormField(
+                                                    decoration: InputDecoration(
+                                                      contentPadding: EdgeInsets.symmetric(vertical: Dimensions.h_1, horizontal: Dimensions.w_5),
                                                       fillColor: Colors.white,
                                                       filled: true,
                                                       hintText: 'Enter your email',
-                                                      hintStyle: TextStyle(
-                                                        color: Colors.grey,
-                                                        fontSize: FontSize.sp_10,
-                                                        fontWeight: FontWeight.w500,
-                                                      ),
+                                                      hintStyle: TextStyle(color: Colors.grey, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
                                                       enabledBorder: OutlineInputBorder(
                                                         borderRadius: BorderRadius.circular(4),
-                                                        borderSide: BorderSide(
-                                                            color: Colors.white,
-                                                            width: 0.1
-                                                        ),
+                                                        borderSide: BorderSide(color: Colors.white, width: 0.1),
                                                       ),
                                                       focusedBorder: OutlineInputBorder(
                                                         borderRadius: BorderRadius.circular(4),
-                                                        borderSide: BorderSide(
-                                                            color: Colors.white,
-                                                            width: 0.1
-                                                        ),
-                                                      )
-                                                  )),
-                                            ),
-                                          ),
-                                          SizedBox(width: Dimensions.w_8),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(vertical: Dimensions.h_8,horizontal: Dimensions.w_15),
-                                            decoration: BoxDecoration(
-                                              color: Color(0xff1b5afc),
-                                              borderRadius: BorderRadius.circular(4),
-                                            ),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Text('Subscribe', style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: FontSize.sp_10,
-                                                    fontWeight: FontWeight.w900
-                                                )),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: Dimensions.h_5),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: Dimensions.h_10),
-                        CommonCard(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(CupertinoIcons.sparkles,size: Dimensions.h_25,color: Theme.of(context).primaryColor),
-                              SizedBox(width: Dimensions.w_12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(height: Dimensions.h_2),
-                                    Row(
-                                      children: [
-                                        Text('ASK WIKIXM AI', style: TextStyle(
-                                            color: Theme.of(Get.context!).highlightColor,
-                                            fontSize: FontSize.sp_12,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: 0.1
-                                        )),
-                                        Container(
-                                          margin: EdgeInsets.only(left: Dimensions.w_4),
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: Dimensions.w_5,
-                                            vertical: Dimensions.h_3,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: !isLight
-                                                ? const Color(0xffffc264)
-                                                : const Color(0xFF97590a),
-                                            borderRadius: BorderRadius.circular(999),
-                                          ),
-                                          child: Text(
-                                            'COMING SOON',
-                                            style: TextStyle(
-                                              color: !isLight ? AppColor.black : AppColor.white,
-                                              fontSize: FontSize.sp_7,
-                                              fontWeight: FontWeight.w800,
-                                              letterSpacing: 0.5,
-                                              height: 1,
-                                            ),
+                                                        borderSide: BorderSide(color: Colors.white, width: 0.1),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: Dimensions.w_8),
+                                              Container(
+                                                padding: EdgeInsets.symmetric(vertical: Dimensions.h_8, horizontal: Dimensions.w_15),
+                                                decoration: BoxDecoration(color: Color(0xff1b5afc), borderRadius: BorderRadius.circular(4)),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'Subscribe',
+                                                      style: TextStyle(color: Colors.white, fontSize: FontSize.sp_10, fontWeight: FontWeight.w900),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
+                                        SizedBox(height: Dimensions.h_5),
                                       ],
                                     ),
-                                    SizedBox(height: Dimensions.h_5),
-                                    Text(
-                                      "Ask anything about pine valley school, education, PTA meetings and more",
-                                      style: TextStyle(
-                                        color: Theme.of(Get.context!).highlightColor,
-                                        fontSize: FontSize.sp_9_5,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    SizedBox(height: Dimensions.h_6),
-                                  ],
+                                  ),
                                 ),
+                              ],
+                            ),
+                            SizedBox(height: Dimensions.h_10),
+                            CommonCard(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(CupertinoIcons.sparkles, size: Dimensions.h_25, color: Theme.of(context).primaryColor),
+                                  SizedBox(width: Dimensions.w_12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: Dimensions.h_2),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'ASK WIKIXM AI',
+                                              style: TextStyle(color: Theme.of(Get.context!).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w700, letterSpacing: 0.1),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(left: Dimensions.w_4),
+                                              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
+                                              decoration: BoxDecoration(color: !isLight ? const Color(0xffffc264) : const Color(0xFF97590a), borderRadius: BorderRadius.circular(999)),
+                                              child: Text(
+                                                'COMING SOON',
+                                                style: TextStyle(color: !isLight ? AppColor.black : AppColor.white, fontSize: FontSize.sp_7, fontWeight: FontWeight.w800, letterSpacing: 0.5, height: 1),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: Dimensions.h_5),
+                                        Text(
+                                          "Ask anything about pine valley school, education, PTA meetings and more",
+                                          style: TextStyle(color: Theme.of(Get.context!).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(height: Dimensions.h_6),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(left: Dimensions.w_20, right: Dimensions.w_10),
+                                    padding: EdgeInsets.symmetric(vertical: Dimensions.h_5, horizontal: Dimensions.w_5),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: AppColor.darkBlue),
+                                    child: Icon(CupertinoIcons.chat_bubble, size: Dimensions.h_18, color: AppColor.white),
+                                  ),
+                                ],
                               ),
-                              Container(
-                                margin: EdgeInsets.only(left: Dimensions.w_20,right: Dimensions.w_10),
-                                padding: EdgeInsets.symmetric(vertical: Dimensions.h_5,horizontal: Dimensions.w_5),
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: AppColor.darkBlue),
-                                child: Icon(CupertinoIcons.chat_bubble,size: Dimensions.h_18,color: AppColor.white),
-                              )
-                            ],
-                          ),
+                            ),
+                            SizedBox(height: Dimensions.h_20),
+                          ],
                         ),
-                        SizedBox(height: Dimensions.h_20),
-                      ],
+                      ),
                     ),
-                  )
-              )]);
-          }
-        ));
+                  ],
+                );
+        },
+      ),
+    );
   }
 
   Widget schoolMemories(BuildContext context) {
-    final memories =
-        schoolController.educationData?.storyGrid?.memories;
+    final memories = schoolController.educationData?.storyGrid?.memories;
 
     String getFullImageUrl(String? image) {
       if (image == null || image.isEmpty) return '';
@@ -285,8 +234,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
 
     IconData getMetaIcon(String? iconUrl) {
-      final iconName =
-          iconUrl?.split('#').last.toLowerCase() ?? '';
+      final iconName = iconUrl?.split('#').last.toLowerCase() ?? '';
 
       switch (iconName) {
         case 'eye':
@@ -305,11 +253,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     return Column(
       children: [
-        CommonSectionHeader(
-          title: (memories?.title ?? 'School Memories').toUpperCase(),
-          actionText: memories?.link?.text ?? 'View All',
-          onActionTap: () {},
-        ),
+        CommonSectionHeader(title: (memories?.title ?? 'School Memories').toUpperCase(), actionText: memories?.link?.text ?? 'View All', onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
@@ -319,18 +263,8 @@ class _SchoolScreenState extends State<SchoolScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(Dimensions.h_8),
-                  topRight: Radius.circular(Dimensions.h_8),
-                ),
-                child: AppCacheImage(
-                  size: Dimensions.h_140,
-                  widthSize: Get.width,
-                  imageUrl: getFullImageUrl(memories?.image),
-                  isShadow: false,
-                  radius: 0,
-                  borderColor: Colors.grey.shade200,
-                ),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimensions.h_8), topRight: Radius.circular(Dimensions.h_8)),
+                child: AppCacheImage(size: Dimensions.h_140, widthSize: Get.width, imageUrl: getFullImageUrl(memories?.image), isShadow: false, radius: 0, borderColor: Colors.grey.shade200),
               ),
               SizedBox(height: Dimensions.h_8),
               Padding(
@@ -338,64 +272,37 @@ class _SchoolScreenState extends State<SchoolScreen> {
                 child: Text(
                   memories?.headline ?? '',
                   maxLines: 2,
-                  style: TextStyle(
-                    color: Theme.of(context).highlightColor,
-                    fontSize: FontSize.sp_14,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
                 ),
               ),
               SizedBox(height: Dimensions.h_6),
               Padding(
-                padding: EdgeInsets.only(
-                  left: Dimensions.w_12,
-                  right: Dimensions.w_12,
-                ),
+                padding: EdgeInsets.only(left: Dimensions.w_12, right: Dimensions.w_12),
                 child: Text(
                   memories?.description ?? '',
                   maxLines: 3,
-                  style: TextStyle(
-                    color: Theme.of(context).highlightColor,
-                    fontSize: FontSize.sp_10,
-                    fontWeight: FontWeight.w500,
-                    height: 1.25,
-                  ),
+                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.25),
                 ),
               ),
               SizedBox(height: Dimensions.h_6),
               Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.w_8,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
                 child: Row(
                   children: List.generate(metaItems.length, (index) {
                     final item = metaItems[index];
                     return Padding(
-                      padding: EdgeInsets.only(
-                        right: index == metaItems.length - 1
-                            ? 0
-                            : Dimensions.w_25,
-                      ),
+                      padding: EdgeInsets.only(right: index == metaItems.length - 1 ? 0 : Dimensions.w_25),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            getMetaIcon(item.icon),
-                            size: Dimensions.h_10,
-                            color: Theme.of(context).highlightColor,
-                          ),
+                          Icon(getMetaIcon(item.icon), size: Dimensions.h_10, color: Theme.of(context).highlightColor),
                           SizedBox(width: Dimensions.w_3),
                           Flexible(
                             child: Text(
                               item.text ?? '',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Theme.of(context).highlightColor,
-                                fontSize: FontSize.sp_8_5,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                              ),
+                              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
                             ),
                           ),
                         ],
@@ -412,15 +319,14 @@ class _SchoolScreenState extends State<SchoolScreen> {
       ],
     );
   }
+
   Widget upcomingEvents(bool isLight, BuildContext context) {
-    final eventsData =
-        schoolController.educationData?.storyGrid?.events;
+    final eventsData = schoolController.educationData?.storyGrid?.events;
 
     final events = eventsData?.items ?? [];
 
     IconData getEventIcon(String? iconUrl) {
-      final iconName =
-          iconUrl?.split('#').last.toLowerCase() ?? '';
+      final iconName = iconUrl?.split('#').last.toLowerCase() ?? '';
 
       switch (iconName) {
         case 'calendar':
@@ -441,27 +347,19 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
 
     Color getEventIconColor() {
-      return isLight
-          ? AppColor.accentBlue
-          : const Color(0xFF7C9AC5);
+      return isLight ? AppColor.accentBlue : const Color(0xFF7C9AC5);
     }
 
+    if (events.isEmpty) {
+      return SizedBox.shrink();
+    }
     return Column(
       children: [
-        CommonSectionHeader(
-          title: (eventsData?.title ?? 'Upcoming Events').toUpperCase(),
-          actionText: '',
-          secondActionText: '',
-          onActionTap: () {},
-        ),
-
+        SizedBox(height: Dimensions.h_15),
+        CommonSectionHeader(title: (eventsData?.title ?? 'Upcoming Events').toUpperCase(), actionText: '', secondActionText: '', onActionTap: () {}),
         SizedBox(height: Dimensions.h_10),
-
         CommonCard(
-          padding: EdgeInsets.only(
-            top: Dimensions.h_4,
-            bottom: Dimensions.h_4,
-          ),
+          padding: EdgeInsets.only(top: Dimensions.h_4, bottom: Dimensions.h_4),
           child: Column(
             children: [
               ListView.separated(
@@ -470,51 +368,24 @@ class _SchoolScreenState extends State<SchoolScreen> {
                 padding: EdgeInsets.zero,
                 itemCount: events.length,
                 separatorBuilder: (context, index) => Padding(
-                  padding: EdgeInsets.only(
-                    left: Dimensions.w_20,
-                  ),
-                  child: Container(
-                    height: 0.1,
-                    color: isLight
-                        ? Theme.of(context).highlightColor
-                        : Theme.of(context)
-                        .highlightColor
-                        .withValues(alpha: 0.50),
-                  ),
+                  padding: EdgeInsets.only(left: Dimensions.w_20),
+                  child: Container(height: 0.1, color: isLight ? Theme.of(context).highlightColor : Theme.of(context).highlightColor.withValues(alpha: 0.50)),
                 ),
                 itemBuilder: (context, index) {
                   final item = events[index];
 
                   return Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Dimensions.w_15,
-                      vertical: Dimensions.h_5,
-                    ),
-                    child: _boardDistrictItem(
-                      context: context,
-                      icon: getEventIcon(item.icon),
-                      title: item.title ?? '',
-                      subtitle: '',
-                      description: item.meta ?? '',
-                      iconColor: getEventIconColor(),
-                      isLight: isLight,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: Dimensions.w_15, vertical: Dimensions.h_5),
+                    child: _boardDistrictItem(context: context, icon: getEventIcon(item.icon), title: item.title ?? '', subtitle: '', description: item.meta ?? '', iconColor: getEventIconColor(), isLight: isLight),
                   );
                 },
               ),
 
               if (events.isNotEmpty)
                 Container(
-                  margin: EdgeInsets.only(
-                    left: Dimensions.w_20,
-                    bottom: Dimensions.h_10,
-                  ),
+                  margin: EdgeInsets.only(left: Dimensions.w_20, bottom: Dimensions.h_10),
                   height: 0.1,
-                  color: isLight
-                      ? Theme.of(context).highlightColor
-                      : Theme.of(context)
-                      .highlightColor
-                      .withValues(alpha: 0.50),
+                  color: isLight ? Theme.of(context).highlightColor : Theme.of(context).highlightColor.withValues(alpha: 0.50),
                 ),
 
               if (eventsData?.bottomLink != null)
@@ -522,21 +393,11 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      eventsData?.bottomLink?.text ??
-                          'View Full Calendar',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColorDark,
-                        fontSize: FontSize.sp_10,
-                        fontWeight: FontWeight.w800,
-                        height: 1,
-                      ),
+                      eventsData?.bottomLink?.text ?? 'View Full Calendar',
+                      style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1),
                     ),
                     SizedBox(width: Dimensions.w_3),
-                    Icon(
-                      Icons.arrow_forward,
-                      color: Theme.of(context).primaryColorDark,
-                      size: Dimensions.h_11,
-                    ),
+                    Icon(Icons.arrow_forward, color: Theme.of(context).primaryColorDark, size: Dimensions.h_11),
                   ],
                 ),
 
@@ -549,8 +410,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
   }
 
   Widget studentSpotlight(BuildContext context) {
-    final spotlight =
-        schoolController.educationData?.storyGrid?.spotlight;
+    final spotlight = schoolController.educationData?.storyGrid?.spotlight;
 
     String getFullImageUrl(String? image) {
       if (image == null || image.isEmpty) return '';
@@ -561,8 +421,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
 
     IconData getMetaIcon(String? iconUrl) {
-      final iconName =
-          iconUrl?.split('#').last.toLowerCase() ?? '';
+      final iconName = iconUrl?.split('#').last.toLowerCase() ?? '';
 
       switch (iconName) {
         case 'heart-hand':
@@ -582,11 +441,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     return Column(
       children: [
-        CommonSectionHeader(
-          title: (spotlight?.title ?? 'Student Spotlight').toUpperCase(),
-          actionText: spotlight?.link?.text ?? 'View All',
-          onActionTap: () {},
-        ),
+        CommonSectionHeader(title: (spotlight?.title ?? 'Student Spotlight').toUpperCase(), actionText: spotlight?.link?.text ?? 'View All', onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
@@ -595,92 +450,53 @@ class _SchoolScreenState extends State<SchoolScreen> {
           child: Column(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(Dimensions.h_8),
-                  topRight: Radius.circular(Dimensions.h_8),
-                ),
-                child: AppCacheImage(
-                  size: Dimensions.h_140,
-                  widthSize: Get.width,
-                  imageUrl: getFullImageUrl(spotlight?.image),
-                  isShadow: false,
-                  radius: 0,
-                  borderColor: Colors.grey.shade200,
-                ),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimensions.h_8), topRight: Radius.circular(Dimensions.h_8)),
+                child: AppCacheImage(size: Dimensions.h_140, widthSize: Get.width, imageUrl: getFullImageUrl(spotlight?.image), isShadow: false, radius: 0, borderColor: Colors.grey.shade200),
               ),
 
               SizedBox(height: Dimensions.h_8),
 
               Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.w_12,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_12),
                 child: Text(
                   spotlight?.headline ?? '',
                   maxLines: 2,
-                  style: TextStyle(
-                    color: Theme.of(context).highlightColor,
-                    fontSize: FontSize.sp_14,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
                 ),
               ),
 
               SizedBox(height: Dimensions.h_6),
 
               Padding(
-                padding: EdgeInsets.only(
-                  left: Dimensions.w_12,
-                  right: Dimensions.w_12,
-                ),
+                padding: EdgeInsets.only(left: Dimensions.w_12, right: Dimensions.w_12),
                 child: Text(
                   spotlight?.description ?? '',
                   maxLines: 3,
-                  style: TextStyle(
-                    color: Theme.of(context).highlightColor,
-                    fontSize: FontSize.sp_10,
-                    fontWeight: FontWeight.w500,
-                    height: 1.25,
-                  ),
+                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.25),
                 ),
               ),
 
               SizedBox(height: Dimensions.h_6),
 
               Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.w_8,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
                 child: Row(
                   children: List.generate(metaItems.length, (index) {
                     final item = metaItems[index];
 
                     return Padding(
-                      padding: EdgeInsets.only(
-                        right: index == metaItems.length - 1
-                            ? 0
-                            : Dimensions.w_25,
-                      ),
+                      padding: EdgeInsets.only(right: index == metaItems.length - 1 ? 0 : Dimensions.w_25),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            getMetaIcon(item.icon),
-                            size: Dimensions.h_10,
-                            color: Theme.of(context).highlightColor,
-                          ),
+                          Icon(getMetaIcon(item.icon), size: Dimensions.h_10, color: Theme.of(context).highlightColor),
                           SizedBox(width: Dimensions.w_3),
                           Flexible(
                             child: Text(
                               item.text ?? '',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Theme.of(context).highlightColor,
-                                fontSize: FontSize.sp_8_5,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                              ),
+                              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
                             ),
                           ),
                         ],
@@ -703,12 +519,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
     final filters = browse?.filters ?? [];
     return Column(
       children: [
-        CommonSectionHeader(
-          title: (browse?.title ?? 'Browse Schools').toUpperCase(),
-          actionText: browse?.link?.text ?? '',
-          secondActionText: "",
-          onActionTap: () {},
-        ),
+        CommonSectionHeader(title: (browse?.title ?? 'Browse Schools').toUpperCase(), actionText: browse?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
         SizedBox(height: Dimensions.h_10),
         CommonCard(
           child: Column(
@@ -719,18 +530,12 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   children: List.generate(filters.length, (index) {
                     final filter = filters[index];
                     return Padding(
-                      padding: EdgeInsets.only(
-                        right: index == filters.length - 1
-                            ? 0
-                            : Dimensions.w_4,
-                      ),
+                      padding: EdgeInsets.only(right: index == filters.length - 1 ? 0 : Dimensions.w_4),
                       child: GestureDetector(
                         onTap: () {
                           schoolController.changeSchoolFilter(filter.id ?? '');
                         },
-                        child:  _scoreFilter(
-                            title: filter.label ?? '',
-                            isSelected: schoolController.selectedSchoolFilter == (filter.id ?? 'all')),
+                        child: _scoreFilter(title: filter.label ?? '', isSelected: schoolController.selectedSchoolFilter == (filter.id ?? 'all')),
                       ),
                     );
                   }),
@@ -746,8 +551,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
   }
 
   Widget whatToday(BuildContext context, bool isLight) {
-    final items =
-        schoolController.educationData?.topPanels?.today?.items ?? [];
+    final items = schoolController.educationData?.topPanels?.today?.items ?? [];
 
     IconData getActionIcon(String? iconUrl) {
       final iconName = iconUrl?.split('#').last.toLowerCase() ?? '';
@@ -776,29 +580,19 @@ class _SchoolScreenState extends State<SchoolScreen> {
     Color getIconColor(String? iconClass) {
       switch (iconClass?.toLowerCase()) {
         case 'meet-icon':
-          return isLight
-              ? const Color(0xFF0D6B3F)
-              : const Color(0xFF4FC98A);
+          return isLight ? const Color(0xFF0D6B3F) : const Color(0xFF4FC98A);
 
         case 'vote-icon':
-          return isLight
-              ? const Color(0xFFD81324)
-              : const Color(0xFFFF7B84);
+          return isLight ? const Color(0xFFD81324) : const Color(0xFFFF7B84);
 
         case 'photo-icon':
-          return isLight
-              ? const Color(0xFF0D6B3F)
-              : const Color(0xFF4FC98A);
+          return isLight ? const Color(0xFF0D6B3F) : const Color(0xFF4FC98A);
 
         case 'welcome-icon':
-          return isLight
-              ? const Color(0xFF0F766E)
-              : const Color(0xFF3FB8AB);
+          return isLight ? const Color(0xFF0F766E) : const Color(0xFF3FB8AB);
 
         case 'discuss-icon':
-          return isLight
-              ? const Color(0xFFB94705)
-              : const Color(0xFFFF9D4D);
+          return isLight ? const Color(0xFFB94705) : const Color(0xFFFF9D4D);
 
         default:
           return Theme.of(context).primaryColor;
@@ -809,24 +603,16 @@ class _SchoolScreenState extends State<SchoolScreen> {
       switch (iconClass?.toLowerCase()) {
         case 'meet-icon':
         case 'photo-icon':
-          return isLight
-              ? const Color(0xFFE8F3EC)
-              : const Color(0xFF102B1F);
+          return isLight ? const Color(0xFFE8F3EC) : const Color(0xFF102B1F);
 
         case 'vote-icon':
-          return isLight
-              ? const Color(0xFFFDE7E9)
-              : const Color(0xFF3A1720);
+          return isLight ? const Color(0xFFFDE7E9) : const Color(0xFF3A1720);
 
         case 'welcome-icon':
-          return isLight
-              ? const Color(0xFFE5F3F4)
-              : const Color(0xFF132B38);
+          return isLight ? const Color(0xFFE5F3F4) : const Color(0xFF132B38);
 
         case 'discuss-icon':
-          return isLight
-              ? const Color(0xFFFDEADA)
-              : const Color(0xFF3D2411);
+          return isLight ? const Color(0xFFFDEADA) : const Color(0xFF3D2411);
 
         default:
           return Theme.of(context).focusColor;
@@ -835,39 +621,21 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     return Column(
       children: [
-        CommonSectionHeader(
-          title: "What Should I Do Today?".toUpperCase(),
-          actionText: "View All",
-          secondActionText: "",
-          onActionTap: () {},
-        ),
+        CommonSectionHeader(title: "What Should I Do Today?".toUpperCase(), actionText: "View All", secondActionText: "", onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
         CommonCard(
-          padding: EdgeInsets.symmetric(
-            horizontal: Dimensions.w_8,
-            vertical: Dimensions.h_8,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_8),
           child: Column(
             children: List.generate(items.length, (index) {
               final item = items[index];
 
               return Column(
                 children: [
-                  _actionItem(
-                    context: context,
-                    isLight: isLight,
-                    icon: getActionIcon(item.icon),
-                    title: item.title ?? '',
-                    subtitle: item.description ?? '',
-                    points: '+${item.points ?? 0} pts',
-                    iconColor: getIconColor(item.iconClass),
-                    iconBackground: getIconBackground(item.iconClass),
-                  ),
+                  _actionItem(context: context, isLight: isLight, icon: getActionIcon(item.icon), title: item.title ?? '', subtitle: item.description ?? '', points: '+${item.points ?? 0} pts', iconColor: getIconColor(item.iconClass), iconBackground: getIconBackground(item.iconClass)),
 
-                  if (index != items.length - 1)
-                    _divider(context, isLight),
+                  if (index != items.length - 1) _divider(context, isLight),
                 ],
               );
             }),
@@ -878,14 +646,12 @@ class _SchoolScreenState extends State<SchoolScreen> {
   }
 
   Widget schoolBoardDistrictSection(bool isLight) {
-    final boardData =
-        schoolController.educationData?.storyGrid?.board;
+    final boardData = schoolController.educationData?.storyGrid?.board;
 
     final items = boardData?.items ?? [];
 
     IconData getBoardIcon(String? iconUrl) {
-      final iconName =
-          iconUrl?.split('#').last.toLowerCase() ?? '';
+      final iconName = iconUrl?.split('#').last.toLowerCase() ?? '';
 
       switch (iconName) {
         case 'clipboard':
@@ -903,28 +669,17 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
 
     Color getBoardIconColor() {
-      return isLight
-          ? AppColor.accentBlue
-          : const Color(0xFF7C9AC5);
+      return isLight ? AppColor.accentBlue : const Color(0xFF7C9AC5);
     }
 
     return Column(
       children: [
-        CommonSectionHeader(
-          title: (boardData?.title ?? 'School Board & District')
-              .toUpperCase(),
-          actionText: "",
-          secondActionText: "",
-          onActionTap: () {},
-        ),
+        CommonSectionHeader(title: (boardData?.title ?? 'School Board & District').toUpperCase(), actionText: "", secondActionText: "", onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
         CommonCard(
-          padding: EdgeInsets.only(
-            top: Dimensions.h_4,
-            bottom: Dimensions.h_4,
-          ),
+          padding: EdgeInsets.only(top: Dimensions.h_4, bottom: Dimensions.h_4),
           child: ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -932,36 +687,16 @@ class _SchoolScreenState extends State<SchoolScreen> {
             itemCount: items.length,
 
             separatorBuilder: (context, index) => Padding(
-              padding: EdgeInsets.only(
-                left: Dimensions.w_20,
-              ),
-              child: Container(
-                height: 0.1,
-                color: isLight
-                    ? Theme.of(context).highlightColor
-                    : Theme.of(context)
-                    .highlightColor
-                    .withValues(alpha: 0.50),
-              ),
+              padding: EdgeInsets.only(left: Dimensions.w_20),
+              child: Container(height: 0.1, color: isLight ? Theme.of(context).highlightColor : Theme.of(context).highlightColor.withValues(alpha: 0.50)),
             ),
 
             itemBuilder: (context, index) {
               final item = items[index];
 
               return Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.w_15,
-                  vertical: Dimensions.h_5,
-                ),
-                child: _boardDistrictItem(
-                  context: context,
-                  icon: getBoardIcon(item.icon),
-                  title: item.title ?? '',
-                  subtitle: item.status ?? '',
-                  description: item.meta ?? '',
-                  iconColor: getBoardIconColor(),
-                  isLight: isLight,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_15, vertical: Dimensions.h_5),
+                child: _boardDistrictItem(context: context, icon: getBoardIcon(item.icon), title: item.title ?? '', subtitle: item.status ?? '', description: item.meta ?? '', iconColor: getBoardIconColor(), isLight: isLight),
               );
             },
           ),
@@ -970,25 +705,13 @@ class _SchoolScreenState extends State<SchoolScreen> {
     );
   }
 
-  Widget _boardDistrictItem({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required String description,
-    required Color iconColor,
-    required bool isLight,
-  }) {
+  Widget _boardDistrictItem({required BuildContext context, required IconData icon, required String title, required String subtitle, required String description, required Color iconColor, required bool isLight}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.only(top: Dimensions.h_3),
-          child: Icon(
-            icon,
-            color: iconColor,
-            size: Dimensions.h_15,
-          ),
+          child: Icon(icon, color: iconColor, size: Dimensions.h_15),
         ),
         SizedBox(width: Dimensions.w_10),
         Expanded(
@@ -999,41 +722,23 @@ class _SchoolScreenState extends State<SchoolScreen> {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).highlightColor,
-                  fontSize: FontSize.sp_11,
-                  fontWeight: FontWeight.w800,
-                  height: 1.1,
-                ),
+                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w800, height: 1.1),
               ),
 
               SizedBox(height: Dimensions.h_3),
-              if(subtitle.isNotEmpty)
-              Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: isLight
-                      ? AppColor.primaryNavyNew
-                      : const Color(0xFFB6C3D5),
-                  fontSize: FontSize.sp_9_5,
-                  fontWeight: FontWeight.w500,
-                  height: 1,
+              if (subtitle.isNotEmpty)
+                Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: isLight ? AppColor.primaryNavyNew : const Color(0xFFB6C3D5), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, height: 1),
                 ),
-              ),
-              if(subtitle.isNotEmpty)
-                SizedBox(height: Dimensions.h_5),
+              if (subtitle.isNotEmpty) SizedBox(height: Dimensions.h_5),
               Text(
                 description,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).hintColor,
-                  fontSize: FontSize.sp_8,
-                  fontWeight: FontWeight.w500,
-                  height: 1,
-                ),
+                style: TextStyle(color: Theme.of(context).hintColor, fontSize: FontSize.sp_8, fontWeight: FontWeight.w500, height: 1),
               ),
             ],
           ),
@@ -1043,8 +748,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
   }
 
   Widget activeEducationTopics(bool isLight) {
-    final topicsData =
-        schoolController.educationData?.midPanels?.topics;
+    final topicsData = schoolController.educationData?.midPanels?.topics;
 
     final topics = topicsData?.items ?? [];
 
@@ -1075,128 +779,82 @@ class _SchoolScreenState extends State<SchoolScreen> {
     Color getIconColor(String? iconClass) {
       switch (iconClass?.toLowerCase()) {
         case 'budget':
-          return isLight
-              ? const Color(0xFFB47A2A)
-              : const Color(0xFFD6A85D);
+          return isLight ? const Color(0xFFB47A2A) : const Color(0xFFD6A85D);
 
         case 'graduation':
-          return isLight
-              ? const Color(0xFF4B8278)
-              : const Color(0xFF75B5A8);
+          return isLight ? const Color(0xFF4B8278) : const Color(0xFF75B5A8);
 
         case 'transport':
-          return isLight
-              ? const Color(0xFF3F75A8)
-              : const Color(0xFF74A9DD);
+          return isLight ? const Color(0xFF3F75A8) : const Color(0xFF74A9DD);
 
         case 'elementary':
-          return isLight
-              ? const Color(0xFFB56D3C)
-              : const Color(0xFFD99A70);
+          return isLight ? const Color(0xFFB56D3C) : const Color(0xFFD99A70);
 
         case 'reading':
-          return isLight
-              ? const Color(0xFF4A70AA)
-              : const Color(0xFF7FA5E0);
+          return isLight ? const Color(0xFF4A70AA) : const Color(0xFF7FA5E0);
 
         default:
-          return isLight
-              ? AppColor.primaryNavyNew
-              : AppColor.white;
+          return isLight ? AppColor.primaryNavyNew : AppColor.white;
       }
     }
 
     Color getIconBackground(String? iconClass) {
       switch (iconClass?.toLowerCase()) {
         case 'budget':
-          return isLight
-              ? const Color(0xFFF7F1E7)
-              : const Color(0xFF2D251A);
+          return isLight ? const Color(0xFFF7F1E7) : const Color(0xFF2D251A);
 
         case 'graduation':
-          return isLight
-              ? const Color(0xFFEAF4F1)
-              : const Color(0xFF18332E);
+          return isLight ? const Color(0xFFEAF4F1) : const Color(0xFF18332E);
 
         case 'transport':
-          return isLight
-              ? const Color(0xFFEAF2FA)
-              : const Color(0xFF172B40);
+          return isLight ? const Color(0xFFEAF2FA) : const Color(0xFF172B40);
 
         case 'elementary':
-          return isLight
-              ? const Color(0xFFFAF0E9)
-              : const Color(0xFF39261D);
+          return isLight ? const Color(0xFFFAF0E9) : const Color(0xFF39261D);
 
         case 'reading':
-          return isLight
-              ? const Color(0xFFEAF0FA)
-              : const Color(0xFF1D2940);
+          return isLight ? const Color(0xFFEAF0FA) : const Color(0xFF1D2940);
 
         default:
-          return isLight
-              ? Theme.of(context).focusColor
-              : const Color(0xFF1E2A3A);
+          return isLight ? Theme.of(context).focusColor : const Color(0xFF1E2A3A);
       }
     }
 
     Color getPriorityColor(String? priorityClass) {
       switch (priorityClass?.toLowerCase()) {
         case 'high':
-          return isLight
-              ? const Color(0xFFC34B4B)
-              : const Color(0xFFFF8585);
+          return isLight ? const Color(0xFFC34B4B) : const Color(0xFFFF8585);
 
         case 'medium':
-          return isLight
-              ? const Color(0xFFB87520)
-              : const Color(0xFFFFB85C);
+          return isLight ? const Color(0xFFB87520) : const Color(0xFFFFB85C);
 
         case 'low':
-          return isLight
-              ? const Color(0xFF4D8A72)
-              : const Color(0xFF72C7A5);
+          return isLight ? const Color(0xFF4D8A72) : const Color(0xFF72C7A5);
 
         default:
-          return isLight
-              ? Theme.of(context).highlightColor
-              : const Color(0xFFB8C4D6);
+          return isLight ? Theme.of(context).highlightColor : const Color(0xFFB8C4D6);
       }
     }
 
     Color getPriorityBackground(String? priorityClass) {
       switch (priorityClass?.toLowerCase()) {
         case 'high':
-          return isLight
-              ? const Color(0xFFFCEDED)
-              : const Color(0xFF3D2025);
+          return isLight ? const Color(0xFFFCEDED) : const Color(0xFF3D2025);
 
         case 'medium':
-          return isLight
-              ? const Color(0xFFFCF4E7)
-              : const Color(0xFF3A2B17);
+          return isLight ? const Color(0xFFFCF4E7) : const Color(0xFF3A2B17);
 
         case 'low':
-          return isLight
-              ? const Color(0xFFE8F4EE)
-              : const Color(0xFF19352A);
+          return isLight ? const Color(0xFFE8F4EE) : const Color(0xFF19352A);
 
         default:
-          return isLight
-              ? Theme.of(context).focusColor
-              : const Color(0xFF202B3A);
+          return isLight ? Theme.of(context).focusColor : const Color(0xFF202B3A);
       }
     }
 
     return Column(
       children: [
-        CommonSectionHeader(
-          title: (topicsData?.title ?? 'Active Education Topics')
-              .toUpperCase(),
-          actionText: topicsData?.link?.text ?? '',
-          secondActionText: "",
-          onActionTap: () {},
-        ),
+        CommonSectionHeader(title: (topicsData?.title ?? 'Active Education Topics').toUpperCase(), actionText: topicsData?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
@@ -1207,21 +865,14 @@ class _SchoolScreenState extends State<SchoolScreen> {
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
             itemCount: topics.length,
-            separatorBuilder: (context, index) => Container(
-              height: 0.5,
-              color: Theme.of(context).focusColor,
-            ),
+            separatorBuilder: (context, index) => Container(height: 0.5, color: Theme.of(context).focusColor),
             itemBuilder: (context, index) {
               final item = topics[index];
 
-              final subtitle =
-                  '${item.discussions ?? 0} discussions · ${item.updated ?? ''}';
+              final subtitle = '${item.discussions ?? 0} discussions · ${item.updated ?? ''}';
 
               return Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.w_12,
-                  vertical: Dimensions.h_8,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_12, vertical: Dimensions.h_8),
                 child: _actionItem(
                   context: context,
                   icon: getTopicIcon(item.icon),
@@ -1230,12 +881,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   iconColor: getIconColor(item.iconClass),
                   iconBackground: getIconBackground(item.iconClass),
                   isLight: isLight,
-                  trailing: _priorityBadge(
-                    label: item.priority ?? '',
-                    color: getPriorityColor(item.priorityClass),
-                    backgroundColor:
-                    getPriorityBackground(item.priorityClass),
-                  ),
+                  trailing: _priorityBadge(label: item.priority ?? '', color: getPriorityColor(item.priorityClass), backgroundColor: getPriorityBackground(item.priorityClass)),
                 ),
               );
             },
@@ -1245,40 +891,25 @@ class _SchoolScreenState extends State<SchoolScreen> {
     );
   }
 
-  Widget _scoreFilter({
-    required String title,
-    bool isSelected = false,
-  }) {
+  Widget _scoreFilter({required String title, bool isSelected = false}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Dimensions.w_15),
       height: Dimensions.h_20,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: isSelected
-            ? AppColor.darkBlue
-            : Theme.of(context).scaffoldBackgroundColor,
+        color: isSelected ? AppColor.darkBlue : Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(999),
-        border: isSelected ? null :Border.all(
-          color:Theme.of(context).focusColor,
-        ),
+        border: isSelected ? null : Border.all(color: Theme.of(context).focusColor),
       ),
       child: Text(
         title,
-        style: TextStyle(
-          color: isSelected
-              ? Colors.white
-              : Theme.of(context).primaryColor,
-          fontSize: FontSize.sp_9_5,
-          fontWeight: FontWeight.w700,
-          height: 1,
-        ),
+        style: TextStyle(color: isSelected ? Colors.white : Theme.of(context).primaryColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700, height: 1),
       ),
     );
   }
 
   Widget educationCommunityPulse(bool isLight) {
-    final pulse =
-        schoolController.educationData?.schoolRail?.pulse;
+    final pulse = schoolController.educationData?.schoolRail?.pulse;
 
     final metrics = pulse?.metrics ?? [];
 
@@ -1314,31 +945,22 @@ class _SchoolScreenState extends State<SchoolScreen> {
         case 'community':
           return const Color(0xFFB94705);
         default:
-          return isLight
-              ? AppColor.primaryNavyNew
-              : AppColor.white;
+          return isLight ? AppColor.primaryNavyNew : AppColor.white;
       }
     }
 
     bool isStable(dynamic metric) {
-      return metric.valueClass?.toLowerCase() == 'stable' ||
-          metric.value?.toLowerCase() == 'stable';
+      return metric.valueClass?.toLowerCase() == 'stable' || metric.value?.toLowerCase() == 'stable';
     }
 
     bool hasPositiveChange(dynamic metric) {
       final change = metric.change ?? '';
-      return change.contains('↑') ||
-          change.toLowerCase().contains('up');
+      return change.contains('↑') || change.toLowerCase().contains('up');
     }
 
     return Column(
       children: [
-        CommonSectionHeader(
-          title: (pulse?.title ?? 'Education Community Pulse').toUpperCase(),
-          actionText: pulse?.link?.text ?? '',
-          secondActionText: "",
-          onActionTap: () {},
-        ),
+        CommonSectionHeader(title: (pulse?.title ?? 'Education Community Pulse').toUpperCase(), actionText: pulse?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
         SizedBox(height: Dimensions.h_10),
         CommonCard(
           child: Column(
@@ -1355,33 +977,12 @@ class _SchoolScreenState extends State<SchoolScreen> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        ArcGaugeIndicator(
-                          radius: Dimensions.h_40,
-                          lineWidth: 10,
-                          percent: ((pulse?.score ?? 0) / 100)
-                              .clamp(0.0, 1.0)
-                              .toDouble(),
-                          progressColor: isLight
-                              ? AppColor.townHallGreen
-                              : AppColor.townHallGreenDark,
-                          backgroundColor: Theme.of(context)
-                              .highlightColor
-                              .withValues(alpha: 0.18),
-                          sweepAngle: 360,
-                          startAngle: 0,
-                        ),
+                        ArcGaugeIndicator(radius: Dimensions.h_40, lineWidth: 10, percent: ((pulse?.score ?? 0) / 100).clamp(0.0, 1.0).toDouble(), progressColor: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark, backgroundColor: Theme.of(context).highlightColor.withValues(alpha: 0.18), sweepAngle: 360, startAngle: 0),
 
                         Text(
                           '${pulse?.score ?? 0}%',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: isLight
-                                ? AppColor.townHallGreen
-                                : AppColor.townHallGreenDark,
-                            fontSize: FontSize.sp_20,
-                            fontWeight: FontWeight.w800,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark, fontSize: FontSize.sp_20, fontWeight: FontWeight.w800, height: 1),
                         ),
                       ],
                     ),
@@ -1395,26 +996,14 @@ class _SchoolScreenState extends State<SchoolScreen> {
                       children: [
                         Text(
                           pulse?.summary?.title ?? '',
-                          style: TextStyle(
-                            color: isLight
-                                ? AppColor.townHallGreen
-                                : AppColor.townHallGreenDark,
-                            fontSize: FontSize.sp_16,
-                            fontWeight: FontWeight.w800,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark, fontSize: FontSize.sp_16, fontWeight: FontWeight.w800, height: 1),
                         ),
 
                         SizedBox(height: Dimensions.h_6),
 
                         Text(
                           pulse?.summary?.subtitle ?? '',
-                          style: TextStyle(
-                            color: Theme.of(context).hintColor,
-                            fontSize: FontSize.sp_11,
-                            fontWeight: FontWeight.w500,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: Theme.of(context).hintColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w500, height: 1),
                         ),
                       ],
                     ),
@@ -1427,33 +1016,18 @@ class _SchoolScreenState extends State<SchoolScreen> {
                 final stable = isStable(item);
                 final positive = hasPositiveChange(item);
                 return Padding(
-                  padding: EdgeInsets.only(
-                    left: Dimensions.w_10,
-                    right: Dimensions.w_10,
-                    bottom: index == metrics.length - 1
-                        ? 0
-                        : Dimensions.h_10,
-                  ),
+                  padding: EdgeInsets.only(left: Dimensions.w_10, right: Dimensions.w_10, bottom: index == metrics.length - 1 ? 0 : Dimensions.h_10),
                   child: Row(
                     children: [
                       SizedBox(
                         width: Dimensions.w_20,
-                        child: Icon(
-                          getMetricIcon(item.icon),
-                          color: getMetricIconColor(item.icon),
-                          size: Dimensions.h_16,
-                        ),
+                        child: Icon(getMetricIcon(item.icon), color: getMetricIconColor(item.icon), size: Dimensions.h_16),
                       ),
                       SizedBox(width: Dimensions.w_5),
                       Expanded(
                         child: Text(
                           item.label ?? '',
-                          style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: FontSize.sp_11,
-                            fontWeight: FontWeight.w600,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, height: 1),
                         ),
                       ),
                       SizedBox(width: Dimensions.w_8),
@@ -1462,49 +1036,22 @@ class _SchoolScreenState extends State<SchoolScreen> {
                         child: Text(
                           (item.value ?? '').toUpperCase(),
                           textAlign: TextAlign.end,
-                          style: TextStyle(
-                            color: stable
-                                ? Theme.of(context).hintColor
-                                : (isLight
-                                ? AppColor.townHallGreen
-                                : AppColor.townHallGreenDark),
-                            fontSize: FontSize.sp_10,
-                            fontWeight: FontWeight.w700,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: stable ? Theme.of(context).hintColor : (isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark), fontSize: FontSize.sp_10, fontWeight: FontWeight.w700, height: 1),
                         ),
                       ),
 
                       SizedBox(width: Dimensions.w_15),
 
                       /// Arrow
-                      if (!stable && positive)
-                        Icon(
-                          Icons.arrow_upward_outlined,
-                          color: isLight
-                              ? AppColor.townHallGreen
-                              : AppColor.townHallGreenDark,
-                          size: Dimensions.h_12,
-                        ),
+                      if (!stable && positive) Icon(Icons.arrow_upward_outlined, color: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark, size: Dimensions.h_12),
 
                       /// Change
                       SizedBox(
                         width: Dimensions.w_28,
                         child: Text(
-                          (item.change ?? '')
-                              .replaceAll('↑', '')
-                              .trim(),
+                          (item.change ?? '').replaceAll('↑', '').trim(),
                           textAlign: TextAlign.end,
-                          style: TextStyle(
-                            color: stable
-                                ? Theme.of(context).hintColor
-                                : (isLight
-                                ? AppColor.townHallGreen
-                                : AppColor.townHallGreenDark),
-                            fontSize: FontSize.sp_11,
-                            fontWeight: FontWeight.w700,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: stable ? Theme.of(context).hintColor : (isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark), fontSize: FontSize.sp_11, fontWeight: FontWeight.w700, height: 1),
                         ),
                       ),
                     ],
@@ -1518,31 +1065,15 @@ class _SchoolScreenState extends State<SchoolScreen> {
     );
   }
 
-  Widget _divider(BuildContext context,bool isLight) {
+  Widget _divider(BuildContext context, bool isLight) {
     return Container(
       height: 0.5,
-      margin: EdgeInsets.symmetric(
-        vertical: Dimensions.h_7,
-      ),
-      color: Theme.of(context)
-          .primaryColor
-          .withValues(alpha: isLight ? 0.12 : 0.18),
+      margin: EdgeInsets.symmetric(vertical: Dimensions.h_7),
+      color: Theme.of(context).primaryColor.withValues(alpha: isLight ? 0.12 : 0.18),
     );
   }
 
-  Widget _actionItem({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color iconColor,
-    required Color iconBackground,
-    required bool isLight,
-
-    String? points,
-    Color? pointsColor,
-    Widget? trailing,
-  }) {
+  Widget _actionItem({required BuildContext context, required IconData icon, required String title, required String subtitle, required Color iconColor, required Color iconBackground, required bool isLight, String? points, Color? pointsColor, Widget? trailing}) {
     return Row(
       children: [
         Container(
@@ -1552,15 +1083,9 @@ class _SchoolScreenState extends State<SchoolScreen> {
           decoration: BoxDecoration(
             color: iconBackground,
             borderRadius: BorderRadius.circular(Dimensions.h_7),
-            border: Border.all(
-              color: iconColor.withValues(alpha: 0.15),
-            ),
+            border: Border.all(color: iconColor.withValues(alpha: 0.15)),
           ),
-          child: Icon(
-            icon,
-            color: iconColor,
-            size: Dimensions.h_13,
-          ),
+          child: Icon(icon, color: iconColor, size: Dimensions.h_13),
         ),
 
         SizedBox(width: Dimensions.w_8),
@@ -1573,12 +1098,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: FontSize.sp_11,
-                  fontWeight: FontWeight.w800,
-                  height: 1.1,
-                ),
+                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w800, height: 1.1),
               ),
 
               SizedBox(height: Dimensions.h_3),
@@ -1587,12 +1107,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                 subtitle,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).hintColor,
-                  fontSize: FontSize.sp_8,
-                  fontWeight: FontWeight.w500,
-                  height: 1.1,
-                ),
+                style: TextStyle(color: Theme.of(context).hintColor, fontSize: FontSize.sp_8, fontWeight: FontWeight.w500, height: 1.1),
               ),
             ],
           ),
@@ -1605,46 +1120,25 @@ class _SchoolScreenState extends State<SchoolScreen> {
           SizedBox(width: Dimensions.w_6),
           Text(
             points,
-            style: TextStyle(
-              color: pointsColor ??
-                  (isLight
-                      ? const Color(0xFF0D6B3F)
-                      : const Color(0xFF4FC98A)),
-              fontSize: FontSize.sp_10,
-              fontWeight: FontWeight.w800,
-              height: 1,
-            ),
+            style: TextStyle(color: pointsColor ?? (isLight ? const Color(0xFF0D6B3F) : const Color(0xFF4FC98A)), fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1),
           ),
         ],
       ],
     );
   }
 
-  Widget _priorityBadge({
-    required String label,
-    required Color color,
-    required Color backgroundColor,
-  }) {
+  Widget _priorityBadge({required String label, required Color color, required Color backgroundColor}) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: Dimensions.w_8,
-        vertical: Dimensions.h_4,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_4),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(Dimensions.h_6),
-        border: Border.all(
-          color: color.withValues(alpha: 0.25),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Text(
         label.toUpperCase(),
-        style: TextStyle(
-          color: color,
-          fontSize: FontSize.sp_8,
-          fontWeight: FontWeight.w900,
-        ),
+        style: TextStyle(color: color, fontSize: FontSize.sp_8, fontWeight: FontWeight.w900),
       ),
     );
   }
@@ -1671,12 +1165,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                         (live?.title ?? '').toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontSize: FontSize.sp_11,
-                          fontWeight: FontWeight.w800,
-                          height: 1,
-                        ),
+                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w800, height: 1),
                       ),
                     ),
                     Row(
@@ -1685,24 +1174,12 @@ class _SchoolScreenState extends State<SchoolScreen> {
                         Container(
                           width: Dimensions.h_5,
                           height: Dimensions.h_5,
-                          decoration: BoxDecoration(
-                            color: isLight
-                                ? const Color(0xFF1FA85B)
-                                : const Color(0xFF4FC98A),
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: BoxDecoration(color: isLight ? const Color(0xFF1FA85B) : const Color(0xFF4FC98A), shape: BoxShape.circle),
                         ),
                         SizedBox(width: Dimensions.w_3),
                         Text(
                           live?.status?.toUpperCase() ?? '',
-                          style: TextStyle(
-                            color: isLight
-                                ? const Color(0xFF1FA85B)
-                                : const Color(0xFF4FC98A),
-                            fontSize: FontSize.sp_10,
-                            fontWeight: FontWeight.w900,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: isLight ? const Color(0xFF1FA85B) : const Color(0xFF4FC98A), fontSize: FontSize.sp_10, fontWeight: FontWeight.w900, height: 1),
                         ),
                       ],
                     ),
@@ -1712,15 +1189,8 @@ class _SchoolScreenState extends State<SchoolScreen> {
                 ...List.generate(items.length, (index) {
                   final item = items[index];
                   return Padding(
-                    padding: EdgeInsets.only(
-                      left: Dimensions.w_1,
-                      bottom: index != items.length - 1 ? Dimensions.h_8 : 0),
-                    child: CommonBulletItem(
-                      text: item.text ?? '',
-                      leadingIcon: _getLiveIcon(item.icon),
-                      iconColor: Theme.of(context).primaryColorDark,
-                      iconSize: Dimensions.h_15,
-                    ),
+                    padding: EdgeInsets.only(left: Dimensions.w_1, bottom: index != items.length - 1 ? Dimensions.h_8 : 0),
+                    child: CommonBulletItem(text: item.text ?? '', leadingIcon: _getLiveIcon(item.icon), iconColor: Theme.of(context).primaryColorDark, iconSize: Dimensions.h_15),
                   );
                 }),
                 if (link != null) ...[
@@ -1730,19 +1200,10 @@ class _SchoolScreenState extends State<SchoolScreen> {
                     children: [
                       Text(
                         link.text ?? '',
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColorDark,
-                          fontSize: FontSize.sp_9_5,
-                          fontWeight: FontWeight.w800,
-                          height: 1,
-                        ),
+                        style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w800, height: 1),
                       ),
                       SizedBox(width: Dimensions.w_4),
-                      Icon(
-                        _getLinkIcon(link.icon),
-                        color: Theme.of(context).primaryColorDark,
-                        size: Dimensions.h_13,
-                      ),
+                      Icon(_getLinkIcon(link.icon), color: Theme.of(context).primaryColorDark, size: Dimensions.h_13),
                       SizedBox(width: Dimensions.w_5),
                     ],
                   ),
@@ -1757,7 +1218,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
   }
 
   Widget aiBrief() {
-    return CommonCard(
+    return CommonAiBrief(
       margin: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1765,68 +1226,40 @@ class _SchoolScreenState extends State<SchoolScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AppCacheImage(imageUrl: "https://staging.wikixm.com${schoolController.educationData?.schoolRail?.aiBrief?.image ?? ''}",
-              size: Dimensions.h_30,
-              widthSize: Dimensions.h_30,
-              isCircle: true,
-              isShadow: false),
-            SizedBox(width: Dimensions.w_5),
-            Text(
-              'AI EDUCATION BRIEF',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Theme.of(context).primaryColor,
-                fontSize: FontSize.sp_12,
-                fontWeight: FontWeight.w800,
-                height: 1,
+              AppCacheImage(imageUrl: "https://staging.wikixm.com${schoolController.educationData?.schoolRail?.aiBrief?.image ?? ''}", size: Dimensions.h_30, widthSize: Dimensions.h_30, isCircle: true, isShadow: false),
+              SizedBox(width: Dimensions.w_5),
+              Text(
+                'AI EDUCATION BRIEF',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800, height: 1),
               ),
-            ),
-            const Spacer(),
-            Text(
-              schoolController.educationData?.schoolRail?.aiBrief?.updated?.text  ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Theme.of(context).highlightColor,
-                fontSize: FontSize.sp_9,
-                fontWeight: FontWeight.w500,
-                height: 1,
+              const Spacer(),
+              Text(
+                schoolController.educationData?.schoolRail?.aiBrief?.updated?.text ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, height: 1),
               ),
-            ),
-          ],),
+            ],
+          ),
           SizedBox(height: Dimensions.h_12),
           Padding(
-            padding:  EdgeInsets.only(left: Dimensions.w_8),
+            padding: EdgeInsets.only(left: Dimensions.w_8),
             child: RichText(
               text: TextSpan(
                 children: [
                   TextSpan(
                     text: schoolController.educationData?.schoolRail?.aiBrief?.intro ?? '',
-                    style: TextStyle(
-                      color: Theme.of(context).highlightColor,
-                      fontSize: FontSize.sp_10,
-                      fontWeight: FontWeight.w500,
-                      height: 1.3,
-                    ),
+                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.3),
                   ),
                   TextSpan(
                     text: ' ${schoolController.educationData?.schoolRail?.aiBrief?.introHighlight ?? ''}',
-                    style: TextStyle(
-                      color: Theme.of(context).highlightColor,
-                      fontSize: FontSize.sp_10,
-                      fontWeight: FontWeight.w800,
-                      height: 1.3,
-                    ),
+                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1.3),
                   ),
                   TextSpan(
                     text: ' across ${schoolController.educationData?.location?.name ?? ''}.',
-                    style: TextStyle(
-                      color: Theme.of(context).highlightColor,
-                      fontSize: FontSize.sp_10,
-                      fontWeight: FontWeight.w500,
-                      height: 1.3,
-                    ),
+                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.3),
                   ),
                 ],
               ),
@@ -1834,48 +1267,32 @@ class _SchoolScreenState extends State<SchoolScreen> {
           ),
           SizedBox(height: Dimensions.h_8),
           Padding(
-            padding:  EdgeInsets.only(left: Dimensions.w_8),
+            padding: EdgeInsets.only(left: Dimensions.w_8),
             child: Text(
               schoolController.educationData?.schoolRail?.aiBrief?.highlight ?? '',
-              style: TextStyle(
-                color: Theme.of(context).highlightColor,
-                fontSize: FontSize.sp_10,
-                fontWeight: FontWeight.w800,
-                height: 1.2,
-              ),
-            )
+              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1.2),
+            ),
           ),
           SizedBox(height: Dimensions.h_8),
           Padding(
-              padding:  EdgeInsets.only(left: Dimensions.w_8),
-              child: Text(
-                schoolController.educationData?.schoolRail?.aiBrief?.description ?? '',
-                style: TextStyle(
-                  color: Theme.of(context).highlightColor,
-                  fontSize: FontSize.sp_10,
-                  fontWeight: FontWeight.w500,
-                  height: 1.2,
-                ),
-              )
+            padding: EdgeInsets.only(left: Dimensions.w_8),
+            child: Text(
+              schoolController.educationData?.schoolRail?.aiBrief?.description ?? '',
+              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.2),
+            ),
           ),
           SizedBox(height: Dimensions.h_10),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                  'Ask AI About Our Schools',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontSize: FontSize.sp_10,
-                      fontWeight: FontWeight.w800,
-                      height: 1)),
+                'Ask AI About Our Schools',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1),
+              ),
               SizedBox(width: Dimensions.w_4),
-              Icon(
-                  Icons.arrow_forward,
-                  color: Theme.of(context).primaryColorDark,
-                  size: Dimensions.h_13),
+              Icon(Icons.arrow_forward, color: Theme.of(context).primaryColorDark, size: Dimensions.h_13),
               SizedBox(width: Dimensions.w_15),
             ],
           ),
@@ -1928,31 +1345,18 @@ class _SchoolScreenState extends State<SchoolScreen> {
     final heroImage = controller.educationData?.hero?.image ?? '';
     final imageUrl = heroImage.isNotEmpty
         ? heroImage.startsWith('http')
-        ? heroImage
-        : 'https://staging.wikixm.com$heroImage'
+              ? heroImage
+              : 'https://staging.wikixm.com$heroImage'
         : 'https://preetis-html.vercel.app/assets/images/school/version2/pine-valley-school-campus-v3.webp';
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        AnimatedWeatherImage(
-          height: Dimensions.h_350,
-          image: imageUrl,
-        ),
+        AnimatedWeatherImage(height: Dimensions.h_350, image: imageUrl),
         Positioned.fill(
           child: Container(
             height: Dimensions.h_350,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  const Color(0xFF020B15).withValues(alpha: 0.85),
-                  const Color(0xFF020B15).withValues(alpha: 0.65),
-                  const Color(0xFF020B15).withValues(alpha: 0.35),
-                  Colors.transparent,
-                ],
-                stops: const [0.0, 0.30, 0.58, 1.0],
-              ),
+              gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent], stops: const [0.0, 0.30, 0.58, 1.0]),
             ),
           ),
         ),
@@ -1964,71 +1368,42 @@ class _SchoolScreenState extends State<SchoolScreen> {
             children: [
               const Spacer(),
               Padding(
-                padding: EdgeInsets.only(
-                  left: Dimensions.w_8,
-                ),
+                padding: EdgeInsets.only(left: Dimensions.w_8),
                 child: Text(
-                  controller.educationData?.hero?.greeting
-                      ?.toUpperCase() ??
-                      '',
+                  controller.educationData?.hero?.greeting?.toUpperCase() ?? '',
                   style: TextStyle(
                     color: const Color(0xFFFFE47A),
                     fontSize: FontSize.sp_11,
                     fontWeight: FontWeight.w900,
                     height: 1.1,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black.withValues(alpha: 0.9),
-                        blurRadius: 30,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    shadows: [Shadow(color: Colors.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2))],
                   ),
                 ),
               ),
 
               Padding(
-                padding: EdgeInsets.only(
-                  left: Dimensions.w_5,
-                  top: Dimensions.h_10,
-                ),
+                padding: EdgeInsets.only(left: Dimensions.w_5, top: Dimensions.h_10),
                 child: Text(
                   "${controller.educationData?.location?.name ?? ''}\n"
-                      "Education Center",
+                  "Education Center",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: FontSize.sp_24,
                     fontWeight: FontWeight.w900,
                     height: 1.1,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black.withValues(alpha: 0.9),
-                        blurRadius: 30,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    shadows: [Shadow(color: Colors.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2))],
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(
-                  left: Dimensions.w_8,
-                  top: Dimensions.h_10,
-                  right: Dimensions.w_60,
-                ),
+                padding: EdgeInsets.only(left: Dimensions.w_8, top: Dimensions.h_10, right: Dimensions.w_60),
                 child: Text(
                   controller.educationData?.hero?.description ?? '',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: FontSize.sp_12,
                     fontWeight: FontWeight.w900,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black.withValues(alpha: 0.9),
-                        blurRadius: 30,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                    shadows: [Shadow(color: Colors.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2))],
                   ),
                 ),
               ),
@@ -2050,37 +1425,17 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    (isLight
-                        ? AppColor.softBackground
-                        : AppColor.backgroundDark)
-                        .withValues(alpha: 0.0),
+                    (isLight ? AppColor.softBackground : AppColor.backgroundDark).withValues(alpha: 0.0),
 
-                    (isLight
-                        ? AppColor.softBackground
-                        : AppColor.backgroundDark)
-                        .withValues(alpha: 0.15),
+                    (isLight ? AppColor.softBackground : AppColor.backgroundDark).withValues(alpha: 0.15),
 
-                    (isLight
-                        ? AppColor.softBackground
-                        : AppColor.backgroundDark)
-                        .withValues(alpha: 0.35),
+                    (isLight ? AppColor.softBackground : AppColor.backgroundDark).withValues(alpha: 0.35),
 
-                    (isLight
-                        ? AppColor.softBackground
-                        : AppColor.backgroundDark)
-                        .withValues(alpha: 0.78),
+                    (isLight ? AppColor.softBackground : AppColor.backgroundDark).withValues(alpha: 0.78),
 
-                    isLight
-                        ? AppColor.softBackground
-                        : AppColor.backgroundDark,
+                    isLight ? AppColor.softBackground : AppColor.backgroundDark,
                   ],
-                  stops: const [
-                    0.08,
-                    0.25,
-                    0.45,
-                    0.75,
-                    1.0,
-                  ],
+                  stops: const [0.08, 0.25, 0.45, 0.75, 1.0],
                 ),
               ),
             ),
@@ -2089,57 +1444,32 @@ class _SchoolScreenState extends State<SchoolScreen> {
       ],
     );
   }
+
   Widget communityStatsSection() {
     final stats = schoolController.educationData?.hero?.stats ?? [];
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: Dimensions.w_5,
-        vertical: Dimensions.h_5,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
       child: Column(
-        children: List.generate(
-          (stats.length / 2).ceil(),
-              (rowIndex) {
-            final firstIndex = rowIndex * 2;
-            final secondIndex = firstIndex + 1;
+        children: List.generate((stats.length / 2).ceil(), (rowIndex) {
+          final firstIndex = rowIndex * 2;
+          final secondIndex = firstIndex + 1;
 
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: rowIndex != (stats.length / 2).ceil() - 1
-                    ? Dimensions.h_12
-                    : 0,
-              ),
-              child: Row(
-                children: [
-                  _communityStatItem(
-                    icon: _getCommunityStatIcon(
-                      stats[firstIndex].icon,
-                    ),
-                    value: _formatStatValue(
-                      stats[firstIndex].value,
-                    ),
-                    label: stats[firstIndex].label ?? '',
+          return Padding(
+            padding: EdgeInsets.only(bottom: rowIndex != (stats.length / 2).ceil() - 1 ? Dimensions.h_12 : 0),
+            child: Row(
+              children: [
+                _communityStatItem(icon: _getCommunityStatIcon(stats[firstIndex].icon), value: _formatStatValue(stats[firstIndex].value), label: stats[firstIndex].label ?? ''),
+                if (secondIndex < stats.length) ...[
+                  SizedBox(width: Dimensions.w_20),
+                  Expanded(
+                    child: _communityStatItem(icon: _getCommunityStatIcon(stats[secondIndex].icon), value: _formatStatValue(stats[secondIndex].value), label: stats[secondIndex].label ?? ''),
                   ),
-                  if (secondIndex < stats.length) ...[
-                    SizedBox(width: Dimensions.w_20),
-                    Expanded(
-                      child: _communityStatItem(
-                        icon: _getCommunityStatIcon(
-                          stats[secondIndex].icon,
-                        ),
-                        value: _formatStatValue(
-                          stats[secondIndex].value,
-                        ),
-                        label: stats[secondIndex].label ?? '',
-                      ),
-                    ),
-                  ] else
-                    const Expanded(child: SizedBox()),
-                ],
-              ),
-            );
-          },
-        ),
+                ] else
+                  const Expanded(child: SizedBox()),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -2149,10 +1479,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     if (value is num) {
       final number = value.toInt();
-      return number.toString().replaceAllMapped(
-        RegExp(r'\B(?=(\d{3})+(?!\d))'),
-            (match) => ',',
-      );
+      return number.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (match) => ',');
     }
 
     return value.toString();
@@ -2182,43 +1509,26 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
   }
 
-  Widget _communityStatItem({
-    required IconData icon,
-    required String value,
-    required String label,
-  }) {
+  Widget _communityStatItem({required IconData icon, required String value, required String label}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: Color(0xFF8adfff),
-          size: Dimensions.h_20,
-        ),
+        Icon(icon, color: Color(0xFF8adfff), size: Dimensions.h_20),
         SizedBox(width: Dimensions.w_5),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               value,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: FontSize.sp_18,
-                fontWeight: FontWeight.w900,
-                height: 1,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_18, fontWeight: FontWeight.w900, height: 1),
             ),
             SizedBox(height: Dimensions.h_2),
             Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: FontSize.sp_11,
-                fontWeight: FontWeight.w700,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
             ),
           ],
         ),
@@ -2252,24 +1562,16 @@ class _SchoolScreenState extends State<SchoolScreen> {
       }
       return 'https://staging.wikixm.com$image';
     }
+
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
       itemCount: items.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: Dimensions.w_8,
-        mainAxisSpacing: Dimensions.h_8,
-        childAspectRatio: 0.78,
-      ),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: Dimensions.w_8, mainAxisSpacing: Dimensions.h_8, childAspectRatio: 0.78),
       itemBuilder: (context, index) {
         final item = items[index];
-
-        final priorityColor = getPriorityColor(
-          item.priority?.className,
-        );
-
+        final priorityColor = getPriorityColor(item.priority?.className);
         return CommonCard(
           padding: EdgeInsets.zero,
           child: Column(
@@ -2279,17 +1581,8 @@ class _SchoolScreenState extends State<SchoolScreen> {
                 clipBehavior: Clip.none,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(Dimensions.h_8),
-                      topRight: Radius.circular(Dimensions.h_8),
-                    ),
-                    child: AppCacheImage(
-                      imageUrl: getFullImageUrl(item.image),
-                      size: Dimensions.h_115,
-                      widthSize: Get.width,
-                      radius: 0,
-                      isShadow: false,
-                    ),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimensions.h_10), topRight: Radius.circular(Dimensions.h_10)),
+                    child: AppCacheImage(imageUrl: getFullImageUrl(item.image), size: Dimensions.h_115, widthSize: Get.width, radius: 0, isShadow: false),
                   ),
                   Positioned(
                     left: Dimensions.w_8,
@@ -2298,18 +1591,10 @@ class _SchoolScreenState extends State<SchoolScreen> {
                       width: Dimensions.h_18,
                       height: Dimensions.h_18,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColor.primaryNavyNew,
-                        shape: BoxShape.circle,
-                      ),
+                      decoration: BoxDecoration(color: AppColor.primaryNavyNew, shape: BoxShape.circle),
                       child: Text(
                         '${item.rank ?? ''}',
-                        style: TextStyle(
-                          color: AppColor.white,
-                          fontSize: FontSize.sp_11,
-                          fontWeight: FontWeight.w900,
-                          height: 1,
-                        ),
+                        style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w900, height: 1),
                       ),
                     ),
                   ),
@@ -2318,25 +1603,15 @@ class _SchoolScreenState extends State<SchoolScreen> {
                       right: Dimensions.w_7,
                       top: Dimensions.h_7,
                       child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Dimensions.w_6,
-                          vertical: Dimensions.h_3,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6, vertical: Dimensions.h_3),
                         decoration: BoxDecoration(
                           color: priorityColor,
-                          border: Border.all(
-                            color: priorityColor.withValues(alpha: 0.60),
-                          ),
+                          border: Border.all(color: priorityColor.withValues(alpha: 0.60)),
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
                           (item.priority?.label ?? '').toUpperCase(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: FontSize.sp_7,
-                            fontWeight: FontWeight.w900,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: FontSize.sp_7, fontWeight: FontWeight.w900, height: 1),
                         ),
                       ),
                     ),
@@ -2344,10 +1619,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimensions.w_8,
-                    vertical: Dimensions.h_7,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_7),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -2355,55 +1627,28 @@ class _SchoolScreenState extends State<SchoolScreen> {
                         item.title ?? '',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontSize: FontSize.sp_12,
-                          fontWeight: FontWeight.w800,
-                          height: 1.1,
-                        ),
+                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800, height: 1.1),
                       ),
                       SizedBox(height: Dimensions.h_5),
                       Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Dimensions.w_6,
-                          vertical: Dimensions.h_4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isLight
-                              ? const Color(0xFFf2f6fd)
-                              : const Color(0xFF102844),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6, vertical: Dimensions.h_4),
+                        decoration: BoxDecoration(color: isLight ? const Color(0xFFf2f6fd) : const Color(0xFF102844), borderRadius: BorderRadius.circular(6)),
                         child: Text(
                           item.topic ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: isLight
-                                ? const Color(0xFF0754e8)
-                                : const Color(0xFF82b4ff),
-                            fontSize: FontSize.sp_9,
-                            fontWeight: FontWeight.w900,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: isLight ? const Color(0xFF0754e8) : const Color(0xFF82b4ff), fontSize: FontSize.sp_9, fontWeight: FontWeight.w900, height: 1),
                         ),
                       ),
                       const Spacer(),
                       Padding(
-                        padding:  EdgeInsets.only(left: Dimensions.w_2),
+                        padding: EdgeInsets.only(left: Dimensions.w_2),
                         child: Text(
                           '${item.comments ?? 0} comments · '
-                              '${item.readTime ?? 0} min read',
+                          '${item.readTime ?? 0} min read',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: isLight
-                                ? Theme.of(context).highlightColor
-                                : const Color(0xFFc0ccdd),
-                            fontSize: FontSize.sp_9_5,
-                            fontWeight: FontWeight.w500,
-                            height: 1,
-                          ),
+                          style: TextStyle(color: isLight ? Theme.of(context).highlightColor : const Color(0xFFc0ccdd), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, height: 1),
                         ),
                       ),
                     ],
@@ -2430,8 +1675,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
 
     IconData getSchoolIcon(String? iconUrl) {
-      final iconName =
-          iconUrl?.split('#').last.toLowerCase() ?? '';
+      final iconName = iconUrl?.split('#').last.toLowerCase() ?? '';
 
       switch (iconName) {
         case 'eagle-head':
@@ -2459,18 +1703,17 @@ class _SchoolScreenState extends State<SchoolScreen> {
     final filteredSchools = selectedFilter == 'all'
         ? schools
         : schools.where((school) {
-      return school.type == selectedFilter;
-    }).toList();
+            return school.type == selectedFilter;
+          }).toList();
     final showViewAll = selectedFilter == 'all';
 
     return SizedBox(
-      height: Dimensions.h_160,
+      height: Dimensions.h_180,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.zero,
         itemCount: filteredSchools.length + (showViewAll ? 1 : 0),
-        separatorBuilder: (context, index) =>
-            SizedBox(width: Dimensions.w_8),
+        separatorBuilder: (context, index) => SizedBox(width: Dimensions.w_8),
         itemBuilder: (context, index) {
           if (showViewAll && index == filteredSchools.length) {
             return _buildViewAllSchoolsCard(isLight);
@@ -2495,21 +1738,8 @@ class _SchoolScreenState extends State<SchoolScreen> {
                       clipBehavior: Clip.none,
                       children: [
                         ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(
-                              Dimensions.h_8,
-                            ),
-                            topRight: Radius.circular(
-                              Dimensions.h_8,
-                            ),
-                          ),
-                          child: AppCacheImage(
-                            imageUrl: getFullImageUrl(item.image),
-                            size: Dimensions.h_70,
-                            widthSize: Dimensions.w_120,
-                            radius: 0,
-                            isShadow: false,
-                          ),
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimensions.h_8), topRight: Radius.circular(Dimensions.h_8)),
+                          child: AppCacheImage(imageUrl: getFullImageUrl(item.image), size: Dimensions.h_70, widthSize: Dimensions.w_120, radius: 0, isShadow: false),
                         ),
                         Positioned(
                           left: Dimensions.w_10,
@@ -2520,20 +1750,9 @@ class _SchoolScreenState extends State<SchoolScreen> {
                             decoration: BoxDecoration(
                               color: AppColor.white,
                               shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(
-                                    alpha: 0.12,
-                                  ),
-                                  blurRadius: 5,
-                                ),
-                              ],
+                              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.12), blurRadius: 5)],
                             ),
-                            child: Icon(
-                              getSchoolIcon(item.icon),
-                              size: Dimensions.h_13,
-                              color: const Color(0xFF244D8D),
-                            ),
+                            child: Icon(getSchoolIcon(item.icon), size: Dimensions.h_13, color: const Color(0xFF244D8D)),
                           ),
                         ),
                       ],
@@ -2541,51 +1760,25 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        Dimensions.w_10,
-                        Dimensions.h_20,
-                        Dimensions.w_10,
-                        Dimensions.h_8,
-                      ),
+                      padding: EdgeInsets.fromLTRB(Dimensions.w_10, Dimensions.h_20, Dimensions.w_10, Dimensions.h_8),
                       child: Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             item.name ?? '',
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color:
-                              Theme.of(context).primaryColor,
-                              fontSize: FontSize.sp_12,
-                              fontWeight: FontWeight.w800,
-                              height: 1.2,
-                            ),
+                            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800, height: 1.2),
                           ),
                           const Spacer(),
                           Text(
                             item.grades ?? '',
-                            style: TextStyle(
-                              color: isLight
-                                  ? Theme.of(context)
-                                  .highlightColor
-                                  : const Color(0xFF9DABC0),
-                              fontSize: FontSize.sp_9,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: TextStyle(color: isLight ? Theme.of(context).highlightColor : const Color(0xFF9DABC0), fontSize: FontSize.sp_9, fontWeight: FontWeight.w500),
                           ),
                           SizedBox(height: Dimensions.h_3),
                           Text(
                             '${item.students ?? 0} students',
-                            style: TextStyle(
-                              color: isLight
-                                  ? Theme.of(context)
-                                  .highlightColor
-                                  : const Color(0xFF9DABC0),
-                              fontSize: FontSize.sp_9,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: TextStyle(color: isLight ? Theme.of(context).highlightColor : const Color(0xFF9DABC0), fontSize: FontSize.sp_9, fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
@@ -2599,6 +1792,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
       ),
     );
   }
+
   Widget _buildViewAllSchoolsCard(bool isLight) {
     return SizedBox(
       width: Dimensions.w_110,
@@ -2606,36 +1800,21 @@ class _SchoolScreenState extends State<SchoolScreen> {
         padding: EdgeInsets.zero,
         child: InkWell(
           borderRadius: BorderRadius.circular(Dimensions.h_8),
-          onTap: () {
-          },
+          onTap: () {},
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.grid_view_rounded,
-                color: Theme.of(context).primaryColorDark,
-                size: Dimensions.h_25,
-              ),
+              Icon(Icons.grid_view_rounded, color: Theme.of(context).primaryColorDark, size: Dimensions.h_25),
 
               SizedBox(height: Dimensions.h_8),
 
               Text(
                 'View All',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColorDark,
-                  fontSize: FontSize.sp_13_5,
-                  fontWeight: FontWeight.w800,
-                ),
+                style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w800),
               ),
               Text(
                 '14 Schools',
-                style: TextStyle(
-                  color: isLight
-                      ? Theme.of(Get.context!).highlightColor
-                      : const Color(0xFF9DABC0),
-                  fontSize: FontSize.sp_9_5,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(color: isLight ? Theme.of(Get.context!).highlightColor : const Color(0xFF9DABC0), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -2643,7 +1822,4 @@ class _SchoolScreenState extends State<SchoolScreen> {
       ),
     );
   }
-
 }
-
-

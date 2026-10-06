@@ -10,23 +10,17 @@ import '../../data/datasource/remote/models/response/command_center_response.dar
 import '../../data/datasource/remote/models/response/town_hall_response.dart';
 
 class LegislativeBillsSection extends StatefulWidget {
-  const LegislativeBillsSection({
-    super.key,
-    required this.isLight,
-    this.bills,
-  });
+  const LegislativeBillsSection({super.key, required this.isLight, this.bills});
 
   final bool isLight;
   final TownHallBills? bills;
 
   @override
-  State<LegislativeBillsSection> createState() =>
-      _LegislativeBillsSectionState();
+  State<LegislativeBillsSection> createState() => _LegislativeBillsSectionState();
 }
 
 class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
-  final CarouselSliderController _carouselController =
-  CarouselSliderController();
+  final CarouselSliderController _carouselController = CarouselSliderController();
 
   int _currentIndex = 0;
   String _selectedFilter = 'all';
@@ -46,14 +40,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
             Expanded(
               child: Text(
                 bills?.title ?? '',
-                style: TextStyle(
-                  color: isLight
-                      ? AppColor.townHallGreen
-                      : AppColor.townHallGreenDark,
-                  fontSize: FontSize.sp_13_5,
-                  fontWeight: FontWeight.w800,
-                  height: 1,
-                ),
+                style: TextStyle(color: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark, fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w800, height: 1),
               ),
             ),
             SizedBox(width: Dimensions.w_5),
@@ -63,40 +50,17 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
                   _showBillFilters(bills?.filters ?? []);
                 },
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimensions.w_8,
-                    vertical: Dimensions.h_4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(
-                      Dimensions.h_4,
-                    ),
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_4),
+                  decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.h_4)),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        bills?.filters?.firstWhere(
-                              (filter) =>
-                          filter.value == _selectedFilter,
-                          orElse: () => bills.filters!.first,
-                        )
-                            .label ??
-                            '',
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontSize: FontSize.sp_9,
-                          fontWeight: FontWeight.w800,
-                          height: 1,
-                        ),
+                        bills?.filters?.firstWhere((filter) => filter.value == _selectedFilter, orElse: () => bills.filters!.first).label ?? '',
+                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w800, height: 1),
                       ),
                       SizedBox(width: Dimensions.w_2),
-                      Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: Dimensions.h_13,
-                        color: Theme.of(context).primaryColorDark,
-                      ),
+                      Icon(Icons.keyboard_arrow_down_rounded, size: Dimensions.h_13, color: Theme.of(context).primaryColorDark),
                     ],
                   ),
                 ),
@@ -125,11 +89,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
                     });
                   },
                 ),
-                itemBuilder: (
-                    BuildContext context,
-                    int index,
-                    int realIndex,
-                    ) {
+                itemBuilder: (BuildContext context, int index, int realIndex) {
                   if (index == 0) {
                     return _buildPriorityCard(bills?.featured);
                   }
@@ -146,10 +106,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
                     impact: bill.impact?.value ?? '',
                     responses: bill.responses ?? '',
                     followers: _formatFollowers(bill.following),
-                    isApproachingVote: _hasRibbon(
-                      bill,
-                      'VOTE APPROACHING',
-                    ),
+                    isApproachingVote: _hasRibbon(bill, 'VOTE APPROACHING'),
                     onFollow: () {
                       _onFollow(bill);
                     },
@@ -191,31 +148,17 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
         SizedBox(height: Dimensions.h_6),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            items.length + 1,
-                (index) {
-              final selected = index == _currentIndex;
+          children: List.generate(items.length + 1, (index) {
+            final selected = index == _currentIndex;
 
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                margin: EdgeInsets.symmetric(
-                  horizontal: Dimensions.w_2,
-                ),
-                width: selected
-                    ? Dimensions.w_7
-                    : Dimensions.w_4,
-                height: Dimensions.h_4,
-                decoration: BoxDecoration(
-                  color: selected
-                      ? Theme.of(context).primaryColorDark
-                      : Theme.of(context)
-                      .highlightColor
-                      .withValues(alpha: 0.20),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              );
-            },
-          ),
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              margin: EdgeInsets.symmetric(horizontal: Dimensions.w_2),
+              width: selected ? Dimensions.w_7 : Dimensions.w_4,
+              height: Dimensions.h_4,
+              decoration: BoxDecoration(color: selected ? Theme.of(context).primaryColorDark : Theme.of(context).highlightColor.withValues(alpha: 0.20), borderRadius: BorderRadius.circular(20)),
+            );
+          }),
         ),
       ],
     );
@@ -238,25 +181,18 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
   }
 
   bool _hasRibbon(dynamic bill, String value) {
-    return (bill.ribbons ?? []).any(
-          (ribbon) =>
-      ribbon.label?.toUpperCase() == value.toUpperCase(),
-    );
+    return (bill.ribbons ?? []).any((ribbon) => ribbon.label?.toUpperCase() == value.toUpperCase());
   }
 
   String _formatFollowers(dynamic following) {
     if (following == null) return '';
 
-    final value = following is num
-        ? following.toInt()
-        : int.tryParse(following.toString()) ?? 0;
+    final value = following is num ? following.toInt() : int.tryParse(following.toString()) ?? 0;
 
     if (value >= 1000) {
       final formatted = value / 1000;
 
-      return '${formatted.toStringAsFixed(
-        formatted % 1 == 0 ? 0 : 1,
-      )}K following';
+      return '${formatted.toStringAsFixed(formatted % 1 == 0 ? 0 : 1)}K following';
     }
 
     return '$value following';
@@ -265,190 +201,104 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
   Widget _buildPriorityCard(dynamic featured) {
     final legend = widget.bills?.priorityLegend ?? [];
     return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: Dimensions.w_2,
-      ),
-      padding: EdgeInsets.all(
-        Dimensions.w_8,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: Dimensions.w_2),
+      padding: EdgeInsets.all(Dimensions.w_8),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(
-          Dimensions.h_6,
-        ),
-        border: Border.all(
-          color: Theme.of(context).focusColor,
-        ),
+        borderRadius: BorderRadius.circular(Dimensions.h_6),
+        border: Border.all(color: Theme.of(context).focusColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'PRIORITY (Urgency)',
-            style: TextStyle(
-              color: Theme.of(context).primaryColorDark,
-              fontSize: FontSize.sp_10,
-              fontWeight: FontWeight.w800,
-            ),
+            style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
           ),
           SizedBox(height: Dimensions.h_8),
-          if (legend.isNotEmpty)
-            _priorityRow(
-              color: Colors.red,
-              title: legend[0].label ?? '',
-              trailing: legend[0].timing ?? '',
-            ),
-          if (legend.length > 1) ...[
-            SizedBox(height: Dimensions.h_6),
-            _priorityRow(
-              color: Colors.green,
-              title: legend[1].label ?? '',
-              trailing: legend[1].timing ?? '',
-            ),
-          ],
-          if (legend.length > 2) ...[
-            SizedBox(height: Dimensions.h_6),
-            _priorityRow(
-              color: Theme.of(context).primaryColorDark,
-              title: legend[2].label ?? '',
-              trailing: legend[2].timing ?? '',
-            ),
-          ],
+          if (legend.isNotEmpty) _priorityRow(color: Colors.red, title: legend[0].label ?? '', trailing: legend[0].timing ?? ''),
+          if (legend.length > 1) ...[SizedBox(height: Dimensions.h_6), _priorityRow(color: Colors.green, title: legend[1].label ?? '', trailing: legend[1].timing ?? '')],
+          if (legend.length > 2) ...[SizedBox(height: Dimensions.h_6), _priorityRow(color: Theme.of(context).primaryColorDark, title: legend[2].label ?? '', trailing: legend[2].timing ?? '')],
           SizedBox(height: Dimensions.h_8),
           Padding(
-            padding: EdgeInsets.only(
-              left: Dimensions.w_8,
-            ),
+            padding: EdgeInsets.only(left: Dimensions.w_8),
             child: Text(
               featured?.description ?? '',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Theme.of(context).highlightColor,
-                fontSize: FontSize.sp_9_5,
-                fontWeight: FontWeight.w500,
-                height: 1.3,
-              ),
+              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, height: 1.3),
             ),
           ),
           const Spacer(),
           Row(
             children: [
               Expanded(
-                child: _infoItem(
-                  title: 'Impact',
-                  value: featured?.impact?.value ?? '',
-                ),
+                child: _infoItem(title: 'Impact', value: featured?.impact?.value ?? ''),
               ),
               Expanded(
-                child: _infoItem(
-                  title: 'Rep. Responses',
-                  value: featured?.responses ?? '',
-                ),
+                child: _infoItem(title: 'Rep. Responses', value: featured?.responses ?? ''),
               ),
             ],
           ),
           SizedBox(height: Dimensions.h_6),
           Row(
             children: [
-              Icon(
-                CupertinoIcons.person_2_fill,
-                color: isLight
-                    ? AppColor.townHallGreen
-                    : AppColor.townHallGreenDark,
-                size: Dimensions.h_12,
-              ),
+              Icon(CupertinoIcons.person_2_fill, color: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark, size: Dimensions.h_12),
               SizedBox(width: Dimensions.w_3),
               Text(
                 _formatFollowers(featured?.following),
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: FontSize.sp_9_5,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700),
               ),
             ],
           ),
           SizedBox(height: Dimensions.h_7),
-          _actionButtons(
-            onFollow: () {},
-            onDetails: () {},
-          ),
+          _actionButtons(onFollow: () {}, onDetails: () {}),
         ],
       ),
     );
   }
 
-  Widget _priorityRow({
-    required Color color,
-    required String title,
-    required String trailing,
-  }) {
+  Widget _priorityRow({required Color color, required String title, required String trailing}) {
     return Row(
       children: [
         Container(
           width: Dimensions.h_6,
           height: Dimensions.h_6,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         SizedBox(width: Dimensions.w_5),
         Expanded(
           child: Text(
             title,
-            style: TextStyle(
-              color: Theme.of(context).primaryColor,
-              fontSize: FontSize.sp_9_5,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
           ),
         ),
         Text(
           trailing,
-          style: TextStyle(
-            color: Theme.of(context).primaryColorDark,
-            fontSize: FontSize.sp_9_5,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
         ),
       ],
     );
   }
 
-  Widget _infoItem({
-    required String title,
-    required String value,
-  }) {
+  Widget _infoItem({required String title, required String value}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: TextStyle(
-            color: Theme.of(context).highlightColor,
-            fontSize: FontSize.sp_9_5,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500),
         ),
         SizedBox(height: Dimensions.h_2),
         Text(
           value,
-          style: TextStyle(
-            color: Theme.of(context).primaryColor,
-            fontSize: FontSize.sp_9_5,
-            fontWeight: FontWeight.w700,
-          ),
+          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700),
         ),
       ],
     );
   }
 
-  Widget _navigationButton({
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
+  Widget _navigationButton({required IconData icon, required VoidCallback onTap}) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
@@ -458,24 +308,10 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           shape: BoxShape.circle,
-          border: Border.all(
-            color: Theme.of(context)
-                .highlightColor
-                .withValues(alpha: 0.15),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          border: Border.all(color: Theme.of(context).highlightColor.withValues(alpha: 0.15)),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 6, offset: const Offset(0, 2))],
         ),
-        child: Icon(
-          icon,
-          size: Dimensions.h_15,
-          color: Theme.of(context).primaryColorDark,
-        ),
+        child: Icon(icon, size: Dimensions.h_15, color: Theme.of(context).primaryColorDark),
       ),
     );
   }
@@ -489,30 +325,16 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: filters.map((filter) {
-              final selected =
-                  filter.value == _selectedFilter;
+              final selected = filter.value == _selectedFilter;
               return ListTile(
                 title: Text(
                   filter.label ?? '',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: selected
-                        ? FontWeight.w700
-                        : FontWeight.w500,
-                  ),
+                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: selected ? FontWeight.w700 : FontWeight.w500),
                 ),
-                trailing: selected
-                    ? Icon(
-                  CupertinoIcons.checkmark,
-                  color: isLight
-                      ? AppColor.townHallGreen
-                      : AppColor.townHallGreenDark,
-                )
-                    : null,
+                trailing: selected ? Icon(CupertinoIcons.checkmark, color: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark) : null,
                 onTap: () {
                   setState(() {
-                    _selectedFilter =
-                        filter.value ?? 'all';
+                    _selectedFilter = filter.value ?? 'all';
                     _currentIndex = 0;
                   });
                   Navigator.pop(context);
@@ -533,6 +355,7 @@ class _LegislativeBillsSectionState extends State<LegislativeBillsSection> {
     debugPrint('Details: ${bill.title}');
   }
 }
+
 class CommonBillCard extends StatelessWidget {
   final String title;
   final String billNumber;
@@ -567,54 +390,37 @@ class CommonBillCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(
-        horizontal: Dimensions.w_2,
-      ),
-      padding: EdgeInsets.all(
-        Dimensions.w_8,
-      ),
+      margin: EdgeInsets.symmetric(horizontal: Dimensions.w_2),
+      padding: EdgeInsets.all(Dimensions.w_8),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(Dimensions.h_6),
         border: Border.all(color: Theme.of(context).focusColor),
       ),
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Wrap(
                   spacing: Dimensions.w_3,
                   runSpacing: Dimensions.h_2,
                   children: tags.map((tag) {
-                    return _buildTag(
-                      context,
-                      tag,
-                    );
+                    return _buildTag(context, tag);
                   }).toList(),
                 ),
               ),
               SizedBox(width: Dimensions.w_3),
               Row(
-                mainAxisSize:
-                MainAxisSize.min,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    CupertinoIcons.clock,
-                    size: Dimensions.h_10,
-                    color: Theme.of(context).highlightColor),
+                  Icon(CupertinoIcons.clock, size: Dimensions.h_10, color: Theme.of(context).highlightColor),
                   SizedBox(width: Dimensions.w_2),
                   Text(
                     billNumber,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: FontSize.sp_9,
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w800),
                   ),
                 ],
               ),
@@ -625,52 +431,23 @@ class CommonBillCard extends StatelessWidget {
             title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color:
-              Theme.of(context).primaryColor,
-              fontSize: FontSize.sp_14,
-              fontWeight: FontWeight.w800,
-              height: 1.05,
-            ),
+            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800, height: 1.05),
           ),
           SizedBox(height: Dimensions.h_10),
           Row(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.w_5,
-                  vertical: Dimensions.h_3,
-                ),
-                decoration: BoxDecoration(
-                  color: isApproachingVote
-                      ? const Color(0xFFFFE8DA)
-                      : Theme.of(context)
-                      .primaryColorDark
-                      .withValues(alpha: 0.08),
-                  borderRadius:
-                  BorderRadius.circular(3),
-                ),
+                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
+                decoration: BoxDecoration(color: isApproachingVote ? const Color(0xFFFFE8DA) : Theme.of(context).primaryColorDark.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(3)),
                 child: Text(
                   status,
-                  style: TextStyle(
-                    color: isApproachingVote
-                        ? const Color(0xFFC65A19)
-                        : Theme.of(context)
-                        .primaryColorDark,
-                    fontSize: FontSize.sp_9,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(color: isApproachingVote ? const Color(0xFFC65A19) : Theme.of(context).primaryColorDark, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
                 ),
               ),
               SizedBox(width: Dimensions.w_5),
               Text(
                 date,
-                style: TextStyle(
-                  color: Theme.of(context)
-                      .highlightColor,
-                  fontSize: FontSize.sp_9,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -679,118 +456,61 @@ class CommonBillCard extends StatelessWidget {
             description,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Theme.of(context)
-                  .highlightColor,
-              fontSize: FontSize.sp_10,
-              fontWeight: FontWeight.w500,
-              height: 1.3,
-            ),
+            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.3),
           ),
           const Spacer(),
           SizedBox(height: Dimensions.h_8),
           Row(
             children: [
               Expanded(
-                child: _billInfo(
-                  context,
-                  title: 'Impact',
-                  value: impact,
-                ),
+                child: _billInfo(context, title: 'Impact', value: impact),
               ),
               Expanded(
-                child: _billInfo(
-                  context,
-                  title: 'Rep. Responses',
-                  value: responses,
-                ),
+                child: _billInfo(context, title: 'Rep. Responses', value: responses),
               ),
             ],
           ),
           SizedBox(height: Dimensions.h_6),
           Row(
             children: [
-              Icon(
-                CupertinoIcons.person_2_fill,
-                color: AppColor.townHallGreen,
-                size: Dimensions.h_12,
-              ),
+              Icon(CupertinoIcons.person_2_fill, color: AppColor.townHallGreen, size: Dimensions.h_12),
               SizedBox(width: Dimensions.w_3),
               Text(
                 followers,
-                style: TextStyle(
-                  color: Theme.of(context)
-                      .primaryColor,
-                  fontSize: FontSize.sp_9_5,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700),
               ),
             ],
           ),
           SizedBox(height: Dimensions.h_7),
-          _actionButtons(
-            context: context,
-            onFollow: onFollow,
-            onDetails: onDetails,
-          ),
+          _actionButtons(context: context, onFollow: onFollow, onDetails: onDetails),
         ],
       ),
     );
   }
 
-  Widget _billInfo(
-      BuildContext context, {
-        required String title,
-        required String value,
-      }) {
+  Widget _billInfo(BuildContext context, {required String title, required String value}) {
     return Column(
-      crossAxisAlignment:
-      CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: TextStyle(
-            color:
-            Theme.of(context).highlightColor,
-            fontSize: FontSize.sp_9_5,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500),
         ),
         Text(
           value,
-          style: TextStyle(
-            color:
-            Theme.of(context).primaryColor,
-            fontSize: FontSize.sp_10,
-            fontWeight: FontWeight.w800,
-          ),
+          style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
         ),
       ],
     );
   }
 
-  Widget _buildTag(
-      BuildContext context,
-      String tag,
-      ) {
+  Widget _buildTag(BuildContext context, String tag) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: Dimensions.w_4,
-        vertical: Dimensions.h_2,
-      ),
-      decoration: BoxDecoration(
-        color: _tagColor(tag),
-        borderRadius:
-        BorderRadius.circular(3),
-      ),
+      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_2),
+      decoration: BoxDecoration(color: _tagColor(tag), borderRadius: BorderRadius.circular(3)),
       child: Text(
         tag,
-        style:  TextStyle(
-          color: Colors.white,
-          fontSize: FontSize.sp_7,
-          fontWeight: FontWeight.w900,
-          height: 1,
-        ),
+        style: TextStyle(color: Colors.white, fontSize: FontSize.sp_7, fontWeight: FontWeight.w900, height: 1),
       ),
     );
   }
@@ -821,11 +541,7 @@ class CommonBillCard extends StatelessWidget {
   }
 }
 
-Widget _actionButtons({
-  required VoidCallback? onFollow,
-  required VoidCallback? onDetails,
-  BuildContext? context,
-}) {
+Widget _actionButtons({required VoidCallback? onFollow, required VoidCallback? onDetails, BuildContext? context}) {
   final ctx = context ?? Get.context!;
 
   return Row(
@@ -839,20 +555,11 @@ Widget _actionButtons({
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(
-                color: Theme.of(ctx)
-                    .primaryColorDark
-                    .withValues(alpha: 0.20),
-              ),
+              border: Border.all(color: Theme.of(ctx).primaryColorDark.withValues(alpha: 0.20)),
             ),
             child: Text(
               'Follow',
-              style: TextStyle(
-                color: Theme.of(ctx).primaryColorDark,
-                fontSize: FontSize.sp_9_5,
-                fontWeight: FontWeight.w700,
-                height: 1,
-              ),
+              style: TextStyle(color: Theme.of(ctx).primaryColorDark, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700, height: 1),
             ),
           ),
         ),
@@ -864,18 +571,10 @@ Widget _actionButtons({
           child: Container(
             height: Dimensions.h_25,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: AppColor.darkBlue,
-              borderRadius: BorderRadius.circular(6),
-            ),
+            decoration: BoxDecoration(color: AppColor.darkBlue, borderRadius: BorderRadius.circular(6)),
             child: Text(
               'Details',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: FontSize.sp_9_5,
-                fontWeight: FontWeight.w700,
-                height: 1,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700, height: 1),
             ),
           ),
         ),

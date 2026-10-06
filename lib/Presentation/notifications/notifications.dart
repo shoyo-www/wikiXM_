@@ -38,9 +38,7 @@ class _NotificationTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade500, width: 0.5),
-        ),
+        border: Border(bottom: BorderSide(color: Colors.grey.shade500, width: 0.5)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,17 +46,9 @@ class _NotificationTabs extends StatelessWidget {
           Row(
             children: [
               SizedBox(width: Dimensions.w_10),
-              _TabButton(
-                title: 'All',
-                selected: controller.selectedIndex == 0,
-                onTap: () => controller.getNotification('all'),
-              ),
+              _TabButton(title: 'All', selected: controller.selectedIndex == 0, onTap: () => controller.getNotification('all')),
               SizedBox(width: Dimensions.w_15),
-              _TabButton(
-                title: 'Unread',
-                selected: controller.selectedIndex == 1,
-                onTap: () => controller.getNotification('unread'),
-              ),
+              _TabButton(title: 'Unread', selected: controller.selectedIndex == 1, onTap: () => controller.getNotification('unread')),
             ],
           ),
           Row(
@@ -67,11 +57,7 @@ class _NotificationTabs extends StatelessWidget {
                 onTap: controller.markAll,
                 child: Text(
                   'Read All',
-                  style: TextStyle(
-                    fontSize: FontSize.sp_11,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
+                  style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w500, color: Colors.black87),
                 ),
               ),
               Container(
@@ -84,11 +70,7 @@ class _NotificationTabs extends StatelessWidget {
                 onTap: controller.clearAll,
                 child: Text(
                   'Clear All',
-                  style: TextStyle(
-                    fontSize: FontSize.sp_11,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.red,
-                  ),
+                  style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w500, color: Colors.red),
                 ),
               ),
             ],
@@ -100,11 +82,7 @@ class _NotificationTabs extends StatelessWidget {
 }
 
 class _TabButton extends StatelessWidget {
-  const _TabButton({
-    required this.title,
-    required this.selected,
-    required this.onTap,
-  });
+  const _TabButton({required this.title, required this.selected, required this.onTap});
 
   final String title;
   final bool selected;
@@ -119,17 +97,11 @@ class _TabButton extends StatelessWidget {
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(horizontal: Dimensions.w_2),
         decoration: BoxDecoration(
-          border: selected
-              ? const Border(bottom: BorderSide(color: Colors.blue, width: 3))
-              : null,
+          border: selected ? const Border(bottom: BorderSide(color: Colors.blue, width: 3)) : null,
         ),
         child: Text(
           title,
-          style: TextStyle(
-            fontSize: FontSize.sp_16,
-            fontWeight: FontWeight.w700,
-            color: selected ? const Color(0xff144E82) : Colors.black87,
-          ),
+          style: TextStyle(fontSize: FontSize.sp_16, fontWeight: FontWeight.w700, color: selected ? const Color(0xff144E82) : Colors.black87),
         ),
       ),
     );
@@ -148,10 +120,7 @@ class _NotificationBody extends StatelessWidget {
         child: Text(
           'Loading.....',
           overflow: TextOverflow.visible,
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: FontSize.sp_15,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: FontSize.sp_15),
         ),
       );
     }
@@ -162,10 +131,7 @@ class _NotificationBody extends StatelessWidget {
         child: Text(
           'No Notifications Found',
           overflow: TextOverflow.visible,
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: FontSize.sp_15,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: FontSize.sp_15),
         ),
       );
     }
@@ -190,12 +156,7 @@ class _NotificationBody extends StatelessWidget {
 }
 
 class _NotificationTile extends StatelessWidget {
-  const _NotificationTile({
-    required this.item,
-    required this.isRead,
-    required this.timeLabel,
-    required this.onTap,
-  });
+  const _NotificationTile({required this.item, required this.isRead, required this.timeLabel, required this.onTap});
 
   final model.NotificationList item;
   final bool isRead;
@@ -207,31 +168,17 @@ class _NotificationTile extends StatelessWidget {
     return GestureDetector(
       onTap: isRead ? null : onTap,
       child: Container(
-        decoration: BoxDecoration(
-          color: isRead ? Colors.white : const Color(0xffeaf3ff),
-        ),
+        decoration: BoxDecoration(color: isRead ? Colors.white : const Color(0xffeaf3ff)),
         margin: EdgeInsets.symmetric(vertical: Dimensions.h_2),
-        padding: EdgeInsets.only(
-          top: Dimensions.h_12,
-          bottom: Dimensions.h_10,
-          left: Dimensions.w_8,
-          right: Dimensions.w_8,
-        ),
+        padding: EdgeInsets.only(top: Dimensions.h_12, bottom: Dimensions.h_10, left: Dimensions.w_8, right: Dimensions.w_8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               height: Dimensions.h_45,
               width: Dimensions.h_45,
-              decoration: BoxDecoration(
-                color: const Color(0xff1877f2),
-                borderRadius: BorderRadius.circular(Dimensions.h_6),
-              ),
-              child: Icon(
-                Icons.notifications_none,
-                color: Colors.white,
-                size: Dimensions.h_22,
-              ),
+              decoration: BoxDecoration(color: const Color(0xff1877f2), borderRadius: BorderRadius.circular(Dimensions.h_6)),
+              child: Icon(Icons.notifications_none, color: Colors.white, size: Dimensions.h_22),
             ),
             SizedBox(width: Dimensions.w_10),
             Expanded(
@@ -245,11 +192,7 @@ class _NotificationTile extends StatelessWidget {
                         child: Text(
                           item.content ?? '',
                           overflow: TextOverflow.visible,
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w400,
-                            fontSize: FontSize.sp_12,
-                          ),
+                          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w400, fontSize: FontSize.sp_12),
                         ),
                       ),
                       if (!isRead)
@@ -257,10 +200,7 @@ class _NotificationTile extends StatelessWidget {
                           margin: EdgeInsets.only(top: Dimensions.h_6),
                           height: Dimensions.h_8,
                           width: Dimensions.h_8,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.green,
-                          ),
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.green),
                         ),
                     ],
                   ),
@@ -269,30 +209,16 @@ class _NotificationTile extends StatelessWidget {
                     children: [
                       Text(
                         timeLabel,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
-                          fontSize: FontSize.sp_10,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.w400, color: Colors.grey.shade700, fontSize: FontSize.sp_10),
                       ),
                       if ((item.type ?? '').isNotEmpty) ...[
                         SizedBox(width: Dimensions.w_8),
                         Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Dimensions.w_5,
-                            vertical: Dimensions.h_2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xff144E82),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_2),
+                          decoration: BoxDecoration(color: const Color(0xff144E82), borderRadius: BorderRadius.circular(50)),
                           child: Text(
                             item.type ?? '',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: FontSize.sp_9_5,
-                            ),
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: FontSize.sp_9_5),
                           ),
                         ),
                       ],

@@ -130,5 +130,89 @@ class RestClient implements BaseService {
     }
     throw Dio.DioException(Constants.someThingWentWrong);
   }
+  @override
+  Future multipartPost({
+    required String url,
+    Map<String, dynamic>? fields,
+    Map<String, List<String>>? files,
+    Map<String, dynamic>? params,
+  }) async {
+    try {
+      final formData = FormData();
 
+      if (fields != null) {
+        fields.forEach((key, value) {
+          formData.fields.add(
+            MapEntry(key, value.toString()),
+          );
+        });
+      }
+
+      if (files != null) {
+        for (final entry in files.entries) {
+          for (final path in entry.value) {
+            formData.files.add(
+              MapEntry(
+                entry.key,
+                await MultipartFile.fromFile(
+                  path,
+                  filename: path.split('/').last,
+                ),
+              ),
+            );
+          }
+        }
+      }
+
+      final response = await dioInstance.getNetworkClient.post(
+        url,
+        data: formData,
+        queryParameters: params,
+        options: Options(
+          contentType: 'multipart/form-data',
+        ),
+      );
+
+      return response.data;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.error is Dio.LogoutException) {
+          throw Dio.LogoutException(e.error.toString());
+        } else if (e.response?.statusCode == 401) {
+          throw Dio.LogoutException(e.error.toString());
+        } else if (e.response?.statusCode == 500 ||
+            e.response?.statusCode == 503 ||
+            e.response?.statusCode == 404) {
+          throw Dio.DioException('Something went wrong');
+        } else if (e.type == DioExceptionType.unknown ||
+            e.type == DioExceptionType.connectionError ||
+            e.response?.statusCode == null) {
+          throw Dio.DioException('Something went wrong');
+        } else {
+          dynamic data = e.response?.data;
+          String message = 'Something went wrong';
+
+          if (data is Map && data['message'] != null) {
+            final errorMessage = data['message'];
+
+            if (errorMessage is List) {
+              message = errorMessage.isNotEmpty
+                  ? errorMessage.first.toString()
+                  : message;
+            } else {
+              message = errorMessage.toString();
+            }
+          }
+
+          throw Dio.DioException(message);
+        }
+      }
+
+      if (kDebugMode) {
+        print(e);
+      }
+
+      throw Dio.DioException(Constants.someThingWentWrong);
+    }
+  }
 }

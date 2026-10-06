@@ -26,17 +26,10 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: DecoratedBox(
         decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(Images.splash),
-            fit: BoxFit.fill,
-          ),
+          image: DecorationImage(image: AssetImage(Images.splash), fit: BoxFit.fill),
         ),
         child: Center(
-          child: SizedBox(
-            width: Dimensions.h_170,
-            height: Dimensions.h_170,
-            child: Image.asset(Images.appLogoGif),
-          ),
+          child: SizedBox(width: Dimensions.h_170, height: Dimensions.h_170, child: Image.asset(Images.appLogoGif)),
         ),
       ),
     );

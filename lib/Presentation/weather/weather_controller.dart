@@ -18,45 +18,44 @@ class WeatherController extends GetxController {
     super.onInit();
   }
 
-
   Future<void> getWeatherHero() async {
     isLoading = true;
     update([ControllerBuilders.weatherController]);
     var data = await weatherRepositoryImpl.getWeatherHero();
-    data.fold((l) {
-      if (l is ServerFailure) {
-        isLoading = false;
-        update([ControllerBuilders.weatherController]);
-      }
-    }, (r) async {
-      bool status = r.success ?? false;
-      if (status == true) {
-        weatherHeroData = r.data;
-        isLoading = false;
-        await getWeatherCards();
-        update([ControllerBuilders.weatherController]);
-      } else {
-        isLoading = false;
-        update([ControllerBuilders.weatherController]);
-      }
-    });
+    data.fold(
+      (l) {
+        if (l is ServerFailure) {
+          isLoading = false;
+          update([ControllerBuilders.weatherController]);
+        }
+      },
+      (r) async {
+        bool status = r.success ?? false;
+        if (status == true) {
+          weatherHeroData = r.data;
+          isLoading = false;
+          await getWeatherCards();
+          update([ControllerBuilders.weatherController]);
+        } else {
+          isLoading = false;
+          update([ControllerBuilders.weatherController]);
+        }
+      },
+    );
   }
 
   Future<void> getWeatherCards() async {
     var data = await weatherRepositoryImpl.getWeatherCards();
-    data.fold((l) {
-      if (l is ServerFailure) {
-
-      }
-    }, (r) {
-      bool status = r.success ?? false;
-      if (status == true) {
-        weatherCardData = r.data;
-      } else {
-
-
-      }
-    });
+    data.fold(
+      (l) {
+        if (l is ServerFailure) {}
+      },
+      (r) {
+        bool status = r.success ?? false;
+        if (status == true) {
+          weatherCardData = r.data;
+        } else {}
+      },
+    );
   }
-
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
+import 'package:wikixm/constants/fontsize.dart';
 import 'common_appbar.dart';
 
 class CommonScrollBlurScaffold extends StatefulWidget {
@@ -19,7 +20,7 @@ class CommonScrollBlurScaffold extends StatefulWidget {
     this.physics,
     this.showBack = false,
     this.isDrawer = false,
-    this.onTap
+    this.onTap,
   });
 
   final Widget hero;
@@ -35,12 +36,10 @@ class CommonScrollBlurScaffold extends StatefulWidget {
   final bool pinned;
   final bool floating;
   final bool stretch;
-
   final ScrollPhysics? physics;
 
   @override
-  State<CommonScrollBlurScaffold> createState() =>
-      _CommonScrollBlurScaffoldState();
+  State<CommonScrollBlurScaffold> createState() => _CommonScrollBlurScaffoldState();
 }
 
 class _CommonScrollBlurScaffoldState extends State<CommonScrollBlurScaffold> {
@@ -72,16 +71,14 @@ class _CommonScrollBlurScaffoldState extends State<CommonScrollBlurScaffold> {
   }
 
   Color get _foregroundColor {
-    return Color.lerp(
-      widget.expandedColor,
-      widget.collapsedColor,
-      _blurOpacity,
-    )!;
+    return Color.lerp(widget.expandedColor, widget.collapsedColor, _blurOpacity)!;
   }
 
   @override
   void dispose() {
-    _scrollController..removeListener(_handleScroll)..dispose();
+    _scrollController
+      ..removeListener(_handleScroll)
+      ..dispose();
     super.dispose();
   }
 
@@ -106,29 +103,16 @@ class _CommonScrollBlurScaffoldState extends State<CommonScrollBlurScaffold> {
                 automaticallyImplyLeading: false,
                 backgroundColor: widget.backgroundColor,
                 elevation: 0,
-                flexibleSpace: FlexibleSpaceBar(
-                  collapseMode: CollapseMode.parallax,
-                  stretchModes: const [
-                    StretchMode.zoomBackground,
-                  ],
-                  background: widget.hero,
-                ),
+                flexibleSpace: FlexibleSpaceBar(collapseMode: CollapseMode.parallax, stretchModes: const [StretchMode.zoomBackground], background: widget.hero),
               ),
               ...widget.slivers,
             ],
           ),
           Positioned(
-            top: Platform.isAndroid ? -10 : -20,
+            top: Platform.isAndroid ? -Dimensions.h_15 : -20,
             left: 0,
             right: 0,
-            child: CommonBlurAppBar(
-              blurOpacity: _blurOpacity,
-              foregroundColor: _foregroundColor,
-              showBackButton: widget.showBack,
-              onTap: widget.onTap,
-              isDrawer: widget.isDrawer,
-
-            ),
+            child: CommonBlurAppBar(blurOpacity: _blurOpacity, foregroundColor: _foregroundColor, showBackButton: widget.showBack, onTap: widget.onTap, isDrawer: widget.isDrawer),
           ),
         ],
       ),

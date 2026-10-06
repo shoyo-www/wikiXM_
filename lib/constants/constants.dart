@@ -17,6 +17,7 @@ class GetXStorageConstants {
   static const darkTheme = "DarkTheme";
   static const townName = "TownName";
   static const day = "day";
+  static const String themeMode = 'themeMode';
 
 }
 
@@ -32,7 +33,11 @@ class ControllerBuilders {
   static String politicsController = 'PoliticsController';
   static String commandCenterController = 'CommandCenterController';
   static String townHallController = 'TownHallController';
-
+  static String addGarageItemController = 'AddGarageItemController';
+  static String marketBriefController = 'MarketBriefController';
+  static String marketPlaceController = 'MarketPlaceController';
+  static String filterController = 'FilterController';
+  static String myGarageController = 'MyGarageController';
 }
 
 class ActivityModel {

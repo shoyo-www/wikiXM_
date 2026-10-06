@@ -28,5 +28,17 @@ class Apis {
   static const politics = '$baseUrl/politics/home';
   static const commandCenter = '$baseUrl/civic-command-center/home';
   static const townHall = '$baseUrl/town-hall/home';
+  static const createItemDraft = '$baseUrl/garage/items/draft';
+  static const addImage = '$baseUrl/garage/items/';
+  static const deleteImage = '$baseUrl/garage/items/';
+  static const analyseImage = '$baseUrl/garage/items/';
+  static const marketBrief = '$baseUrl/garage/market-brief';
+  static const marketAiBrief = '$baseUrl/garage/market-brief/ai-brief';
+  static const marketBriefCharts = '$baseUrl/garage/market-brief/analytics';
+  static const marketPlace = '$baseUrl/garage/marketplace/items';
+  static const marketPlaceContent = '$baseUrl/garage/marketplace/content';
+  static const marketPlaceFilters = '$baseUrl/garage/marketplace/filters';
+  static const myGarage = '$baseUrl/garage/dashboard';
+  static const myGarageAI = '$baseUrl/garage/assistant';
 }
 

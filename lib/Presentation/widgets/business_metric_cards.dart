@@ -9,28 +9,15 @@ class BusinessMetricCard extends StatelessWidget {
   final Color iconColor;
   final double? iconSize;
 
-  const BusinessMetricCard({
-    super.key,
-    required this.icon,
-    required this.value,
-    required this.title,
-    this.iconColor = const Color(0xFF0b6030),
-    this.iconSize,
-  });
+  const BusinessMetricCard({super.key, required this.icon, required this.value, required this.title, this.iconColor = const Color(0xFF0b6030), this.iconSize});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: Dimensions.w_3,
-        vertical: Dimensions.h_2,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_3, vertical: Dimensions.h_2),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey.shade500,
-          width: 0.3,
-        ),
+        border: Border.all(color: Colors.grey.shade500, width: 0.3),
         borderRadius: BorderRadius.circular(Dimensions.h_6),
       ),
       child: Column(
@@ -42,23 +29,13 @@ class BusinessMetricCard extends StatelessWidget {
           Text(
             value,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: FontSize.sp_15,
-              fontWeight: FontWeight.w700,
-              height: 1.05,
-            ),
+            style: TextStyle(color: Colors.black87, fontSize: FontSize.sp_15, fontWeight: FontWeight.w700, height: 1.05),
           ),
           SizedBox(height: Dimensions.h_4),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black87,
-              fontSize: FontSize.sp_9,
-              fontWeight: FontWeight.w500,
-              height: 1.05,
-            ),
+            style: TextStyle(color: Colors.black87, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, height: 1.05),
           ),
         ],
       ),
@@ -67,16 +44,8 @@ class BusinessMetricCard extends StatelessWidget {
 
   Widget _buildIcon() {
     if (icon is FaIconData) {
-      return FaIcon(
-        icon,
-        color: iconColor,
-        size: iconSize ?? Dimensions.h_22,
-      );
+      return FaIcon(icon, color: iconColor, size: iconSize ?? Dimensions.h_22);
     }
-    return Icon(
-      icon as IconData,
-      color: iconColor,
-      size: iconSize ?? Dimensions.h_22,
-    );
+    return Icon(icon as IconData, color: iconColor, size: iconSize ?? Dimensions.h_22);
   }
 }

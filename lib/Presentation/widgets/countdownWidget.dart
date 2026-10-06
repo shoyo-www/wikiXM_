@@ -3,14 +3,7 @@ import 'package:flutter/material.dart';
 import '../../constants/fontsize.dart';
 
 class CountdownWidget extends StatefulWidget {
-  const CountdownWidget({
-    super.key,
-    required this.days,
-    required this.hours,
-    required this.minutes,
-    required this.seconds,
-    this.textColor = Colors.white,
-  });
+  const CountdownWidget({super.key, required this.days, required this.hours, required this.minutes, required this.seconds, this.textColor = Colors.white});
 
   final int days;
   final int hours;
@@ -30,12 +23,7 @@ class _CountdownWidgetState extends State<CountdownWidget> {
   void initState() {
     super.initState();
 
-    _remaining = Duration(
-      days: widget.days,
-      hours: widget.hours,
-      minutes: widget.minutes,
-      seconds: widget.seconds,
-    );
+    _remaining = Duration(days: widget.days, hours: widget.hours, minutes: widget.minutes, seconds: widget.seconds);
 
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
@@ -54,16 +42,8 @@ class _CountdownWidgetState extends State<CountdownWidget> {
   void didUpdateWidget(covariant CountdownWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.days != widget.days ||
-        oldWidget.hours != widget.hours ||
-        oldWidget.minutes != widget.minutes ||
-        oldWidget.seconds != widget.seconds) {
-      _remaining = Duration(
-        days: widget.days,
-        hours: widget.hours,
-        minutes: widget.minutes,
-        seconds: widget.seconds,
-      );
+    if (oldWidget.days != widget.days || oldWidget.hours != widget.hours || oldWidget.minutes != widget.minutes || oldWidget.seconds != widget.seconds) {
+      _remaining = Duration(days: widget.days, hours: widget.hours, minutes: widget.minutes, seconds: widget.seconds);
     }
   }
 
@@ -80,29 +60,14 @@ class _CountdownWidgetState extends State<CountdownWidget> {
     final minutes = _remaining.inMinutes.remainder(60);
     final seconds = _remaining.inSeconds.remainder(60);
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _item(days, "DAYS"),
-        _separator(),
-        _item(hours, "HRS"),
-        _separator(),
-        _item(minutes, "MIN"),
-        _separator(),
-        _item(seconds, "SEC"),
-      ],
-    );
+    return Row(mainAxisSize: MainAxisSize.min, children: [_item(days, "DAYS"), _separator(), _item(hours, "HRS"), _separator(), _item(minutes, "MIN"), _separator(), _item(seconds, "SEC")]);
   }
 
   Widget _separator() => Padding(
     padding: EdgeInsets.symmetric(horizontal: Dimensions.w_7),
     child: Text(
       ":",
-      style: TextStyle(
-        color: widget.textColor,
-        fontSize: FontSize.sp_22,
-        fontWeight: FontWeight.w900,
-      ),
+      style: TextStyle(color: widget.textColor, fontSize: FontSize.sp_22, fontWeight: FontWeight.w900),
     ),
   );
 
@@ -112,20 +77,12 @@ class _CountdownWidgetState extends State<CountdownWidget> {
       children: [
         Text(
           value.toString().padLeft(2, '0'),
-          style: TextStyle(
-            color: widget.textColor,
-            fontSize: FontSize.sp_24,
-            fontWeight: FontWeight.w900,
-          ),
+          style: TextStyle(color: widget.textColor, fontSize: FontSize.sp_24, fontWeight: FontWeight.w900),
         ),
         const SizedBox(height: 2),
         Text(
           label,
-          style: TextStyle(
-            color: widget.textColor,
-            fontSize: FontSize.sp_10,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: widget.textColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
         ),
       ],
     );

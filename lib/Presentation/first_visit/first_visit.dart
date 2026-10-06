@@ -27,146 +27,85 @@ class FirstVisit extends StatelessWidget {
           children: [
             Stack(
               children: [
-                AppCacheImage(
-                  size: Dimensions.h_290,
-                  imageUrl: isLight ? Images.cityImageMobileDay:Images.cityImageMobile,
-                  isShadow: false,
-                  fit: BoxFit.cover,
-                  widthSize: Get.width,
-                ),
-                 Positioned.fill(
+                AppCacheImage(size: Dimensions.h_290, imageUrl: isLight ? Images.cityImageMobileDay : Images.cityImageMobile, isShadow: false, fit: BoxFit.cover, widthSize: Get.width),
+                Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
-                        colors: isLight
-                            ? [
-                          const Color(0xE6FFFFFF),
-                          const Color(0x99FFFFFF),
-                          const Color(0x00FFFFFF),
-                          const Color(0x00FFFFFF),
-                        ]
-                            : [
-                          const Color(0xE6020B15),
-                          const Color(0x99020B15),
-                          const Color(0x00000000),
-                          const Color(0x00000000),
-                        ],
+                        colors: isLight ? [const Color(0xE6FFFFFF), const Color(0x99FFFFFF), const Color(0x00FFFFFF), const Color(0x00FFFFFF)] : [const Color(0xE6020B15), const Color(0x99020B15), const Color(0x00000000), const Color(0x00000000)],
                         stops: const [0, 0.4, 0.78, 1],
                       ),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(
-                    top: Dimensions.h_50,
-                    left: Dimensions.w_10,
-                    right: Dimensions.w_10,
-                  ),
+                  padding: EdgeInsets.only(top: Dimensions.h_50, left: Dimensions.w_10, right: Dimensions.w_10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Your town.',
-                        style: TextStyle(
-                          color: isLight ? AppColor.primaryNavyNew :Colors.white,
-                          fontSize: FontSize.sp_24,
-                          fontWeight: FontWeight.w900,
-                        ),
+                        style: TextStyle(color: isLight ? AppColor.primaryNavyNew : Colors.white, fontSize: FontSize.sp_24, fontWeight: FontWeight.w900),
                       ),
                       Text(
                         'Your voice.',
-                        style: TextStyle(
-                          color: isLight ? AppColor.primaryNavyNew :Colors.white,
-                          fontSize: FontSize.sp_24,
-                          fontWeight: FontWeight.w900,
-                        ),
+                        style: TextStyle(color: isLight ? AppColor.primaryNavyNew : Colors.white, fontSize: FontSize.sp_24, fontWeight: FontWeight.w900),
                       ),
                       SizedBox(height: Dimensions.h_3),
                       Text(
                         'News your way. Community first.',
-                        style: TextStyle(
-                          color: isLight ? AppColor.primaryNavyNew :Colors.white,
-                          fontSize: FontSize.sp_12,
-                          fontWeight: FontWeight.w900,
-                        ),
+                        style: TextStyle(color: isLight ? AppColor.primaryNavyNew : Colors.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w900),
                       ),
                       SizedBox(height: Dimensions.h_8),
                       Row(
                         children: [
-                          Icon(CupertinoIcons.book, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew :Colors.white,),
+                          Icon(CupertinoIcons.book, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew : Colors.white),
                           SizedBox(width: Dimensions.w_4),
                           Text(
                             'Stay informed about what matters.',
-                            style: TextStyle(
-                              color: isLight ? AppColor.primaryNavyNew :Colors.white,
-                              fontSize: FontSize.sp_9,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyle(color: isLight ? AppColor.primaryNavyNew : Colors.white, fontSize: FontSize.sp_9, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
                       SizedBox(height: Dimensions.h_3),
                       Row(
                         children: [
-                          Icon(CupertinoIcons.chat_bubble, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew :Colors.white,),
+                          Icon(CupertinoIcons.chat_bubble, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew : Colors.white),
                           SizedBox(width: Dimensions.w_4),
                           Text(
                             'Share your voice in Town Talk.',
-                            style: TextStyle(
-                              color: isLight ? AppColor.primaryNavyNew :Colors.white,
-                              fontSize: FontSize.sp_9,
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: TextStyle(color: isLight ? AppColor.primaryNavyNew : Colors.white, fontSize: FontSize.sp_9, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
                       SizedBox(height: Dimensions.h_3),
                       Row(
                         children: [
-                          Icon(CupertinoIcons.heart, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew :Colors.white,),
+                          Icon(CupertinoIcons.heart, size: Dimensions.h_10, color: isLight ? AppColor.primaryNavyNew : Colors.white),
                           SizedBox(width: Dimensions.w_4),
                           Text(
                             'Help shape the future of your community.',
-                            style: TextStyle(
-                              color: isLight ? AppColor.primaryNavyNew :Colors.white,
-                              fontSize: FontSize.sp_9,
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: TextStyle(color: isLight ? AppColor.primaryNavyNew : Colors.white, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
                           ),
                         ],
                       ),
                       SizedBox(height: Dimensions.h_15),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                        },
+                        onTap: () {},
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Dimensions.w_30,
-                            vertical: Dimensions.h_6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade900,
-                            borderRadius: BorderRadius.circular(Dimensions.h_4),
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_30, vertical: Dimensions.h_6),
+                          decoration: BoxDecoration(color: Colors.red.shade900, borderRadius: BorderRadius.circular(Dimensions.h_4)),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                CupertinoIcons.location_solid,
-                                size: Dimensions.h_12,
-                                color: AppColor.white,
-                              ),
+                              Icon(CupertinoIcons.location_solid, size: Dimensions.h_12, color: AppColor.white),
                               SizedBox(width: Dimensions.w_2),
                               Text(
                                 'Find My Town',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: FontSize.sp_10,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                                style: TextStyle(color: Colors.white, fontSize: FontSize.sp_10, fontWeight: FontWeight.w900),
                               ),
                             ],
                           ),
@@ -174,32 +113,18 @@ class FirstVisit extends StatelessWidget {
                       ),
                       SizedBox(height: Dimensions.h_8),
                       GestureDetector(
-                        onTap: ()=> Get.toNamed(AppRoutes.dashboard),
+                        onTap: () => Get.toNamed(AppRoutes.dashboard),
                         child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Dimensions.w_23,
-                            vertical: Dimensions.h_6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(Dimensions.h_4),
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_23, vertical: Dimensions.h_6),
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(Dimensions.h_4)),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                CupertinoIcons.eye_fill,
-                                size: Dimensions.h_12,
-                                color: Colors.black87,
-                              ),
+                              Icon(CupertinoIcons.eye_fill, size: Dimensions.h_12, color: Colors.black87),
                               SizedBox(width: Dimensions.w_5),
                               Text(
                                 'Browse as Guest',
-                                style: TextStyle(
-                                  color: Colors.black87,
-                                  fontSize: FontSize.sp_10,
-                                  fontWeight: FontWeight.w900,
-                                ),
+                                style: TextStyle(color: Colors.black87, fontSize: FontSize.sp_10, fontWeight: FontWeight.w900),
                               ),
                             ],
                           ),
@@ -208,27 +133,19 @@ class FirstVisit extends StatelessWidget {
                       SizedBox(height: Dimensions.h_8),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: ()=> Get.toNamed(AppRoutes.signIn),
+                        onTap: () => Get.toNamed(AppRoutes.signIn),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             SizedBox(width: Dimensions.w_15),
                             Text(
                               'Already have an account?',
-                              style: TextStyle(
-                                color: isLight ? AppColor.primaryNavyNew :Colors.white,
-                                fontSize: FontSize.sp_9,
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: TextStyle(color: isLight ? AppColor.primaryNavyNew : Colors.white, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
                             ),
                             SizedBox(width: Dimensions.w_4),
                             Text(
                               'Sign in',
-                              style: TextStyle(
-                                color: AppColor.darkBlue,
-                                fontSize: FontSize.sp_9,
-                                fontWeight: FontWeight.w900,
-                              ),
+                              style: TextStyle(color: AppColor.darkBlue, fontSize: FontSize.sp_9, fontWeight: FontWeight.w900),
                             ),
                           ],
                         ),
@@ -246,114 +163,60 @@ class FirstVisit extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
                 itemCount: exploreCards.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: Dimensions.w_5,
-                  crossAxisSpacing: Dimensions.w_5,
-                  childAspectRatio: 2.4,
-                ),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, mainAxisSpacing: Dimensions.w_5, crossAxisSpacing: Dimensions.w_5, childAspectRatio: 2.4),
                 itemBuilder: (context, index) {
                   final item = exploreCards[index];
 
-                  return ExploreCard(
-                    image: item.image,
-                    title: item.title,
-                    subtitle: item.subtitle,
-                    icon: item.icon,
-                    iconColor: item.iconColor,
-                    sepia: item.sepia,
-                    isCommunity: item.isCommunity,
-                    actionTitle: item.actionTitle,
-                  );
+                  return ExploreCard(image: item.image, title: item.title, subtitle: item.subtitle, icon: item.icon, iconColor: item.iconColor, sepia: item.sepia, isCommunity: item.isCommunity, actionTitle: item.actionTitle);
                 },
               ),
             ),
             Padding(
-              padding:  EdgeInsets.only(left: Dimensions.w_12,top: Dimensions.h_8),
+              padding: EdgeInsets.only(left: Dimensions.w_12, top: Dimensions.h_8),
               child: Row(
                 children: [
-                  Icon(CupertinoIcons.rocket_fill,size: Dimensions.h_15,color:  Theme.of(context).highlightColor),
+                  Icon(CupertinoIcons.rocket_fill, size: Dimensions.h_15, color: Theme.of(context).highlightColor),
                   SizedBox(width: Dimensions.w_5),
                   Text(
                     "Join in minutes. It's free.",
-                    style: TextStyle(
-                      color: Theme.of(context).highlightColor,
-                      fontSize: FontSize.sp_13,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_13, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding:  EdgeInsets.only(left: Dimensions.w_6,top: Dimensions.h_12,right: Dimensions.w_6),
-              child:IntrinsicHeight(
+              padding: EdgeInsets.only(left: Dimensions.w_6, top: Dimensions.h_12, right: Dimensions.w_6),
+              child: IntrinsicHeight(
                 child: Row(
                   children: [
-                    buildStepCard(
-                      step: 1,
-                      icon: CupertinoIcons.location_solid,
-                      title: "Find Your Town",
-                      description: "Search by city, zip code, or use your location",
-                      color: const Color(0xFF2563EB),
-                    ),
+                    buildStepCard(step: 1, icon: CupertinoIcons.location_solid, title: "Find Your Town", description: "Search by city, zip code, or use your location", color: const Color(0xFF2563EB)),
                     SizedBox(width: Dimensions.w_4),
-                    buildStepCard(
-                      step: 2,
-                      icon: CupertinoIcons.group_solid,
-                      title: "Explore",
-                      iconSize: Dimensions.h_22,
-                      description: "Browse local news, weather and events",
-                      color: const Color(0xFF16A34A),
-                    ),
+                    buildStepCard(step: 2, icon: CupertinoIcons.group_solid, title: "Explore", iconSize: Dimensions.h_22, description: "Browse local news, weather and events", color: const Color(0xFF16A34A)),
                     SizedBox(width: Dimensions.w_4),
-                    buildStepCard(
-                      step: 3,
-                      icon: CupertinoIcons.chat_bubble,
-                      title: "Join Conversation",
-                      description: "Create a free account and join discussions",
-                      color: const Color(0xFF9333EA),
-                    ),
+                    buildStepCard(step: 3, icon: CupertinoIcons.chat_bubble, title: "Join Conversation", description: "Create a free account and join discussions", color: const Color(0xFF9333EA)),
                     SizedBox(width: Dimensions.w_4),
-                    buildStepCard(
-                      step: 4,
-                      icon: CupertinoIcons.star,
-                      iconSize: Dimensions.h_16,
-                      title: "Make an Impact",
-                      description: "Share stories and strengthen your community",
-                      color: const Color(0xFFF97316),
-                    ),
+                    buildStepCard(step: 4, icon: CupertinoIcons.star, iconSize: Dimensions.h_16, title: "Make an Impact", description: "Share stories and strengthen your community", color: const Color(0xFFF97316)),
                   ],
                 ),
               ),
             ),
             Padding(
-              padding:  EdgeInsets.only(left: Dimensions.w_6,top: Dimensions.h_8,right: Dimensions.w_6),
+              padding: EdgeInsets.only(left: Dimensions.w_6, top: Dimensions.h_8, right: Dimensions.w_6),
               child: buildCommunityPromise(),
             ),
             SizedBox(height: Dimensions.h_10),
             GestureDetector(
-              onTap: ()=> Get.toNamed(AppRoutes.signUp),
+              onTap: () => Get.toNamed(AppRoutes.signUp),
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: Dimensions.w_5),
-                decoration: BoxDecoration(
-                  color: Color(0xff01276b),
-                  borderRadius: BorderRadius.circular(4)
-                ),
-                padding: EdgeInsets.symmetric(
-                  vertical: Dimensions.h_6,
-                  horizontal: Dimensions.w_8
-                ),
+                decoration: BoxDecoration(color: Color(0xff01276b), borderRadius: BorderRadius.circular(4)),
+                padding: EdgeInsets.symmetric(vertical: Dimensions.h_6, horizontal: Dimensions.w_8),
                 child: Row(
                   children: [
                     Container(
                       padding: EdgeInsets.all(Dimensions.h_3),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xff0354d6)
-                      ),
-                      child: Icon(CupertinoIcons.group_solid,color: Colors.white,size: Dimensions.h_18),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: Color(0xff0354d6)),
+                      child: Icon(CupertinoIcons.group_solid, color: Colors.white, size: Dimensions.h_18),
                     ),
                     SizedBox(width: Dimensions.w_10),
                     Expanded(
@@ -362,25 +225,16 @@ class FirstVisit extends StatelessWidget {
                         children: [
                           Text(
                             "Join WikiXM Today",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: FontSize.sp_11,
-                              fontWeight: FontWeight.w900,
-                            ),
+                            style: TextStyle(color: Colors.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w900),
                           ),
                           Text(
                             "Create your free account",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: FontSize.sp_9_5,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9_5, fontFamily: 'Poppins', fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios,color: Colors.white,size: Dimensions.h_10)
+                    Icon(Icons.arrow_forward_ios, color: Colors.white, size: Dimensions.h_10),
                   ],
                 ),
               ),
@@ -394,49 +248,16 @@ class FirstVisit extends StatelessWidget {
 
   Widget buildCommunityPromise() {
     final items = [
-      {
-        "icon": Icons.verified_user_outlined,
-        "color": const Color(0xFF2563EB),
-        "title": "Trusted",
-        "subtitle": "by communities\nacross the country.",
-        "desc": "Real people.\nReal impact."
-      },
-      {
-        "icon": Icons.newspaper_outlined,
-        "color": const Color(0xFF2563EB),
-        "title": "Local Journalism",
-        "subtitle": "Real reporting.",
-        "desc": "Local impact."
-      },
-      {
-        "icon": Icons.account_balance_outlined,
-        "color": const Color(0xFF16A34A),
-        "title": "Civic Transparency",
-        "subtitle": "Open government.",
-        "desc": "Stronger\ncommunities."
-      },
-      {
-        "icon": Icons.groups_2_outlined,
-        "color": const Color(0xFF9333EA),
-        "title": "Community Voices",
-        "subtitle": "Your voice.",
-        "desc": "Your\nneighborhood."
-      },
-      {
-        "icon": Icons.shield_outlined,
-        "color": const Color(0xFFF97316),
-        "title": "Safe & Respectful",
-        "subtitle": "Moderated.",
-        "desc": "Inclusive.\nCivil."
-      },
+      {"icon": Icons.verified_user_outlined, "color": const Color(0xFF2563EB), "title": "Trusted", "subtitle": "by communities\nacross the country.", "desc": "Real people.\nReal impact."},
+      {"icon": Icons.newspaper_outlined, "color": const Color(0xFF2563EB), "title": "Local Journalism", "subtitle": "Real reporting.", "desc": "Local impact."},
+      {"icon": Icons.account_balance_outlined, "color": const Color(0xFF16A34A), "title": "Civic Transparency", "subtitle": "Open government.", "desc": "Stronger\ncommunities."},
+      {"icon": Icons.groups_2_outlined, "color": const Color(0xFF9333EA), "title": "Community Voices", "subtitle": "Your voice.", "desc": "Your\nneighborhood."},
+      {"icon": Icons.shield_outlined, "color": const Color(0xFFF97316), "title": "Safe & Respectful", "subtitle": "Moderated.", "desc": "Inclusive.\nCivil."},
     ];
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: Dimensions.h_4),
-      decoration: BoxDecoration(
-        color: Theme.of(Get.context!).cardColor,
-        borderRadius: BorderRadius.circular(4),
-      ),
+      decoration: BoxDecoration(color: Theme.of(Get.context!).cardColor, borderRadius: BorderRadius.circular(4)),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -451,31 +272,18 @@ class FirstVisit extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(
-                          item["icon"] as IconData,
-                          color: item["color"] as Color,
-                          size: Dimensions.h_20,
-                        ),
+                        Icon(item["icon"] as IconData, color: item["color"] as Color, size: Dimensions.h_20),
                         SizedBox(height: Dimensions.h_2),
                         Text(
                           item["title"] as String,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: FontSize.sp_9,
-                            fontWeight: FontWeight.w700,
-                            color: Theme.of(Get.context!).highlightColor,
-                          ),
+                          style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w700, color: Theme.of(Get.context!).highlightColor),
                         ),
                         Text(
                           item["subtitle"] as String,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: FontSize.sp_8,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(Get.context!).highlightColor,
-                          ),
+                          style: TextStyle(fontSize: FontSize.sp_8, fontWeight: FontWeight.w500, color: Theme.of(Get.context!).highlightColor),
                         ),
-
                       ],
                     ),
                   ),
@@ -493,55 +301,33 @@ class FirstVisit extends StatelessWidget {
       ),
     );
   }
-  Widget buildStepCard({
-    required int step,
-    required IconData icon,
-    required String title,
-    required String description,
-    required Color color,
-    double? iconSize
-  }) {
+
+  Widget buildStepCard({required int step, required IconData icon, required String title, required String description, required Color color, double? iconSize}) {
     return Expanded(
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Container(
-            padding: EdgeInsets.only(
-              left: Dimensions.w_3,
-              right: Dimensions.w_3,
-              top: Dimensions.h_8,
-              bottom: Dimensions.h_3,
-            ),
+            padding: EdgeInsets.only(left: Dimensions.w_3, right: Dimensions.w_3, top: Dimensions.h_8, bottom: Dimensions.h_3),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(Dimensions.h_4),
-              border: Border.all(color: Colors.grey, width: 0.3)),
+              border: Border.all(color: Colors.grey, width: 0.3),
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  icon,
-                  size: iconSize ?? Dimensions.h_18,
-                  color: color
-                ),
+                Icon(icon, size: iconSize ?? Dimensions.h_18, color: color),
                 SizedBox(height: Dimensions.h_2),
                 Text(
                   title,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(Get.context!).highlightColor,
-                    fontSize: FontSize.sp_9,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(color: Theme.of(Get.context!).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
                 ),
                 SizedBox(height: Dimensions.h_1),
                 Text(
                   description,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(Get.context!).highlightColor,
-                    fontSize: FontSize.sp_8_5,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(color: Theme.of(Get.context!).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -554,19 +340,11 @@ class FirstVisit extends StatelessWidget {
               child: Container(
                 height: Dimensions.h_16,
                 width: Dimensions.h_16,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: color,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: color),
                 child: Center(
                   child: Text(
                     '$step',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Poppins',
-                      fontSize: FontSize.sp_12,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),
@@ -579,16 +357,7 @@ class FirstVisit extends StatelessWidget {
 }
 
 class ExploreCard extends StatelessWidget {
-  const ExploreCard({super.key,
-    required this.image,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.iconColor,
-    this.sepia = false,
-    this.isCommunity = false,
-    required this.actionTitle
-  });
+  const ExploreCard({super.key, required this.image, required this.title, required this.subtitle, required this.icon, required this.iconColor, this.sepia = false, this.isCommunity = false, required this.actionTitle});
 
   final String image;
   final String title;
@@ -602,193 +371,71 @@ class ExploreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isLight = Theme.of(context).brightness == Brightness.light;
-    return isCommunity ? Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-            color: isLight? Colors.transparent: AppColor.white,width: 0.5),
-        borderRadius: BorderRadius.circular(Dimensions.h_6),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(Dimensions.h_6),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(
-              image,
-              fit: BoxFit.cover,
-              color: sepia ? const Color(0x99704A2A) : null,
-              colorBlendMode: sepia ? BlendMode.color : null,
+    return isCommunity
+        ? Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: isLight ? Colors.transparent : AppColor.white, width: 0.5),
+              borderRadius: BorderRadius.circular(Dimensions.h_6),
             ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: .99),
-                    Colors.black.withValues(alpha: .70),
-                    Colors.black.withValues(alpha: .01),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              left: Dimensions.w_5,
-              right: Dimensions.w_4,
-              bottom: Dimensions.h_6,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(Dimensions.h_6),
+              child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Text(
-                    title.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: FontSize.sp_11,
-                    ),
-                  ),
-                  SizedBox(height: Dimensions.h_1),
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: FontSize.sp_9,
-                    ),
-                  ),
-                  SizedBox(height: Dimensions.h_4),
+                  Image.asset(image, fit: BoxFit.cover, color: sepia ? const Color(0x99704A2A) : null, colorBlendMode: sepia ? BlendMode.color : null),
                   Container(
-                    height: 0.5,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(height: Dimensions.h_5),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: Dimensions.h_10,
-                        height: Dimensions.h_10,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF6C4EFF),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.edit_rounded,
-                          color: Colors.white,
-                          size: Dimensions.h_8,
-                        ),
-                      ),
-                      SizedBox(width: Dimensions.w_5),
-                      Expanded(
-                        child: Text(
-                          actionTitle,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: FontSize.sp_9,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: Dimensions.w_3,
-                          vertical: Dimensions.h_1,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3BF00),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          "Earn +2 pts",
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w700,
-                            fontSize: FontSize.sp_8,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ) : Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: isLight? Colors.transparent: AppColor.white,width: 0.5),
-        borderRadius: BorderRadius.circular(Dimensions.w_5),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(Dimensions.w_5),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(
-              image,
-              fit: BoxFit.cover,
-              color: sepia ? const Color(0x99704A2A) : null,
-              colorBlendMode: sepia ? BlendMode.color : null,
-            ),
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Color(0xE6000718),
-                    Color(0x99000718),
-                    Color(0x11000718),
-                  ],
-                  stops: [0, 0.55, 1],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(Dimensions.w_8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: Dimensions.w_23,
-                    height: Dimensions.w_23,
                     decoration: BoxDecoration(
-                      color: iconColor,
-                      borderRadius: BorderRadius.circular(Dimensions.w_4),
+                      gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black.withValues(alpha: .99), Colors.black.withValues(alpha: .70), Colors.black.withValues(alpha: .01), Colors.transparent]),
                     ),
-                    child: Icon(icon, color: Colors.white, size: Dimensions.w_15),
                   ),
-                  SizedBox(width: Dimensions.w_6),
-                  Expanded(
+                  Positioned(
+                    left: Dimensions.w_5,
+                    right: Dimensions.w_4,
+                    bottom: Dimensions.h_6,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          title,
+                          title.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: FontSize.sp_11,
-                            fontWeight: FontWeight.w900,
-                          ),
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: FontSize.sp_11),
                         ),
-                        SizedBox(height: Dimensions.h_3),
+                        SizedBox(height: Dimensions.h_1),
                         Text(
                           subtitle,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: FontSize.sp_9,
-                            height: 1.35,
-                            fontWeight: FontWeight.w700,
-                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: FontSize.sp_9),
+                        ),
+                        SizedBox(height: Dimensions.h_4),
+                        Container(height: 0.5, color: Colors.grey),
+                        SizedBox(height: Dimensions.h_5),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: Dimensions.h_10,
+                              height: Dimensions.h_10,
+                              decoration: const BoxDecoration(color: Color(0xFF6C4EFF), shape: BoxShape.circle),
+                              child: Icon(Icons.edit_rounded, color: Colors.white, size: Dimensions.h_8),
+                            ),
+                            SizedBox(width: Dimensions.w_5),
+                            Expanded(
+                              child: Text(
+                                actionTitle,
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: FontSize.sp_9),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_3, vertical: Dimensions.h_1),
+                              decoration: BoxDecoration(color: const Color(0xFFF3BF00), borderRadius: BorderRadius.circular(4)),
+                              child: Text(
+                                "Earn +2 pts",
+                                style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w700, fontSize: FontSize.sp_8),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -796,33 +443,73 @@ class ExploreCard extends StatelessWidget {
                 ],
               ),
             ),
-            Positioned(
-              right: Dimensions.w_6,
-              bottom: Dimensions.h_6,
-              child: Container(
-                width: Dimensions.w_20,
-                height: Dimensions.w_20,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0x66000000),
-                      blurRadius: 5,
-                      offset: Offset(0, 2),
+          )
+        : Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: isLight ? Colors.transparent : AppColor.white, width: 0.5),
+              borderRadius: BorderRadius.circular(Dimensions.w_5),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(Dimensions.w_5),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(image, fit: BoxFit.cover, color: sepia ? const Color(0x99704A2A) : null, colorBlendMode: sepia ? BlendMode.color : null),
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color(0xE6000718), Color(0x99000718), Color(0x11000718)], stops: [0, 0.55, 1]),
                     ),
-                  ],
-                ),
-                child: Icon(
-                  CupertinoIcons.chevron_right,
-                  size: Dimensions.w_10,
-                  color: const Color(0xFF111827),
-                ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(Dimensions.w_8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: Dimensions.w_23,
+                          height: Dimensions.w_23,
+                          decoration: BoxDecoration(color: iconColor, borderRadius: BorderRadius.circular(Dimensions.w_4)),
+                          child: Icon(icon, color: Colors.white, size: Dimensions.w_15),
+                        ),
+                        SizedBox(width: Dimensions.w_6),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(color: Colors.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w900),
+                              ),
+                              SizedBox(height: Dimensions.h_3),
+                              Text(
+                                subtitle,
+                                style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9, height: 1.35, fontWeight: FontWeight.w700),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: Dimensions.w_6,
+                    bottom: Dimensions.h_6,
+                    child: Container(
+                      width: Dimensions.w_20,
+                      height: Dimensions.w_20,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [BoxShadow(color: Color(0x66000000), blurRadius: 5, offset: Offset(0, 2))],
+                      ),
+                      child: Icon(CupertinoIcons.chevron_right, size: Dimensions.w_10, color: const Color(0xFF111827)),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 }

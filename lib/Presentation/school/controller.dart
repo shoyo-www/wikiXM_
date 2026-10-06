@@ -8,8 +8,7 @@ import '../../data/datasource/remote/models/response/Education_response.dart';
 class SchoolController extends GetxController {
   bool isLoading = false;
 
-  final EducationRepositoryImpl educationRepositoryImpl =
-  EducationRepositoryImpl();
+  final EducationRepositoryImpl educationRepositoryImpl = EducationRepositoryImpl();
   EducationData? educationData;
   String selectedSchoolFilter = 'all';
 
@@ -32,14 +31,14 @@ class SchoolController extends GetxController {
     var data = await educationRepositoryImpl.getEducationData();
 
     data.fold(
-          (l) {
+      (l) {
         if (l is ServerFailure) {
           isLoading = false;
 
           update([ControllerBuilders.educationController]);
         }
       },
-          (r) {
+      (r) {
         bool status = r.success ?? false;
 
         if (status == true) {

@@ -10,6 +10,8 @@ class SportsTheme extends ThemeExtension<SportsTheme> {
   final Color secondaryText;
   final Color accent;
   final Color cardActiveBackground;
+  final Color green;
+  final Color yellow;
 
   const SportsTheme({
     required this.background,
@@ -20,6 +22,8 @@ class SportsTheme extends ThemeExtension<SportsTheme> {
     required this.secondaryText,
     required this.accent,
     required this.cardActiveBackground,
+    required this.green,
+    required this.yellow
   });
 
   static const light = SportsTheme(
@@ -31,6 +35,8 @@ class SportsTheme extends ThemeExtension<SportsTheme> {
     secondaryText: AppColor.sportsLightSecondaryText,
     accent: AppColor.sportsBorder,
     cardActiveBackground: AppColor.sportsActiveCard,
+    green: Color(0xFF087C4B),
+    yellow: Color(0xFFbb7800)
   );
 
   static const dark = SportsTheme(
@@ -42,6 +48,8 @@ class SportsTheme extends ThemeExtension<SportsTheme> {
     secondaryText: AppColor.darkGreenSportsSecondaryText,
     accent: AppColor.sportsDarkBorder,
     cardActiveBackground: AppColor.darkGreenSportsCard,
+    green: Color(0xFF64D9A2),
+    yellow: Color(0xFFffc958)
   );
 
   @override
@@ -54,6 +62,8 @@ class SportsTheme extends ThemeExtension<SportsTheme> {
     Color? secondaryText,
     Color? accent,
     Color? cardActiveBackground,
+    Color? green,
+    Color? yellow
   }) {
     return SportsTheme(
       background: background ?? this.background,
@@ -65,6 +75,8 @@ class SportsTheme extends ThemeExtension<SportsTheme> {
       accent: accent ?? this.accent,
       cardActiveBackground:
       cardActiveBackground ?? this.cardActiveBackground,
+      green: green ?? this.green,
+      yellow: yellow ?? this.yellow
     );
   }
 
@@ -78,46 +90,17 @@ class SportsTheme extends ThemeExtension<SportsTheme> {
     }
 
     return SportsTheme(
-      background: Color.lerp(
-        background,
-        other.background,
-        t,
-      )!,
-      card: Color.lerp(
-        card,
-        other.card,
-        t,
-      )!,
-      border: Color.lerp(
-        border,
-        other.border,
-        t,
-      )!,
-      activeBorder: Color.lerp(
-        activeBorder,
-        other.activeBorder,
-        t,
-      )!,
-      primaryText: Color.lerp(
-        primaryText,
-        other.primaryText,
-        t,
-      )!,
-      secondaryText: Color.lerp(
-        secondaryText,
-        other.secondaryText,
-        t,
-      )!,
-      accent: Color.lerp(
-        accent,
-        other.accent,
-        t,
-      )!,
-      cardActiveBackground: Color.lerp(
-        cardActiveBackground,
-        other.cardActiveBackground,
-        t,
-      )!,
+      background: Color.lerp(background, other.background, t)!,
+      card: Color.lerp(card, other.card, t)!,
+      border: Color.lerp(border, other.border, t)!,
+      activeBorder: Color.lerp(activeBorder, other.activeBorder, t)!,
+      primaryText: Color.lerp(primaryText, other.primaryText, t)!,
+      secondaryText: Color.lerp(secondaryText, other.secondaryText, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
+      cardActiveBackground:
+      Color.lerp(cardActiveBackground, other.cardActiveBackground, t)!,
+      green: Color.lerp(green, other.green, t)!,
+      yellow: Color.lerp(yellow, other.yellow, t)!
     );
   }
 }

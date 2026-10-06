@@ -34,22 +34,9 @@ class NewsScreenShimmer extends StatelessWidget {
                   highlightColor: highlightColor,
                   child: Container(
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0xFF26374A),
-                          Color(0xFF38516C),
-                          Color(0xFF0F1D2A),
-                        ],
-                      ),
+                      gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF26374A), Color(0xFF38516C), Color(0xFF0F1D2A)]),
                     ),
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      Platform.isAndroid ? 86 : 96,
-                      16,
-                      20,
-                    ),
+                    padding: EdgeInsets.fromLTRB(16, Platform.isAndroid ? 86 : 96, 16, 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -107,10 +94,7 @@ class NewsScreenShimmer extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: 3,
                         separatorBuilder: (_, __) => const SizedBox(width: 6),
-                        itemBuilder: (_, __) => SizedBox(
-                          width: 110,
-                          child: _repCard(baseColor, highlightColor),
-                        ),
+                        itemBuilder: (_, __) => SizedBox(width: 110, child: _repCard(baseColor, highlightColor)),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -124,12 +108,7 @@ class NewsScreenShimmer extends StatelessWidget {
                     const SizedBox(height: 8),
                     SizedBox(
                       height: 170,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 4,
-                        separatorBuilder: (_, __) => const SizedBox(width: 5),
-                        itemBuilder: (_, __) => _topicCard(baseColor, highlightColor),
-                      ),
+                      child: ListView.separated(scrollDirection: Axis.horizontal, itemCount: 4, separatorBuilder: (_, __) => const SizedBox(width: 5), itemBuilder: (_, __) => _topicCard(baseColor, highlightColor)),
                     ),
                     const SizedBox(height: 16),
                     _sectionHeader(baseColor, highlightColor),
@@ -144,10 +123,7 @@ class NewsScreenShimmer extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: 3,
                         separatorBuilder: (_, __) => const SizedBox(width: 8),
-                        itemBuilder: (_, __) => SizedBox(
-                          width: 110,
-                          child: _regionCard(baseColor, highlightColor),
-                        ),
+                        itemBuilder: (_, __) => SizedBox(width: 110, child: _regionCard(baseColor, highlightColor)),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -159,10 +135,7 @@ class NewsScreenShimmer extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: 4,
                         separatorBuilder: (_, __) => const SizedBox(width: 6),
-                        itemBuilder: (_, __) => SizedBox(
-                          width: 85,
-                          child: _communityCard(baseColor, highlightColor),
-                        ),
+                        itemBuilder: (_, __) => SizedBox(width: 85, child: _communityCard(baseColor, highlightColor)),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -199,13 +172,7 @@ class NewsScreenShimmer extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Row(
-                      children: [
-                        _circle(28, baseColor, highlightColor),
-                        const SizedBox(width: 8),
-                        _circle(28, baseColor, highlightColor),
-                      ],
-                    ),
+                    Row(children: [_circle(28, baseColor, highlightColor), const SizedBox(width: 8), _circle(28, baseColor, highlightColor)]),
                   ],
                 ),
               ),
@@ -249,10 +216,7 @@ class NewsScreenShimmer extends StatelessWidget {
                 _circle(28, baseColor, highlightColor),
               ],
             ),
-            if (!compact) ...[
-              const SizedBox(height: 10),
-              _line(width: double.infinity, height: 56, baseColor: baseColor, highlightColor: highlightColor, radius: 10),
-            ],
+            if (!compact) ...[const SizedBox(height: 10), _line(width: double.infinity, height: 56, baseColor: baseColor, highlightColor: highlightColor, radius: 10)],
           ],
         ),
       ),
@@ -387,13 +351,7 @@ class NewsScreenShimmer extends StatelessWidget {
     return _card(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Column(
-          children: [
-            _meetingRow(baseColor, highlightColor, live: true),
-            const Divider(height: 12),
-            _meetingRow(baseColor, highlightColor),
-          ],
-        ),
+        child: Column(children: [_meetingRow(baseColor, highlightColor, live: true), const Divider(height: 12), _meetingRow(baseColor, highlightColor)]),
       ),
     );
   }
@@ -412,10 +370,7 @@ class NewsScreenShimmer extends StatelessWidget {
                 Row(
                   children: [
                     _line(width: 120, height: 12, baseColor: baseColor, highlightColor: highlightColor),
-                    if (live) ...[
-                      const SizedBox(width: 6),
-                      _pill(width: 28, baseColor: baseColor, highlightColor: highlightColor, height: 14),
-                    ],
+                    if (live) ...[const SizedBox(width: 6), _pill(width: 28, baseColor: baseColor, highlightColor: highlightColor, height: 14)],
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -433,10 +388,7 @@ class NewsScreenShimmer extends StatelessWidget {
   Widget _topicCard(Color baseColor, Color highlightColor) {
     return Container(
       width: 100,
-      decoration: BoxDecoration(
-        color: const Color(0xFF315CB6),
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(color: const Color(0xFF315CB6), borderRadius: BorderRadius.circular(8)),
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: Column(
@@ -608,67 +560,35 @@ class NewsScreenShimmer extends StatelessWidget {
       decoration: BoxDecoration(
         color: color ?? Colors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: Colors.black.withValues(alpha: 0.06),
-        ),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
       ),
       child: child,
     );
   }
 
-  Widget _line({
-    required double width,
-    required double height,
-    required Color baseColor,
-    required Color highlightColor,
-    double radius = 6,
-  }) {
+  Widget _line({required double width, required double height, required Color baseColor, required Color highlightColor, double radius = 6}) {
     return _NewsShimmerBox(
       baseColor: baseColor,
       highlightColor: highlightColor,
       child: Container(
         width: width,
         height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(radius),
-        ),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(radius)),
       ),
     );
   }
 
-  Widget _pill({
-    required double width,
-    required Color baseColor,
-    required Color highlightColor,
-    double height = 18,
-  }) {
-    return _line(
-      width: width,
-      height: height,
-      baseColor: baseColor,
-      highlightColor: highlightColor,
-      radius: 999,
-    );
+  Widget _pill({required double width, required Color baseColor, required Color highlightColor, double height = 18}) {
+    return _line(width: width, height: height, baseColor: baseColor, highlightColor: highlightColor, radius: 999);
   }
 
   Widget _circle(double size, Color baseColor, Color highlightColor) {
-    return _line(
-      width: size,
-      height: size,
-      baseColor: baseColor,
-      highlightColor: highlightColor,
-      radius: size,
-    );
+    return _line(width: size, height: size, baseColor: baseColor, highlightColor: highlightColor, radius: size);
   }
 }
 
 class _NewsShimmerBox extends StatelessWidget {
-  const _NewsShimmerBox({
-    required this.baseColor,
-    required this.highlightColor,
-    required this.child,
-  });
+  const _NewsShimmerBox({required this.baseColor, required this.highlightColor, required this.child});
 
   final Color baseColor;
   final Color highlightColor;
@@ -676,10 +596,6 @@ class _NewsShimmerBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: baseColor,
-      highlightColor: highlightColor,
-      child: child,
-    );
+    return Shimmer.fromColors(baseColor: baseColor, highlightColor: highlightColor, child: child);
   }
 }
