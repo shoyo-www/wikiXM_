@@ -71,7 +71,7 @@ class _BusinessMicrositeState extends State<BusinessMicrosite> {
                     height: Dimensions.h_25,
                     decoration: BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(color: isLight ? Colors.grey : Colors.white54, width: isLight ? 0.6 : 0.6),
+                        bottom: BorderSide(color: AppColor.micrositeGrey(context), width: isLight ? 0.6 : 0.6),
                       ),
                     ),
                     child: ListView.builder(
@@ -781,7 +781,7 @@ class _BusinessMicrositeState extends State<BusinessMicrosite> {
           margin: EdgeInsets.symmetric(horizontal: Dimensions.w_2),
           width: Get.width,
           decoration: BoxDecoration(
-            color: isLight ? Color(0xFFedf7f1) : Color(0xFF19332a),
+            color: AppColor.micrositeGreenSoft(context),
             border: Border.all(color: context.sports.green, width: 0.3),
             borderRadius: BorderRadius.circular(Dimensions.h_8),
           ),
@@ -846,7 +846,7 @@ class _BusinessMicrositeState extends State<BusinessMicrosite> {
                 child: Center(
                   child: Text(
                     "Ask a Question".toUpperCase(),
-                    style: TextStyle(color: isLight ? Colors.white : Colors.black87, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
+                    style: TextStyle(color: AppColor.micrositeWhite(context), fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),

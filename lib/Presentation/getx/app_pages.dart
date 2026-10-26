@@ -7,9 +7,15 @@ import 'package:wikixm/Presentation/dashboard/dashboard.dart';
 import 'package:wikixm/Presentation/first_visit/first_visit.dart';
 import 'package:wikixm/Presentation/garage/add_item.dart';
 import 'package:wikixm/Presentation/garage/garage_screen.dart';
-import 'package:wikixm/Presentation/garage/marketBrief.dart';
+import 'package:wikixm/Presentation/garage/market_brief.dart';
 import 'package:wikixm/Presentation/garage/market_place.dart';
+import 'package:wikixm/Presentation/groups/activity_detail.dart';
+import 'package:wikixm/Presentation/groups/create_group.dart';
+import 'package:wikixm/Presentation/groups/detail_page.dart';
+import 'package:wikixm/Presentation/groups/group_detail.dart';
+import 'package:wikixm/Presentation/groups/group_profile.dart';
 import 'package:wikixm/Presentation/guide/ask_guide.dart';
+import 'package:wikixm/Presentation/notifications/notifications.dart';
 import 'package:wikixm/Presentation/politics/politics.dart';
 import 'package:wikixm/Presentation/school/school_screen.dart';
 import 'package:wikixm/Presentation/sports/sports_screen.dart';
@@ -19,6 +25,7 @@ import 'package:wikixm/Presentation/widgets/ads_widget.dart';
 import '../../approutes.dart';
 import '../auth/sign_up.dart';
 import '../business/business.dart';
+import '../groups/groups.dart';
 import '../splash/splash_screen.dart';
 
 class AppPages {
@@ -45,5 +52,12 @@ class AppPages {
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.marketPlace, page: () => const MarketPlace()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.microsite, page: () => const BusinessMicrosite()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.adsWidget, page: () => const AdsWidget()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.notifications, page: () => const Notifications()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groups, page: () => const GroupsScreen()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupDetail, page: () => const GroupDetail()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.createGroup, page: () => const CreateGroupScreen()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.activityDetail, page: () => const ActivityDetail()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.detailPage, page: () => const DetailPage()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupUserProfile, page: () => const GroupUserProfile()),
   ];
 }

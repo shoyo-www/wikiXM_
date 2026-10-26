@@ -4,21 +4,7 @@ import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'common_appbar.dart';
 
 class CommonBlurScaffold extends StatefulWidget {
-  const CommonBlurScaffold({
-    super.key,
-    required this.child,
-    this.heroHeight = 280,
-    this.blurDistance = 120,
-    this.expandedColor = Colors.white,
-    this.collapsedColor = Colors.black,
-    this.backgroundColor,
-    this.physics,
-    this.showBack = false,
-    this.isDrawer = false,
-    this.onTap,
-    this.appBarchild,
-    this.scrollController,
-  });
+  const CommonBlurScaffold({super.key, required this.child, this.heroHeight = 280, this.blurDistance = 120, this.expandedColor = Colors.white, this.collapsedColor = Colors.black, this.backgroundColor, this.physics, this.showBack = false, this.isDrawer = false, this.onTap, this.appBarchild, this.scrollController});
 
   final Widget child;
   final bool showBack;
@@ -42,15 +28,13 @@ class _CommonBlurScaffoldState extends State<CommonBlurScaffold> {
   late final ScrollController _scrollController;
   double _scrollOffset = 0;
 
-  bool get _isExternalController =>
-      widget.scrollController != null;
+  bool get _isExternalController => widget.scrollController != null;
 
   @override
   void initState() {
     super.initState();
 
-    _scrollController =
-        widget.scrollController ?? ScrollController();
+    _scrollController = widget.scrollController ?? ScrollController();
 
     _scrollController.addListener(_handleScroll);
   }
@@ -74,16 +58,11 @@ class _CommonBlurScaffoldState extends State<CommonBlurScaffold> {
       return 1;
     }
 
-    return (_scrollOffset / widget.blurDistance)
-        .clamp(0.0, 1.0);
+    return (_scrollOffset / widget.blurDistance).clamp(0.0, 1.0);
   }
 
   Color get _foregroundColor {
-    return Color.lerp(
-      widget.expandedColor,
-      widget.collapsedColor,
-      _blurOpacity,
-    )!;
+    return Color.lerp(widget.expandedColor, widget.collapsedColor, _blurOpacity)!;
   }
 
   @override
@@ -106,25 +85,14 @@ class _CommonBlurScaffoldState extends State<CommonBlurScaffold> {
       backgroundColor: widget.backgroundColor,
       body: Stack(
         children: [
-          SingleChildScrollView(
-            controller: _scrollController,
-            physics: widget.physics ??
-                const AlwaysScrollableScrollPhysics(),
-            child: widget.child,
+          Positioned.fill(
+            child: SingleChildScrollView(controller: _scrollController, physics: widget.physics ?? const AlwaysScrollableScrollPhysics(), child: widget.child),
           ),
-
           Positioned(
             top: Platform.isAndroid ? -10 : -20,
             left: 0,
             right: 0,
-            child: CommonBlurAppBar(
-              blurOpacity: _blurOpacity,
-              foregroundColor: _foregroundColor,
-              showBackButton: widget.showBack,
-              onTap: widget.onTap,
-              isDrawer: widget.isDrawer,
-              child: widget.appBarchild,
-            ),
+            child: CommonBlurAppBar(blurOpacity: _blurOpacity, foregroundColor: _foregroundColor, showBackButton: widget.showBack, onTap: widget.onTap, isDrawer: widget.isDrawer, child: widget.appBarchild),
           ),
         ],
       ),

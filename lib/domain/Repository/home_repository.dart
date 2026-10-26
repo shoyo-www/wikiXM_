@@ -8,7 +8,6 @@ import 'package:wikixm/data/datasource/remote/models/response/home_local.dart';
 import 'package:wikixm/data/datasource/remote/models/response/home_market_place.dart';
 import 'package:wikixm/data/datasource/remote/models/response/home_response.dart';
 import 'package:wikixm/data/datasource/remote/models/response/search_town.dart';
-import 'package:wikixm/data/datasource/remote/models/response/search_town_response.dart';
 import 'package:wikixm/data/datasource/remote/models/response/weather_alerts.dart';
 import '../../core/error/failures.dart';
 

@@ -12,17 +12,17 @@ abstract class BaseSliderAppBar extends StatelessWidget {
   final VoidCallback? onDrawerTap;
 
   const BaseSliderAppBar({
-    Key? key,
+    super.key,
     required this.config,
     this.onDrawerTap,
-  }) : super(key: key);
+  });
 }
 
 class SliderAppBar extends BaseSliderAppBar {
   const SliderAppBar({
-    Key? key,
-    required SliderAppBarConfig config,
-  }) : super(key: key, config: config);
+    super.key,
+    required super.config,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +38,11 @@ class _InternalSliderAppBar extends BaseSliderAppBar
   final SlideDirection slideDirection;
 
   const _InternalSliderAppBar({
-    required SliderAppBarConfig config,
+    required super.config,
     required this.animationController,
     required this.slideDirection,
-    VoidCallback? onDrawerTap,
-  }) : super(config: config, onDrawerTap: onDrawerTap);
+    super.onDrawerTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -101,8 +101,7 @@ class _AnimatedCupertinoIcon extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _AnimatedCupertinoIcon(
-      {Key? key, required this.progress, required this.onTap})
-      : super(key: key);
+      {required this.progress, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +133,7 @@ class AppBar extends StatelessWidget {
   final VoidCallback? onDrawerTap;
   final SlideDirection slideDirection;
 
-  const AppBar({
+  const AppBar({super.key,
     this.appBar,
     required this.animationDrawerController,
     this.onDrawerTap,

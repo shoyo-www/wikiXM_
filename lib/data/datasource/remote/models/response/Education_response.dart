@@ -229,7 +229,7 @@ class QuickLink {
 class Stat {
   final String? icon;
   final String? label;
-  final int? value;
+  final dynamic value;
 
   Stat({
     this.icon,
@@ -817,7 +817,7 @@ class Board {
 }
 
 class BoardItem {
-  final String? id;
+  final int? id;
   final String? icon;
   final String? title;
   final String? status;

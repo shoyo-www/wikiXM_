@@ -1,12 +1,9 @@
-import 'package:carousel_slider_plus/carousel_controller.dart';
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wikixm/Presentation/town_hall/controller.dart';
 import '../../constants/appcolor.dart';
 import '../../constants/fontsize.dart';
-import '../../data/datasource/remote/models/response/command_center_response.dart';
 import '../../data/datasource/remote/models/response/town_hall_response.dart';
 
 class LegislativeBillsSection extends StatefulWidget {

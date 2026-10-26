@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:wikixm/constants/appcolor.dart';
 
 class EventsScreenShimmer extends StatelessWidget {
   const EventsScreenShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isLight = theme.brightness == Brightness.light;
     return CustomScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       slivers: [
@@ -20,7 +19,7 @@ class EventsScreenShimmer extends StatelessWidget {
           elevation: 0,
           expandedHeight: 312,
           flexibleSpace: FlexibleSpaceBar(
-            background: _HeroShimmer(cardColor: Theme.of(context).scaffoldBackgroundColor, lineColor: isLight ? Colors.white : Colors.white10),
+            background: _HeroShimmer(cardColor: Theme.of(context).scaffoldBackgroundColor, lineColor: AppColor.eventsScreenShimmerWhite(context)),
           ),
         ),
         SliverPadding(
@@ -64,19 +63,19 @@ class EventsScreenShimmer extends StatelessWidget {
               const SizedBox(height: 12),
               const _SectionHeaderShimmer(),
               const SizedBox(height: 10),
-              _EventsGridShimmer(cardColor: isLight ? Colors.white : const Color(0xFF1E2430)),
+              _EventsGridShimmer(cardColor: AppColor.eventsScreenShimmerWhite2(context)),
               const SizedBox(height: 12),
               const _WideCardSectionShimmer(itemCount: 2),
               const SizedBox(height: 12),
-              _CategoryGridShimmer(cardColor: isLight ? Colors.white : const Color(0xFF1E2430)),
+              _CategoryGridShimmer(cardColor: AppColor.eventsScreenShimmerWhite2(context)),
               const SizedBox(height: 12),
               const _ContributorsShimmer(),
               const SizedBox(height: 12),
-              _FeatureStoryShimmer(cardColor: isLight ? Colors.white : const Color(0xFF1E2430)),
+              _FeatureStoryShimmer(cardColor: AppColor.eventsScreenShimmerWhite2(context)),
               const SizedBox(height: 12),
               const _ArticleGridShimmer(),
               const SizedBox(height: 12),
-              _PlannerShimmer(cardColor: isLight ? Colors.white : const Color(0xFF1E2430)),
+              _PlannerShimmer(cardColor: AppColor.eventsScreenShimmerWhite2(context)),
               const SizedBox(height: 12),
               _NewsletterShimmer(cardColor: const Color(0xFF2A2AD4)),
               const SizedBox(height: 16),
@@ -86,7 +85,7 @@ class EventsScreenShimmer extends StatelessWidget {
               const SizedBox(height: 16),
               _box(128, 12, context: context),
               const SizedBox(height: 10),
-              _ExploreShimmer(cardColor: isLight ? Colors.white : const Color(0xFF1E2430)),
+              _ExploreShimmer(cardColor: AppColor.eventsScreenShimmerWhite2(context)),
             ]),
           ),
         ),
@@ -244,7 +243,7 @@ class _EventsGridShimmer extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 4,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: 0.82),
-      itemBuilder: (_, __) {
+      itemBuilder: (_, _) {
         return _CardShimmer(
           color: cardColor,
           child: Column(
@@ -339,7 +338,7 @@ class _CategoryGridShimmer extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 6,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: 1.18),
-      itemBuilder: (_, __) {
+      itemBuilder: (_, _) {
         return _CardShimmer(
           color: cardColor,
           child: Column(
@@ -445,7 +444,7 @@ class _ArticleGridShimmer extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: 4,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: 0.92),
-      itemBuilder: (_, __) {
+      itemBuilder: (_, _) {
         return _CardShimmer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

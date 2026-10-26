@@ -10,7 +10,7 @@ import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
-import '../widgets/AnimatedImage.dart';
+import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/circular_percent.dart';
 import '../widgets/common_header.dart';
@@ -199,8 +199,8 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
         'assigned': 'City Council assigned',
         'participants': '428 participants',
         'support': '87% community support',
-        'color': isLight ? const Color(0xff267257) : const Color(0xff70B894),
-        'bgColor': isLight ? const Color(0xffE7F3EC) : const Color(0xff20382D),
+        'color': AppColor.commandCenterGreenDeep(context),
+        'bgColor': AppColor.commandCenterGreenSoft(context),
       },
       {
         'number': '2',
@@ -210,8 +210,8 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
         'assigned': 'Representative response pending',
         'participants': '312 participants',
         'support': '72% community support',
-        'color': isLight ? const Color(0xffA5660B) : const Color(0xffD99A5A),
-        'bgColor': isLight ? const Color(0xffFFF3DD) : const Color(0xff3D2E20),
+        'color': AppColor.commandCenterOrange(context),
+        'bgColor': AppColor.commandCenterOrangeSoft(context),
       },
       {
         'number': '3',
@@ -221,8 +221,8 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
         'assigned': 'Council vote · May 28',
         'participants': '186 participants',
         'support': '91% community support',
-        'color': isLight ? const Color(0xff2860B5) : const Color(0xff78A6E8),
-        'bgColor': isLight ? const Color(0xffE6F0FC) : const Color(0xff1F3048),
+        'color': AppColor.commandCenterBlue(context),
+        'bgColor': AppColor.commandCenterBlueSoft(context),
       },
     ];
     return Column(
@@ -417,11 +417,11 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
       {'number': '3', 'time': '5 MIN', 'title': 'Support Black Nugget crossing', 'description': 'Implementation is 91% complete', 'button': 'View progress'},
     ];
 
-    final primaryColor = isLight ? const Color(0xff246B4D) : const Color(0xff3F8A68);
+    final primaryColor = AppColor.primaryColor(context);
 
-    final lightBlue = isLight ? const Color(0xffE5F1FC) : const Color(0xff1D3348);
+    final lightBlue = AppColor.lightBlue(context);
 
-    final borderColor = isLight ? const Color(0xffC9DDED) : const Color(0xff304A60);
+    final borderColor = AppColor.borderColor(context);
 
     return Column(
       children: [
@@ -495,7 +495,7 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                         Container(
                           width: Dimensions.h_20,
                           height: Dimensions.h_20,
-                          decoration: BoxDecoration(color: isLight ? const Color(0xffE7F3EC) : const Color(0xff20382D), shape: BoxShape.circle),
+                          decoration: BoxDecoration(color: AppColor.commandCenterGreenSoft(context), shape: BoxShape.circle),
                           child: Center(
                             child: Text(
                               item['number']!,
@@ -510,7 +510,7 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                             children: [
                               Text(
                                 item['time']!,
-                                style: TextStyle(color: isLight ? const Color(0xff2860B5) : const Color(0xff78A6E8), fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w800),
+                                style: TextStyle(color: AppColor.commandCenterBlue(context), fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w800),
                               ),
                               Text(
                                 item['title']!,
@@ -542,9 +542,9 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                               children: [
                                 Text(
                                   item['button']!,
-                                  style: TextStyle(color: isLight ? const Color(0xff2860B5) : const Color(0xff78A6E8), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w800),
+                                  style: TextStyle(color: AppColor.commandCenterBlue(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w800),
                                 ),
-                                if (item['button'] == 'View progress') ...[SizedBox(width: Dimensions.w_3), Icon(Icons.arrow_forward, size: Dimensions.h_10, color: isLight ? const Color(0xff2860B5) : const Color(0xff78A6E8))],
+                                if (item['button'] == 'View progress') ...[SizedBox(width: Dimensions.w_3), Icon(Icons.arrow_forward, size: Dimensions.h_10, color: AppColor.commandCenterBlue(context))],
                               ],
                             ),
                           ),
@@ -562,7 +562,7 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(CupertinoIcons.bell, size: Dimensions.h_16, color: isLight ? const Color(0xff2860B5) : const Color(0xff78A6E8)),
+                    Icon(CupertinoIcons.bell, size: Dimensions.h_16, color: AppColor.commandCenterBlue(context)),
                     SizedBox(width: Dimensions.w_6),
                     Expanded(
                       child: Column(
@@ -611,8 +611,8 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
         'impactValue': 'High',
         'bottomText': 'Public comment closes May 24',
         'comments': '126',
-        'color': isLight ? const Color(0xff267257) : const Color(0xff70B894),
-        'badgeColor': isLight ? const Color(0xffE7F3EC) : const Color(0xff20382D),
+        'color': AppColor.commandCenterGreenDeep(context),
+        'badgeColor': AppColor.commandCenterGreenSoft(context),
       },
       {
         'level': 'COUNTY',
@@ -624,8 +624,8 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
         'impactValue': 'High',
         'bottomText': 'Hearing May 27',
         'comments': '94',
-        'color': isLight ? const Color(0xff6950A5) : const Color(0xffA58BD8),
-        'badgeColor': isLight ? const Color(0xffF0EAF9) : const Color(0xff302746),
+        'color': AppColor.commandCenterPurple(context),
+        'badgeColor': AppColor.commandCenterPurpleSoft(context),
       },
       {
         'level': 'STATE',
@@ -637,8 +637,8 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
         'impactValue': 'High',
         'bottomText': 'Possible vote this week',
         'comments': '211',
-        'color': isLight ? const Color(0xff267257) : const Color(0xff70B894),
-        'badgeColor': isLight ? const Color(0xffE7F3EC) : const Color(0xff20382D),
+        'color': AppColor.commandCenterGreenDeep(context),
+        'badgeColor': AppColor.commandCenterGreenSoft(context),
       },
       {
         'level': 'FEDERAL',
@@ -650,8 +650,8 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
         'impactValue': 'High',
         'bottomText': 'Representative response received',
         'comments': '172',
-        'color': isLight ? const Color(0xffA5660B) : const Color(0xffD99A5A),
-        'badgeColor': isLight ? const Color(0xffFFF3DD) : const Color(0xff3D2E20),
+        'color': AppColor.commandCenterOrange(context),
+        'badgeColor': AppColor.commandCenterOrangeSoft(context),
       },
     ];
 
@@ -732,7 +732,7 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_4),
-                    decoration: BoxDecoration(color: isLight ? const Color(0xffFFF3D6) : const Color(0xff3D3020), borderRadius: BorderRadius.circular(Dimensions.h_4)),
+                    decoration: BoxDecoration(color: AppColor.commandCenterGoldSoft(context), borderRadius: BorderRadius.circular(Dimensions.h_4)),
                     child: Row(
                       children: [
                         Text(
@@ -742,7 +742,7 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                         const Spacer(),
                         Text(
                           item['impactValue'] as String,
-                          style: TextStyle(color: isLight ? const Color(0xff8A5A12) : const Color(0xffD9A35A), fontSize: FontSize.sp_9, fontWeight: FontWeight.w800),
+                          style: TextStyle(color: AppColor.commandCenterOrange2(context), fontSize: FontSize.sp_9, fontWeight: FontWeight.w800),
                         ),
                       ],
                     ),
@@ -843,12 +843,12 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                       Expanded(
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: Dimensions.w_2, vertical: Dimensions.h_3),
-                          decoration: BoxDecoration(color: isLight ? const Color(0xffEAF2FA) : const Color(0xff263A4D), borderRadius: BorderRadius.circular(Dimensions.h_4)),
+                          decoration: BoxDecoration(color: AppColor.commandCenterBlueSoft2(context), borderRadius: BorderRadius.circular(Dimensions.h_4)),
                           child: Text(
                             item['category'] as String,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: isLight ? const Color(0xff315F96) : const Color(0xff8DB9E5), fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w800, letterSpacing: .2, height: 1),
+                            style: TextStyle(color: AppColor.commandCenterBlue2(context), fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w800, letterSpacing: .2, height: 1),
                           ),
                         ),
                       ),
@@ -910,9 +910,9 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
       {'month': 'MAY', 'day': '29', 'title': 'School Board Meeting', 'time': '6:00 PM', 'location': 'Admin Bldg'},
     ];
 
-    final dateColor = isLight ? const Color(0xff315F96) : const Color(0xff8DB9E5);
+    final dateColor = AppColor.commandCenterBlue2(context);
 
-    final dateBackground = isLight ? const Color(0xffEAF2FA) : const Color(0xff263A4D);
+    final dateBackground = AppColor.commandCenterBlueSoft2(context);
 
     return Column(
       children: [
@@ -1049,20 +1049,20 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: index == 0 || index == 4
-                          ? (isLight ? const Color(0xffDDF1E7) : const Color(0xff294638))
+                          ? (AppColor.commandCenterGreenSoft2(context))
                           : index == 2
-                          ? (isLight ? const Color(0xffEEE3FA) : const Color(0xff3B2D4D))
-                          : (isLight ? const Color(0xffE2EDF9) : const Color(0xff2B4057)),
+                          ? (AppColor.commandCenterPurpleSoft2(context))
+                          : (AppColor.commandCenterBlueSoft3(context)),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       item['initials'] as String,
                       style: TextStyle(
                         color: index == 0 || index == 4
-                            ? (isLight ? const Color(0xff35634F) : const Color(0xff9ED2B5))
+                            ? (AppColor.commandCenterGreenDeep2(context))
                             : index == 2
-                            ? (isLight ? const Color(0xff674D91) : const Color(0xffC0A6E2))
-                            : (isLight ? const Color(0xff365B82) : const Color(0xff9BBBDD)),
+                            ? (AppColor.commandCenterPurple2(context))
+                            : (AppColor.commandCenterBlue3(context)),
                         fontSize: FontSize.sp_12,
                         fontWeight: FontWeight.w800,
                       ),
@@ -1129,9 +1129,9 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
       {'type': 'Issue milestone', 'time': '36 min ago', 'initials': '', 'name': 'Civic Solutions', 'description': 'Black Nugget Road Crossing moved into implementation.', 'action': 'View progress', 'icon': CupertinoIcons.arrow_right},
     ];
 
-    final chipBorderColor = isLight ? const Color(0xffC8D9E8) : const Color(0xff385066);
+    final chipBorderColor = AppColor.chipBorderColor(context);
 
-    final selectedChipColor = isLight ? const Color(0xff285A94) : const Color(0xff477DB8);
+    final selectedChipColor = AppColor.selectedChipColor(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1201,16 +1201,16 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                   final isMilestone = index == 2;
 
                   final avatarColor = isMilestone
-                      ? (isLight ? const Color(0xffDCEAF8) : const Color(0xff263D54))
+                      ? (AppColor.commandCenterBlueSoft4(context))
                       : isRepresentative
-                      ? (isLight ? const Color(0xffDCEFE4) : const Color(0xff20382D))
-                      : (isLight ? const Color(0xffDCEAF8) : const Color(0xff263D54));
+                      ? (AppColor.commandCenterGreenSoft3(context))
+                      : (AppColor.commandCenterBlueSoft4(context));
 
                   final avatarTextColor = isMilestone
-                      ? (isLight ? const Color(0xff4C78A5) : const Color(0xff8BB6E5))
+                      ? (AppColor.commandCenterBlue4(context))
                       : isRepresentative
-                      ? (isLight ? const Color(0xff397A5D) : const Color(0xff72B894))
-                      : (isLight ? const Color(0xff4C78A5) : const Color(0xff8BB6E5));
+                      ? (AppColor.getStatusColorAnswered(context))
+                      : (AppColor.commandCenterBlue4(context));
 
                   return Container(
                     padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_8),
@@ -1275,10 +1275,10 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                                   children: [
                                     Text(
                                       item['action'].toString(),
-                                      style: TextStyle(color: isLight ? const Color(0xff2454B8) : const Color(0xff78A6E8), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700),
+                                      style: TextStyle(color: AppColor.commandCenterBlue5(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700),
                                     ),
                                     SizedBox(width: Dimensions.w_3),
-                                    Icon(item['icon'] as IconData, size: Dimensions.h_10, color: isLight ? const Color(0xff2454B8) : const Color(0xff78A6E8)),
+                                    Icon(item['icon'] as IconData, size: Dimensions.h_10, color: AppColor.commandCenterBlue5(context)),
                                   ],
                                 ),
                               ],

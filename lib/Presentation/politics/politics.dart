@@ -10,7 +10,7 @@ import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
-import '../widgets/AnimatedImage.dart';
+import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/circular_percent.dart';
 import '../widgets/common_bullet.dart';
@@ -179,26 +179,26 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
             itemCount: bills.length,
             itemBuilder: (context, index) {
               final item = bills[index];
-              Color _billLevelColor(String? level, bool isLight) {
+              Color billLevelColor(String? level, bool isLight) {
                 switch (level?.toLowerCase()) {
                   case 'town':
-                    return isLight ? AppColor.townHallGreen : const Color(0xFF70C995);
+                    return AppColor.politicsGreen(context);
 
                   case 'county':
-                    return isLight ? const Color(0xFF4566A8) : const Color(0xFF82A5E8);
+                    return AppColor.billLevelColorCounty(context);
 
                   case 'state':
-                    return isLight ? const Color(0xFF654CB0) : const Color(0xFFA58BE8);
+                    return AppColor.billLevelColorState(context);
 
                   case 'federal':
-                    return isLight ? const Color(0xFFB14A4A) : const Color(0xFFE07878);
+                    return AppColor.billLevelColorFederal(context);
 
                   default:
                     return isLight ? Theme.of(context).primaryColor : Colors.white70;
                 }
               }
 
-              final levelColor = _billLevelColor(item.level?.value, isLight);
+              final levelColor = billLevelColor(item.level?.value, isLight);
               return Container(
                 margin: EdgeInsets.only(bottom: Dimensions.h_10),
                 padding: EdgeInsets.symmetric(horizontal: Dimensions.w_2, vertical: Dimensions.h_2),
@@ -502,11 +502,11 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
         case 'opinion':
           return isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark;
         case 'analysis':
-          return isLight ? const Color(0xff3459A6) : const Color(0xff6F91D1);
+          return AppColor.getVoiceColorAnalysis(context);
         case 'letter':
-          return isLight ? const Color(0xff32665F) : const Color(0xff6FA49C);
+          return AppColor.getVoiceColorLetter(context);
         case 'guest':
-          return isLight ? const Color(0xffA85A0A) : const Color(0xffD58A45);
+          return AppColor.getVoiceColorGuest(context);
         default:
           return isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark;
       }
@@ -531,9 +531,9 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(Dimensions.h_8),
                 border: Border(
-                  right: BorderSide(color: isLight ? Colors.grey : Colors.white24, width: 0.4),
-                  left: BorderSide(color: isLight ? Colors.grey : Colors.white24, width: 0.4),
-                  bottom: BorderSide(color: isLight ? Colors.grey : Colors.white24, width: 0.4),
+                  right: BorderSide(color: AppColor.border(context), width: 0.4),
+                  left: BorderSide(color: AppColor.border(context), width: 0.4),
+                  bottom: BorderSide(color: AppColor.border(context), width: 0.4),
                 ),
               ),
               child: Column(
@@ -627,9 +627,9 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
     Color getStatusColor(String? status) {
       switch (status?.toLowerCase()) {
         case 'pending':
-          return isLight ? const Color(0xffA86A2A) : const Color(0xffD99A5A);
+          return AppColor.getStatusColorPending(context);
         case 'answered':
-          return isLight ? const Color(0xff397A5D) : const Color(0xff72B894);
+          return AppColor.getStatusColorAnswered(context);
         default:
           return isLight ? Theme.of(context).primaryColor : Colors.white70;
       }
@@ -638,9 +638,9 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
     Color getStatusBackground(String? status) {
       switch (status?.toLowerCase()) {
         case 'pending':
-          return isLight ? const Color(0xffF8EEE0) : const Color(0xff3D2E20);
+          return AppColor.getStatusBackgroundPending(context);
         case 'answered':
-          return isLight ? const Color(0xffE5F1EB) : const Color(0xff20382D);
+          return AppColor.getStatusBackgroundAnswered(context);
         default:
           return isLight ? Colors.grey.shade200 : Colors.white.withValues(alpha: 0.10);
       }
@@ -735,7 +735,7 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
     final localNews = controller.politicsData?.localNews;
     final stories = localNews?.stories ?? [];
 
-    final featuredStory = stories.cast<dynamic?>().firstWhere((story) => story?.featured == true, orElse: () => null);
+    final featuredStory = stories.cast<dynamic>().firstWhere((story) => story?.featured == true, orElse: () => null);
 
     final gridStories = stories.where((story) => story.featured != true).toList();
 
@@ -904,19 +904,19 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
               Color discussionColor(String? iconClass, bool isLight) {
                 switch (iconClass) {
                   case 'is-red':
-                    return isLight ? const Color(0xFFB83232) : const Color(0xFFE06A6A);
+                    return AppColor.discussionColorIsRed(context);
 
                   case 'is-green':
-                    return isLight ? const Color(0xFF397A5D) : const Color(0xFF72B894);
+                    return AppColor.getStatusColorAnswered(context);
 
                   case 'is-orange':
-                    return isLight ? const Color(0xFFB86718) : const Color(0xFFE09A55);
+                    return AppColor.discussionColorIsOrange(context);
 
                   case 'is-blue':
-                    return isLight ? const Color(0xFF3D73C9) : const Color(0xFF78A6E8);
+                    return AppColor.discussionColorIsBlue(context);
 
                   default:
-                    return isLight ? const Color(0xFF397A5D) : const Color(0xFF72B894);
+                    return AppColor.getStatusColorAnswered(context);
                 }
               }
 
@@ -1015,16 +1015,16 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
                               width: Dimensions.h_30,
                               height: Dimensions.h_30,
                               decoration: BoxDecoration(
-                                color: isLight ? const Color(0xFFFFEAEC) : const Color(0xFF3A1F23),
+                                color: AppColor.politicsRedSoft(context),
                                 borderRadius: BorderRadius.circular(Dimensions.h_5),
-                                border: Border.all(color: isLight ? const Color(0xFFBD252D) : const Color(0xFF7F3038), width: 0.5),
+                                border: Border.all(color: AppColor.politicsRed(context), width: 0.5),
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     month,
-                                    style: TextStyle(color: isLight ? const Color(0xFFBD252D) : const Color(0xFFE06A70), fontSize: FontSize.sp_7, fontWeight: FontWeight.w700, height: 1),
+                                    style: TextStyle(color: AppColor.politicsRed2(context), fontSize: FontSize.sp_7, fontWeight: FontWeight.w700, height: 1),
                                   ),
                                   SizedBox(height: Dimensions.h_1),
                                   Text(
@@ -1133,9 +1133,9 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
       return parsedDate.day.toString();
     }
 
-    final eventAccentColor = isLight ? const Color(0xFFBD252D) : const Color(0xFFE06A70);
+    final eventAccentColor = AppColor.politicsRed2(context);
 
-    final eventBackgroundColor = isLight ? const Color(0xFFFFEAEC) : const Color(0xFF3A1F23);
+    final eventBackgroundColor = AppColor.politicsRedSoft(context);
 
     return CommonCard(
       padding: EdgeInsets.zero,
@@ -1258,7 +1258,7 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
 
     final icons = [Icons.help_outline, CupertinoIcons.chat_bubble_text, Icons.account_balance_outlined, Icons.send_outlined];
 
-    final iconColor = isLight ? const Color(0xff2454B8) : const Color(0xff7EA5F0);
+    final iconColor = AppColor.iconColor(context);
 
     String getDeltaText(dynamic delta) {
       final prefix = delta?.prefix ?? '';

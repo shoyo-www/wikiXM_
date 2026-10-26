@@ -24,7 +24,7 @@ class CommonSectionHeader extends StatelessWidget {
         if (icon != null) ...[icon!, SizedBox(width: Dimensions.w_4)],
         Text(
           title,
-          style: TextStyle(color: color ?? Theme.of(context).highlightColor, fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w700, height: 1),
+          style: TextStyle(color: color ?? Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800, height: 1),
         ),
         const Spacer(),
         if (actionText.isNotEmpty) _actionItem(text: actionText, color: actionColor, onTap: onActionTap),

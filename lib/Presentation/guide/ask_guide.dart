@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/Presentation/guide/controller.dart';
-import 'package:wikixm/Presentation/widgets/common_appbar.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/constants/fontsize.dart';
 
@@ -188,35 +187,6 @@ class _GuideMessageBubble extends StatelessWidget {
           style: TextStyle(color: Colors.black, fontSize: FontSize.sp_12, height: 1.35, fontWeight: FontWeight.w500),
         ),
       ),
-    );
-  }
-}
-
-class _GuideAppBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => Get.back(),
-          child: Container(
-            width: Dimensions.h_22,
-            height: Dimensions.h_22,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF303030)),
-            ),
-            child: Icon(Icons.arrow_back_ios_sharp, size: Dimensions.h_10),
-          ),
-        ),
-        SizedBox(width: Dimensions.w_15),
-        Text(
-          'TOWN AI GUIDE',
-          style: TextStyle(fontSize: FontSize.sp_14, fontWeight: FontWeight.w900),
-        ),
-      ],
     );
   }
 }

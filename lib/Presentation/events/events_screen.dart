@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wikixm/Presentation/weather/shimmer.dart';
 import 'package:wikixm/Presentation/widgets/ai_brief.dart';
 import 'package:wikixm/Presentation/widgets/common_card.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
@@ -14,7 +13,7 @@ import '../../constants/constants.dart';
 import '../../constants/fontsize.dart';
 import '../../constants/images.dart';
 import '../dashboard/controller.dart';
-import '../widgets/AnimatedImage.dart';
+import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/common_bullet.dart';
 import '../widgets/common_header.dart';
@@ -1365,8 +1364,8 @@ class _EventsScreenState extends State<EventsScreen> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
                       decoration: BoxDecoration(
-                        color: isLight ? const Color(0xFFdac0c6) : const Color(0x24FF3C50),
-                        border: Border.all(color: isLight ? const Color(0xFFdac0c6) : const Color(0x24FF3C50), width: 1),
+                        color: AppColor.eventsScreenRed(context),
+                        border: Border.all(color: AppColor.eventsScreenRed(context), width: 1),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
@@ -1375,7 +1374,7 @@ class _EventsScreenState extends State<EventsScreen> {
                           Container(
                             width: Dimensions.h_5,
                             height: Dimensions.h_5,
-                            decoration: BoxDecoration(color: isLight ? const Color(0xffD71945) : Color(0xFF8C0C22), shape: BoxShape.circle),
+                            decoration: BoxDecoration(color: AppColor.eventsScreenRed2(context), shape: BoxShape.circle),
                           ),
                           SizedBox(width: Dimensions.w_3),
                           Text(
@@ -1470,7 +1469,7 @@ class _EventsScreenState extends State<EventsScreen> {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [Color(0xE6020B15).withValues(alpha: 0.60), Color(0x99020B15).withValues(alpha: 0.50), Color(0x99020B15).withValues(alpha: 0.40), Color(0x00000000), Color(0x00000000)],
-                    stops: [0.08, 0.15, 0.35, 0.78, 1],
+                    stops: const [0.08, 0.15, 0.35, 0.78, 1],
                   ),
                 ),
               ),
@@ -1530,8 +1529,8 @@ class _EventsScreenState extends State<EventsScreen> {
                   decoration: BoxDecoration(
                     boxShadow: isLight ? null : [BoxShadow(color: Color(0xE6020B15), offset: Offset(0, 150), spreadRadius: 70, blurRadius: 1)],
                     gradient: isLight
-                        ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00FFFFFF), Color(0x33FFFFFF), Color(0xCCFFFFFF), Color(0xFFFFFFFF), AppColor.background], stops: [0.08, 0.25, 0.45, 0.75, 1.0])
-                        : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00000000), Color(0x00000000), Color(0xE6020B15).withValues(alpha: 0.78), Color(0xE6020B15), Color(0x99020B15)], stops: [0.08, 0.20, 0.35, 0.78, 1]),
+                        ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: const [Color(0x00FFFFFF), Color(0x33FFFFFF), Color(0xCCFFFFFF), Color(0xFFFFFFFF), AppColor.background], stops: const [0.08, 0.25, 0.45, 0.75, 1.0])
+                        : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00000000), Color(0x00000000), Color(0xE6020B15).withValues(alpha: 0.78), Color(0xE6020B15), Color(0x99020B15)], stops: const [0.08, 0.20, 0.35, 0.78, 1]),
                   ),
                   child: IntrinsicHeight(
                     child: Row(
@@ -1670,6 +1669,7 @@ class _EventsScreenState extends State<EventsScreen> {
   Widget aiBrief() {
     return CommonAiBrief(
       margin: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+      padding: EdgeInsets.fromLTRB(Dimensions.w_10, Dimensions.h_4, Dimensions.w_10, Dimensions.h_10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1695,7 +1695,7 @@ class _EventsScreenState extends State<EventsScreen> {
           ),
           SizedBox(height: Dimensions.h_8),
           Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
+            padding: EdgeInsets.only(left: Dimensions.w_12),
             child: RichText(
               text: TextSpan(
                 children: [
@@ -1709,7 +1709,7 @@ class _EventsScreenState extends State<EventsScreen> {
           ),
           SizedBox(height: Dimensions.h_8),
           Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
+            padding: EdgeInsets.only(left: Dimensions.w_12),
             child: Text(
               dashboardController.entertainmentData?.hero?.aiBrief?.description ?? '',
               style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.2),

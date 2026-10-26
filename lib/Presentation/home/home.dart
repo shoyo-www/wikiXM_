@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
           SliverToBoxAdapter(
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: isLight ? [AppColor.background, AppColor.background] : [Color(0xff00111f), Color(0xff00111f)], stops: [0.0, 0.90]),
+                gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: isLight ? [AppColor.background, AppColor.background] : [Color(0xff00111f), Color(0xff00111f)], stops: const [0.0, 0.90]),
               ),
               child: Column(
                 children: [
@@ -65,36 +65,39 @@ class _HomeState extends State<Home> {
                               'YOUR AI COMMUNITY UPDATE',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, height: 1),
+                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800, height: 1),
                             ),
                           ],
                         ),
-                        SizedBox(height: Dimensions.h_6),
+                        SizedBox(height: Dimensions.h_4),
                         GetBuilder(
                           id: ControllerBuilders.homeSectionsController,
                           init: dashboardController,
                           builder: (context) {
                             final highlights = dashboardController.communityData?.guide?.highlights?.take(3).toList() ?? [];
                             return ListView.builder(
-                              padding: EdgeInsets.only(left: Dimensions.w_6,top: Dimensions.h_5),
+                              padding: EdgeInsets.only(left: Dimensions.w_10,top: Dimensions.h_5),
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: highlights.length,
                               itemBuilder: (context, index) {
                                 final text = highlights[index].text ?? '';
                                 return Padding(
-                                  padding: EdgeInsets.only(bottom: Dimensions.h_4),
+                                  padding: EdgeInsets.only(bottom: Dimensions.h_6),
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Icon(CupertinoIcons.checkmark_circle_fill, color: AppColor.darkGreenSportsSecondaryText, size: Dimensions.h_10),
+                                      Padding(
+                                        padding:  EdgeInsets.only(top: Dimensions.h_2),
+                                        child: Icon(CupertinoIcons.checkmark_circle_fill, color: AppColor.darkGreenSportsSecondaryText, size: Dimensions.h_11),
+                                      ),
                                       SizedBox(width: Dimensions.w_4),
                                       Expanded(
                                         child: Text(
                                           text,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
+                                          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w600),
                                         ),
                                       ),
                                     ],
@@ -549,7 +552,7 @@ class _HomeState extends State<Home> {
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
                   physics: const NeverScrollableScrollPhysics(),
-                  separatorBuilder: (_, __) => Container(
+                  separatorBuilder: (_, _) => Container(
                     margin: EdgeInsets.only(top: Dimensions.h_5, bottom: Dimensions.h_5, left: Dimensions.w_12),
                     width: Get.width,
                     height: 0.1,
@@ -689,7 +692,7 @@ class _HomeState extends State<Home> {
                     scrollDirection: Axis.horizontal,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: stats.length,
-                    separatorBuilder: (_, __) => Container(
+                    separatorBuilder: (_, _) => Container(
                       margin: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_12),
                       width: 0.3,
                       color: Colors.grey.shade500,
@@ -925,12 +928,12 @@ class _HomeState extends State<Home> {
     return Container(
       margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
       padding: EdgeInsets.only(top: Dimensions.h_1, left: Dimensions.w_10, bottom: Dimensions.h_10),
-      decoration: BoxDecoration(color: isLight ? const Color(0xfff1f4f3) : AppColor.darkCardColor, borderRadius: BorderRadius.circular(6)),
+      decoration: BoxDecoration(color: AppColor.homeGreySoft(context), borderRadius: BorderRadius.circular(6)),
       child: Column(
         children: [
           Row(
             children: [
-              Image.asset(Images.garage, height: Dimensions.h_60, width: Dimensions.h_60, color: isLight ? AppColor.darkGreen : const Color(0xff4AD492)),
+              Image.asset(Images.garage, height: Dimensions.h_60, width: Dimensions.h_60, color: AppColor.homeGreen(context)),
               SizedBox(width: Dimensions.w_10),
               Expanded(
                 child: Column(
@@ -938,7 +941,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Text(
                       '${LocalStorage.getString(GetXStorageConstants.townName).toUpperCase()} GARAGE',
-                      style: TextStyle(color: isLight ? AppColor.darkGreen : const Color(0xff4AD492), fontSize: FontSize.sp_11, fontWeight: FontWeight.w600),
+                      style: TextStyle(color: AppColor.homeGreen(context), fontSize: FontSize.sp_11, fontWeight: FontWeight.w600),
                     ),
                     SizedBox(height: Dimensions.h_2),
                     Text(
@@ -956,14 +959,14 @@ class _HomeState extends State<Home> {
             margin: EdgeInsets.only(left: Dimensions.w_5, right: Dimensions.w_20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: isLight ? AppColor.darkGreen : const Color(0xff4AD492), width: 0.5),
+              border: Border.all(color: AppColor.homeGreen(context), width: 0.5),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'Go to Garage',
-                  style: TextStyle(color: isLight ? AppColor.darkGreen : const Color(0xff4AD492), fontSize: FontSize.sp_11, fontWeight: FontWeight.w500),
+                  style: TextStyle(color: AppColor.homeGreen(context), fontSize: FontSize.sp_11, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(width: Dimensions.w_15),
                 Icon(Icons.arrow_forward, size: Dimensions.h_12, color: AppColor.darkGreen),
@@ -1146,7 +1149,7 @@ class _HomeState extends State<Home> {
                       AppCacheImage(imageUrl: dashboardController.homeInsights?.townMemory?.image ?? ''),
                       DecoratedBox(
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color(0xF2111A2D), Color(0xD9111A2D).withValues(alpha: 0.90), Color(0x66111A2D).withValues(alpha: 0.50), Color(0x66111A2D).withValues(alpha: 0.10)], stops: [0, 0.32, 0.99, 1]),
+                          gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color(0xF2111A2D), Color(0xD9111A2D).withValues(alpha: 0.90), Color(0x66111A2D).withValues(alpha: 0.50), Color(0x66111A2D).withValues(alpha: 0.10)], stops: const [0, 0.32, 0.99, 1]),
                         ),
                       ),
                       Row(
@@ -1443,7 +1446,7 @@ class _HomeState extends State<Home> {
                       physics: const NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
                       itemCount: dashboardController.homeInsights?.topContributors?.items?.length ?? 0,
-                      separatorBuilder: (_, __) => Container(
+                      separatorBuilder: (_, _) => Container(
                         margin: EdgeInsets.symmetric(horizontal: Dimensions.w_10),
                         height: 0.2,
                         color: Colors.grey.shade500,
@@ -1558,7 +1561,7 @@ class _HomeState extends State<Home> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: items.length,
-                        separatorBuilder: (_, __) => Container(
+                        separatorBuilder: (_,_) => Container(
                           margin: EdgeInsets.only(left: Dimensions.w_20, top: Dimensions.h_5, bottom: Dimensions.h_5),
                           height: 0.3,
                           color: Colors.grey.shade300,
@@ -1711,7 +1714,7 @@ class _HomeState extends State<Home> {
                         child: Container(
                           padding: EdgeInsets.only(top: Dimensions.h_5, left: Dimensions.w_5, bottom: Dimensions.h_10),
                           decoration: BoxDecoration(
-                            color: isLight ? Color(0xfff1f4f3) : AppColor.backgroundDark,
+                            color: AppColor.homeGreySoftBackground(context),
                             borderRadius: BorderRadius.circular(6),
                             border: isLight ? null : Border.all(color: AppColor.darkBorderColor),
                           ),
@@ -1720,17 +1723,17 @@ class _HomeState extends State<Home> {
                             children: [
                               Text(
                                 'YESTERDAY',
-                                style: TextStyle(color: isLight ? Color(0xff1a623e) : Colors.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w600),
+                                style: TextStyle(color: AppColor.homeGreenDeep(context), fontSize: FontSize.sp_12, fontWeight: FontWeight.w600),
                               ),
                               SizedBox(height: Dimensions.h_5),
                               Row(
                                 children: [
-                                  Icon(CupertinoIcons.check_mark_circled_solid, color: isLight ? Color(0xff1a623e) : Colors.white, size: Dimensions.h_12),
+                                  Icon(CupertinoIcons.check_mark_circled_solid, color: AppColor.homeGreenDeep(context), size: Dimensions.h_12),
                                   SizedBox(width: Dimensions.w_3),
                                   Expanded(
                                     child: Text(
                                       'Helped 14 neighbors',
-                                      style: TextStyle(color: isLight ? Color(0xff1a623e) : Colors.white, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
+                                      style: TextStyle(color: AppColor.homeGreenDeep(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
                                     ),
                                   ),
                                 ],
@@ -1738,12 +1741,12 @@ class _HomeState extends State<Home> {
                               SizedBox(height: Dimensions.h_5),
                               Row(
                                 children: [
-                                  Icon(CupertinoIcons.check_mark_circled_solid, color: isLight ? Color(0xff1a623e) : Colors.white, size: Dimensions.h_12),
+                                  Icon(CupertinoIcons.check_mark_circled_solid, color: AppColor.homeGreenDeep(context), size: Dimensions.h_12),
                                   SizedBox(width: Dimensions.w_3),
                                   Expanded(
                                     child: Text(
                                       'Gained 22 points',
-                                      style: TextStyle(color: isLight ? Color(0xff1a623e) : Colors.white, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
+                                      style: TextStyle(color: AppColor.homeGreenDeep(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
                                     ),
                                   ),
                                 ],
@@ -1751,12 +1754,12 @@ class _HomeState extends State<Home> {
                               SizedBox(height: Dimensions.h_5),
                               Row(
                                 children: [
-                                  Icon(CupertinoIcons.check_mark_circled_solid, color: isLight ? Color(0xff1a623e) : Colors.white, size: Dimensions.h_12),
+                                  Icon(CupertinoIcons.check_mark_circled_solid, color: AppColor.homeGreenDeep(context), size: Dimensions.h_12),
                                   SizedBox(width: Dimensions.w_3),
                                   Expanded(
                                     child: Text(
                                       'Moved up 8 places',
-                                      style: TextStyle(color: isLight ? Color(0xff1a623e) : Colors.white, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
+                                      style: TextStyle(color: AppColor.homeGreenDeep(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
                                     ),
                                   ),
                                 ],
@@ -1769,7 +1772,7 @@ class _HomeState extends State<Home> {
                                   children: [
                                     Text(
                                       'Great Work',
-                                      style: TextStyle(color: isLight ? Color(0xff1a623e) : Colors.white, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
+                                      style: TextStyle(color: AppColor.homeGreenDeep(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w600),
                                     ),
                                     Icon(Icons.celebration, color: Colors.yellow.shade900, size: Dimensions.h_16),
                                   ],
@@ -1787,7 +1790,7 @@ class _HomeState extends State<Home> {
                             Container(
                               padding: EdgeInsets.only(top: Dimensions.h_5, left: Dimensions.w_5, bottom: Dimensions.h_5, right: Dimensions.w_5),
                               decoration: BoxDecoration(
-                                color: isLight ? Color(0xfff3f0f9) : AppColor.backgroundDark,
+                                color: AppColor.homePurpleSoft(context),
                                 borderRadius: BorderRadius.circular(6),
                                 border: isLight ? null : Border.all(color: AppColor.darkBorderColor),
                               ),
@@ -1796,7 +1799,7 @@ class _HomeState extends State<Home> {
                                 children: [
                                   Text(
                                     'TODAY',
-                                    style: TextStyle(color: isLight ? Color(0xff8662d5) : AppColor.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w600),
+                                    style: TextStyle(color: AppColor.homePurple(context), fontSize: FontSize.sp_12, fontWeight: FontWeight.w600),
                                   ),
                                   SizedBox(height: Dimensions.h_5),
                                   Text(
@@ -1912,7 +1915,7 @@ class _HomeState extends State<Home> {
                   padding: EdgeInsets.fromLTRB(Dimensions.w_5, Dimensions.h_8, Dimensions.w_5, Dimensions.h_3_9),
                   decoration: BoxDecoration(
                     gradient: isLight
-                        ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00FFFFFF), Color(0x33FFFFFF), Color(0xCCFFFFFF), Color(0xFFFFFFFF), AppColor.background], stops: [0.08, 0.25, 0.45, 0.75, 1.0])
+                        ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: const [Color(0x00FFFFFF), Color(0x33FFFFFF), Color(0xCCFFFFFF), Color(0xFFFFFFFF), AppColor.background], stops: const [0.08, 0.25, 0.45, 0.75, 1.0])
                         : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: const [Color(0x00000000), Color(0x00000000), Color(0xE6020B15), Color(0xE6020B15), Color(0x99020B15)], stops: const [0.08, 0.20, 0.35, 0.78, 1.0]),
                   ),
                   child: Column(

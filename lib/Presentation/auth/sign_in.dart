@@ -25,7 +25,7 @@ class SignInScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(bottom: Dimensions.h_15),
               decoration: BoxDecoration(
-                gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xE6001244).withValues(alpha: 0.95), Color(0xFF011c62), Color(0xFF001e67), Color(0xFF14327b), Colors.white], stops: [0.01, 0.012, 0.20, 0.3, 0.75]),
+                gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xE6001244).withValues(alpha: 0.95), Color(0xFF011c62), Color(0xFF001e67), Color(0xFF14327b), Colors.white], stops: const [0.01, 0.012, 0.20, 0.3, 0.75]),
               ),
               child: Column(
                 children: [
@@ -36,7 +36,7 @@ class SignInScreen extends StatelessWidget {
                       Positioned.fill(
                         child: DecoratedBox(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color(0xE6020B15), Color(0x99020B15), Color(0x00000000), Color(0x00000000)], stops: [0.08, 0.35, 0.78, 1]),
+                            gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: const [Color(0xE6020B15), Color(0x99020B15), Color(0x00000000), Color(0x00000000)], stops: const [0.08, 0.35, 0.78, 1]),
                           ),
                         ),
                       ),
@@ -132,7 +132,7 @@ class SignInScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_5),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      boxShadow: [BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 2, spreadRadius: 1)],
+                      boxShadow: const [BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 2, spreadRadius: 1)],
                       borderRadius: BorderRadius.circular(Dimensions.h_8),
                     ),
                     child: Column(
@@ -239,7 +239,7 @@ class SignInScreen extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(Dimensions.h_8),
                       border: Border.all(color: const Color(0xffE8E8E8)),
-                      boxShadow: [BoxShadow(color: Colors.black12, offset: Offset(0, 4), blurRadius: 2, spreadRadius: 1)],
+                      boxShadow: const [BoxShadow(color: Colors.black12, offset: Offset(0, 4), blurRadius: 2, spreadRadius: 1)],
                     ),
                     child: Column(
                       children: [
@@ -926,7 +926,7 @@ class ContinueWhereLeftOffWidget extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10),
               scrollDirection: Axis.horizontal,
               itemCount: items.length,
-              separatorBuilder: (_, __) => SizedBox(width: Dimensions.w_8),
+              separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_8),
               itemBuilder: (context, index) {
                 final item = items[index];
 

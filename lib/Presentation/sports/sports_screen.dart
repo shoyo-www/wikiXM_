@@ -1,8 +1,3 @@
-import 'dart:io';
-import 'dart:ui';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cupertino_native/components/button.dart';
-import 'package:cupertino_native/style/sf_symbol.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -19,17 +14,11 @@ import 'package:wikixm/data/datasource/local/local_storage.dart';
 import '../../constants/constants.dart';
 import '../../constants/extensions.dart';
 import '../../constants/fontsize.dart';
-import '../../constants/images.dart';
-import '../dashboard/controller.dart';
-import '../widgets/AnimatedImage.dart';
+import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
-import '../widgets/circular_percent.dart';
-import '../widgets/common_appbar.dart';
 import '../widgets/sports_cards.dart';
 import 'package:wikixm/data/datasource/remote/models/response/sports_response.dart';
-
 import '../widgets/sports_community.dart';
-import '../widgets/sports_event_item.dart';
 import '../widgets/sports_item.dart';
 import '../widgets/sports_screen_shimmer.dart';
 import '../widgets/sports_stats.dart';
@@ -158,7 +147,7 @@ class _SportsScreenState extends State<SportsScreen> {
                                   child: ListView.separated(
                                     scrollDirection: Axis.horizontal,
                                     itemCount: sportsController.sportsData?.communitySpotlight?.athletes?.length ?? 0,
-                                    separatorBuilder: (_, __) => SizedBox(width: Dimensions.w_8),
+                                    separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_8),
                                     itemBuilder: (context, index) {
                                       final athlete = sportsController.sportsData?.communitySpotlight?.athletes?[index];
                                       return Container(
@@ -356,7 +345,7 @@ class _SportsScreenState extends State<SportsScreen> {
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 itemCount: (sportsController.sportsData?.teamHubs?.sports?.length ?? 0) > 5 ? 5 : sportsController.sportsData?.teamHubs?.sports?.length ?? 0,
-                                separatorBuilder: (_, __) => SizedBox(width: Dimensions.w_8),
+                                separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_8),
                                 itemBuilder: (context, index) {
                                   final team = sportsController.sportsData?.teamHubs?.sports?[index];
                                   final String teamName = team?.teamName ?? '';
@@ -372,7 +361,7 @@ class _SportsScreenState extends State<SportsScreen> {
                                         return value != null && value.trim().isNotEmpty;
                                       })
                                       .join(' ');
-                                  final String record = (team?.record?.trim().isNotEmpty == true ?? false) ? (team?.record ?? "") : '—';
+                                  final String record = (team?.record?.trim().isNotEmpty == true) ? (team?.record ?? "") : '—';
                                   return Container(
                                     width: Dimensions.w_140,
                                     padding: EdgeInsets.only(top: Dimensions.h_6, bottom: Dimensions.h_6, left: Dimensions.w_4, right: Dimensions.w_4),
@@ -636,7 +625,7 @@ class _SportsScreenState extends State<SportsScreen> {
                                       begin: Alignment.centerLeft,
                                       end: Alignment.centerRight,
                                       colors: [Color(0xE6020B15).withValues(alpha: 0.60), Color(0x99020B15).withValues(alpha: 0.55), Color(0x99020B15).withValues(alpha: 0.45), Color(0x00000000), Color(0x00000000)],
-                                      stops: [0.08, 0.35, 0.55, 0.99, 1],
+                                      stops: const [0.08, 0.35, 0.55, 0.99, 1],
                                     ),
                                   ),
                                 ),
@@ -771,7 +760,7 @@ class _SportsScreenState extends State<SportsScreen> {
                                       padding: EdgeInsets.zero,
                                       physics: const NeverScrollableScrollPhysics(),
                                       itemCount: games.length,
-                                      separatorBuilder: (_, __) => Container(
+                                      separatorBuilder: (_, _) => Container(
                                         margin: EdgeInsets.symmetric(vertical: Dimensions.h_4),
                                         height: 0.3,
                                         color: Colors.grey,
@@ -1562,7 +1551,7 @@ class _SportsScreenState extends State<SportsScreen> {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [Color(0xE6020B15).withValues(alpha: 0.99), Color(0x99020B15).withValues(alpha: 0.75), Color(0x99020B15).withValues(alpha: 0.55), Color(0x00000000), Color(0x00000000)],
-                    stops: [0.08, 0.35, 0.55, 0.78, 1],
+                    stops: const [0.08, 0.35, 0.55, 0.78, 1],
                   ),
                 ),
               ),

@@ -65,7 +65,7 @@ class AppTheme {
     hoverColor: AppColor.white,
     focusColor: AppColor.darkBorderColor,
     disabledColor: AppColor.slate,
-    hintColor: AppColor.mutedGray,
+    hintColor: Colors.grey.shade200,
     indicatorColor: AppColor.communityGreen,
     shadowColor: AppColor.black,
     colorScheme: const ColorScheme.dark(

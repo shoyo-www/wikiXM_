@@ -484,7 +484,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   margin: EdgeInsets.symmetric(horizontal: Dimensions.w_10),
                   width: 0.4,
                   height: Dimensions.h_22,
-                  color: isLight ? Colors.grey : Colors.white24,
+                  color: AppColor.border(context),
                 ),
                 SizedBox(width: Dimensions.w_6),
                 Expanded(
@@ -508,7 +508,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   margin: EdgeInsets.symmetric(horizontal: Dimensions.w_10),
                   width: 0.4,
                   height: Dimensions.h_22,
-                  color: isLight ? Colors.grey : Colors.white24,
+                  color: AppColor.border(context),
                 ),
                 SizedBox(width: Dimensions.w_6),
                 Expanded(
@@ -588,18 +588,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, height: 1.3),
-                  children: [
-                    const TextSpan(text: 'By listing, you agree to our '),
+                  children: const [
+                    TextSpan(text: 'By listing, you agree to our '),
                     TextSpan(
                       text: 'Terms of Service',
-                      style: TextStyle(color: const Color(0xFF075DC9), decoration: TextDecoration.underline, fontWeight: FontWeight.w800, decorationColor: const Color(0xFF075DC9)),
+                      style: TextStyle(color: Color(0xFF075DC9), decoration: TextDecoration.underline, fontWeight: FontWeight.w800, decorationColor: Color(0xFF075DC9)),
                     ),
-                    const TextSpan(text: ' and '),
+                    TextSpan(text: ' and '),
                     TextSpan(
                       text: 'Community Guidelines',
-                      style: TextStyle(color: const Color(0xFF075DC9), fontWeight: FontWeight.w800, decoration: TextDecoration.underline, decorationColor: const Color(0xFF075DC9)),
+                      style: TextStyle(color: Color(0xFF075DC9), fontWeight: FontWeight.w800, decoration: TextDecoration.underline, decorationColor: Color(0xFF075DC9)),
                     ),
-                    const TextSpan(text: '.'),
+                    TextSpan(text: '.'),
                   ],
                 ),
               ),
@@ -771,18 +771,18 @@ class _AddItemScreenState extends State<AddItemScreen> {
               itemDetails(isLight),
               SizedBox(height: Dimensions.h_10),
               CommonCard(
-                color: isLight ? const Color(0x84fcf2dc) : const Color(0x34FFC36C),
+                color: AppColor.addItemGoldSoftTranslucent(context),
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        Icon(CupertinoIcons.sparkles, color: isLight ? const Color(0xFFA14F00) : const Color(0xFFFFC36C), size: Dimensions.h_15),
+                        Icon(CupertinoIcons.sparkles, color: AppColor.addItemOrange(context), size: Dimensions.h_15),
                         SizedBox(width: Dimensions.w_5),
                         Text(
                           'AI-Generated Description',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF), fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
+                          style: TextStyle(color: AppColor.ink(context), fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
                         ),
                         const Spacer(),
                         GestureDetector(
@@ -832,13 +832,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   Widget sellingOptions(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
+    final surface = AppColor.addItemSurface(context);
 
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
+    final ink = AppColor.ink(context);
 
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
+    final blue = AppColor.blue(context);
 
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final blueSoft = AppColor.blueSoft(context);
 
     final options = [
       {'title': 'Sell Fast', 'price': '\$400', 'time': 'Estimated 2–4 days', 'description': 'Great if you want to sell quickly.', 'icon': CupertinoIcons.bolt_fill, 'color': blue, 'softColor': blueSoft, 'recommended': false},
@@ -878,9 +878,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           border: Border.all(
                             color: isSelected
                                 ? blue
-                                : isLight
-                                ? Colors.grey
-                                : Colors.white24,
+                                : AppColor.border(context),
                             width: isSelected ? 0.9 : 0.4,
                           ),
                         ),
@@ -947,7 +945,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   child: Container(
                     margin: EdgeInsets.only(left: Dimensions.w_20, right: Dimensions.w_10),
                     height: 0.4,
-                    color: isLight ? Colors.grey : Colors.white24,
+                    color: AppColor.border(context),
                   ),
                 ),
                 Text(
@@ -958,7 +956,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                   child: Container(
                     margin: EdgeInsets.only(left: Dimensions.w_10, right: Dimensions.w_20),
                     height: 0.4,
-                    color: isLight ? Colors.grey : Colors.white24,
+                    color: AppColor.border(context),
                   ),
                 ),
               ],
@@ -1046,15 +1044,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   Widget itemDetails(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
-
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
-
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
+    final blue = AppColor.blue(context);
 
     final details = [
       {'icon': CupertinoIcons.tag, 'title': 'Category', 'value': 'Bikes'},

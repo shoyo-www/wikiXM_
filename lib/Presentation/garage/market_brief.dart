@@ -14,7 +14,7 @@ import 'package:wikixm/constants/constants.dart';
 import 'package:wikixm/constants/images.dart';
 import '../../constants/fontsize.dart';
 import '../../data/datasource/remote/models/response/market_brief_charts.dart';
-import '../widgets/AnimatedImage.dart';
+import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/common_bullet.dart';
 import '../widgets/drawer/src/slider_drawer.dart';
@@ -137,7 +137,7 @@ class _MarketBriefState extends State<MarketBrief> {
                             //                 Container(
                             //                   margin: EdgeInsets.only(left: Dimensions.w_4),
                             //                   padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
-                            //                   decoration: BoxDecoration(color: !isLight ? const Color(0xffffc264) : const Color(0xFF97590a), borderRadius: BorderRadius.circular(999)),
+                            //                   decoration: BoxDecoration(color: AppColor.orangeAccent(context), borderRadius: BorderRadius.circular(999)),
                             //                   child: Text(
                             //                     'COMING SOON',
                             //                     style: TextStyle(color: !isLight ? AppColor.black : AppColor.white, fontSize: FontSize.sp_7, fontWeight: FontWeight.w800, letterSpacing: 0.5, height: 1),
@@ -176,13 +176,13 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget marketForecast(bool isLight) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final orange = isLight ? const Color(0xFFA14F00) : const Color(0xFFFFC36C);
-    final orangeSoft = isLight ? const Color(0xFFFFF3E4) : const Color(0xFF49371F);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
-    final greenSoft = isLight ? const Color(0xFFE8F7EF) : const Color(0xFF123D36);
+    final ink = AppColor.ink(context);
+    final orange = AppColor.addItemOrange(context);
+    final orangeSoft = AppColor.garageScreenOrangeSoft(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
+    final green = AppColor.green(context);
+    final greenSoft = AppColor.garageScreenGreenSoft(context);
     final seasonality = garageController.marketBriefData?.seasonality ?? [];
 
     return Column(
@@ -271,9 +271,9 @@ class _MarketBriefState extends State<MarketBrief> {
                             child: Container(
                               padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6, vertical: Dimensions.h_4),
                               decoration: BoxDecoration(
-                                color: isLight ? Colors.white.withValues(alpha: 0.68) : const Color(0xFF0B2035).withValues(alpha: 0.62),
+                                color: AppColor.marketBriefWhiteTranslucent(context),
                                 borderRadius: BorderRadius.circular(Dimensions.h_6),
-                                border: Border.all(color: isLight ? Colors.white.withValues(alpha: 0.75) : Colors.white.withValues(alpha: 0.16), width: 0.7),
+                                border: Border.all(color: AppColor.marketBriefWhiteTranslucent2(context), width: 0.7),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: isLight ? 0.08 : 0.18),
@@ -319,7 +319,7 @@ class _MarketBriefState extends State<MarketBrief> {
                     ),
                   ),
                   SizedBox(height: Dimensions.h_5),
-                  Container(height: 0.4, color: isLight ? Colors.grey : Colors.white24),
+                  Container(height: 0.4, color: AppColor.border(context)),
                   SizedBox(height: Dimensions.h_5),
                   Row(
                     children: [
@@ -385,12 +385,12 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget upcomingSales(bool isLight) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
+    final muted = AppColor.muted(context);
+    final line = AppColor.line(context);
 
     final sales = garageController.marketBriefData?.sales ?? [];
 
@@ -475,11 +475,11 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget keyDates(bool isLight) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
+    final ink = AppColor.ink(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
+    final line = AppColor.line(context);
+    final green = AppColor.green(context);
     final holidays = garageController.marketBriefData?.holidays ?? [];
 
     return Column(
@@ -554,12 +554,12 @@ class _MarketBriefState extends State<MarketBrief> {
                         children: [
                           Text(
                             month,
-                            style: TextStyle(color: isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w900),
+                            style: TextStyle(color: AppColor.red(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w900),
                           ),
                           SizedBox(height: Dimensions.h_3),
                           Text(
                             day,
-                            style: TextStyle(color: isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96), fontSize: FontSize.sp_15, height: 0.9, fontWeight: FontWeight.w900),
+                            style: TextStyle(color: AppColor.red(context), fontSize: FontSize.sp_15, height: 0.9, fontWeight: FontWeight.w900),
                           ),
                         ],
                       ),
@@ -621,9 +621,9 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget quickLinks(bool isLight) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final ink = AppColor.ink(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
 
     final links = garageController.marketBriefData?.quickLinks ?? [];
 
@@ -714,9 +714,9 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget tips(bool isLight) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final ink = AppColor.ink(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
 
     final sellingTips = garageController.marketBriefData?.sellingTips ?? [];
 
@@ -961,13 +961,13 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget trending(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
+    final surface = AppColor.addItemSurface(context);
+    final ink = AppColor.ink(context);
+    final muted = AppColor.muted(context);
+    final line = AppColor.line(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
+    final green = AppColor.green(context);
 
     final categories = (garageController.marketBriefData?.categories ?? []).where((item) => (item.active ?? 0) > 0).take(5).toList();
 
@@ -1106,10 +1106,10 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget priceTrends(bool isLight) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final ink = AppColor.ink(context);
+    final muted = AppColor.muted(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
     final categories = garageController.marketBriefData?.categories ?? [];
     final prices = garageController.allPrices ? categories : categories.take(6).toList();
     final currentPrices = categories.map((category) => category.currentPrice).whereType<num>().map((price) => price.toDouble()).toList();
@@ -1213,7 +1213,7 @@ class _MarketBriefState extends State<MarketBrief> {
                             widthFactor: currentProgress.clamp(0.0, 1.0),
                             child: Container(
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [blue, isLight ? const Color(0xFF45B5D8) : const Color(0xFF56D8F3)]),
+                                gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [blue, AppColor.marketBriefTeal(context)]),
                               ),
                             ),
                           ),
@@ -1331,19 +1331,19 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget marketStats(bool isLight, GarageController controller) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
-    final red = isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96);
-    final redSoft = isLight ? const Color(0xFFFFF0F1) : const Color(0xFF48242B);
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
-    final greenSoft = isLight ? const Color(0xFFE8F7EF) : const Color(0xFF123D36);
-    final purple = isLight ? const Color(0xFF7657FF) : const Color(0xFFAB98FF);
-    final purpleSoft = isLight ? const Color(0xFFF1EDFF) : const Color(0xFF29244F);
+    final surface = AppColor.addItemSurface(context);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
+    final muted = AppColor.muted(context);
+    final line = AppColor.line(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
+    final red = AppColor.red(context);
+    final redSoft = AppColor.redSoft(context);
+    final green = AppColor.green(context);
+    final greenSoft = AppColor.garageScreenGreenSoft(context);
+    final purple = AppColor.purple(context);
+    final purpleSoft = AppColor.purpleSoft(context);
     final stats = controller.marketBriefData?.stats;
     final activeListings = stats?.active?.toString() ?? '';
     final averagePrice = stats?.averagePrice != null ? '\$${NumberFormat('#,##0.00').format(stats!.averagePrice)}' : '';
@@ -1455,13 +1455,13 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget garageListing(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
+    final surface = AppColor.addItemSurface(context);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
+    final muted = AppColor.muted(context);
+    final line = AppColor.line(context);
+    final blue = AppColor.blue(context);
+    final green = AppColor.green(context);
     final allPoints = garageController.briefChartsData?.points ?? [];
     final selectedMonths = garageController.listingActivityRange == 'Last Year' ? 12 : garageController.listingActivityRange == 'Last 6 Months' ? 6 : 3;
     final points = allPoints.length > selectedMonths ? allPoints.sublist(allPoints.length - selectedMonths) : List<Point>.from(allPoints);
@@ -1611,13 +1611,13 @@ class _MarketBriefState extends State<MarketBrief> {
   }
 
   Widget averageListing(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
-    final purple = isLight ? const Color(0xFF7657FF) : const Color(0xFFAB98FF);
-    final purpleSoft = isLight ? const Color(0xFFF1EDFF) : const Color(0xFF29244F);
+    final surface = AppColor.addItemSurface(context);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
+    final muted = AppColor.muted(context);
+    final line = AppColor.line(context);
+    final purple = AppColor.purple(context);
+    final purpleSoft = AppColor.purpleSoft(context);
     final allPoints = garageController.briefChartsData?.points ?? [];
     final selectedMonths = garageController.averagePriceRange == 'Last Year' ? 12 : garageController.averagePriceRange == 'Last 6 Months' ? 6 : 3;
     final points = allPoints.length > selectedMonths ? allPoints.sublist(allPoints.length - selectedMonths) : List<Point>.from(allPoints);

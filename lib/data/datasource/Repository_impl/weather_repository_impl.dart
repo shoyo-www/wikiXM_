@@ -1,13 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/core/error/failures.dart';
-import 'package:wikixm/data/datasource/remote/models/response/sports_response.dart';
 import 'package:wikixm/data/datasource/remote/models/response/weather_card_response.dart';
 import 'package:wikixm/data/datasource/remote/models/response/weather_hero_response.dart';
 import 'package:wikixm/data/datasource/remote/services/dio/rest_client.dart';
-import 'package:wikixm/domain/Repository/sports_repository.dart';
 import 'package:wikixm/domain/Repository/weather_repository.dart';
-
 import '../../../core/error/exceptions.dart';
 import '../remote/services/apis.dart';
 

@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/Presentation/widgets/cache_image.dart';
+import 'package:wikixm/Presentation/widgets/town_selection.dart';
+import 'package:wikixm/approutes.dart';
 import 'package:wikixm/constants/fontsize.dart';
 
 import '../../constants/constants.dart';
@@ -71,51 +73,73 @@ class CommonBlurAppBar extends StatelessWidget {
                   child: Icon(CupertinoIcons.line_horizontal_3, color: foregroundColor, size: Dimensions.h_20),
                 ),
               if (isDrawer) SizedBox(width: Dimensions.w_20),
-              Icon(CupertinoIcons.location_solid, color: foregroundColor, size: Dimensions.h_12),
-              SizedBox(width: Dimensions.w_2),
-              Flexible(
-                child: Text(
-                  LocalStorage.getString(GetXStorageConstants.townName),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: foregroundColor, fontSize: FontSize.sp_13, fontWeight: FontWeight.w700),
+              Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: Get.context!,
+                      isScrollControlled: true,
+                      scrollControlDisabledMaxHeightRatio : 0.85,
+                      builder: (context) {
+                        return FractionallySizedBox(
+                          heightFactor: 0.85,
+                            child: const TownSelection());
+                      },
+                    );
+                  },
+                  child: Row(children: [
+                    Icon(CupertinoIcons.location_solid, color: foregroundColor, size: Dimensions.h_12),
+                    SizedBox(width: Dimensions.w_2),
+                    Flexible(
+                      child: Text(
+                        LocalStorage.getString(GetXStorageConstants.townName),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: foregroundColor, fontSize: FontSize.sp_13, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    SizedBox(width: Dimensions.w_3),
+                    Icon(CupertinoIcons.chevron_down, color: foregroundColor, size: Dimensions.h_12),
+                  ],),
                 ),
-              ),
-              SizedBox(width: Dimensions.w_3),
-              Icon(CupertinoIcons.chevron_down, color: foregroundColor, size: Dimensions.h_12),
+              )
             ],
           ),
         ),
-        Row(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: SizedBox(
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Get.toNamed(AppRoutes.notifications);
+          },
+          child: Row(
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  SizedBox(
                     width: Dimensions.h_28,
                     height: Dimensions.h_28,
                     child: Icon(CupertinoIcons.bell, color: foregroundColor, size: Dimensions.h_18),
                   ),
-                ),
-                Positioned(
-                  right: 2,
-                  top: 5,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_1),
-                    decoration: const BoxDecoration(color: Color(0xFFFF3B30), shape: BoxShape.circle),
-                    child: Text(
-                      '3',
-                      style: TextStyle(color: Colors.white, fontSize: FontSize.sp_8, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+                  Positioned(
+                    right: 2,
+                    top: 5,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_1),
+                      decoration: const BoxDecoration(color: Color(0xFFFF3B30), shape: BoxShape.circle),
+                      child: Text(
+                        '3',
+                        style: TextStyle(color: Colors.white, fontSize: FontSize.sp_8, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(width: Dimensions.w_8),
-            AppCacheImage(imageUrl: 'https://wikixm-staging.s3.us-west-2.amazonaws.com/profile/2026/01/6970dd6c24dee7.50803251.png', size: Dimensions.h_22, widthSize: Dimensions.h_22, borderColor: Colors.white, radius: Dimensions.h_50, isCircle: true),
-          ],
+                ],
+              ),
+              SizedBox(width: Dimensions.w_8),
+              AppCacheImage(imageUrl: 'https://wikixm-staging.s3.us-west-2.amazonaws.com/profile/2026/01/6970dd6c24dee7.50803251.png', size: Dimensions.h_22, widthSize: Dimensions.h_22, borderColor: Colors.white, radius: Dimensions.h_50, isCircle: true),
+            ],
+          ),
         ),
       ],
     );

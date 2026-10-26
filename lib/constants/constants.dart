@@ -38,6 +38,9 @@ class ControllerBuilders {
   static String marketPlaceController = 'MarketPlaceController';
   static String filterController = 'FilterController';
   static String myGarageController = 'MyGarageController';
+  static String groupController = 'GroupController';
+  static String createGroupController = 'CreateGroupController';
+  static String interestDetailController = 'InterestDetailController';
 }
 
 class ActivityModel {

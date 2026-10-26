@@ -40,5 +40,10 @@ class Apis {
   static const marketPlaceFilters = '$baseUrl/garage/marketplace/filters';
   static const myGarage = '$baseUrl/garage/dashboard';
   static const myGarageAI = '$baseUrl/garage/assistant';
+  static const groupHome = '$baseUrl/groups/home';
+  static const groupSections = '$baseUrl/groups/sections';
+  static const groupJoin = '$baseUrl/groups/join';
+  static const groupLeave = '$baseUrl/groups/leave';
+  static const interestsDetail = '$baseUrl/groups/interests';
 }
 

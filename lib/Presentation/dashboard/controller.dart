@@ -17,7 +17,6 @@ import '../../data/datasource/remote/models/response/entertainment_response.dart
 import '../../data/datasource/remote/models/response/home_cat.dart';
 import '../../data/datasource/remote/models/response/home_insights.dart';
 import '../../data/datasource/remote/models/response/search_town.dart';
-import 'dashboard.dart';
 
 class DashboardController extends GetxController {
   bool isLoading = false;

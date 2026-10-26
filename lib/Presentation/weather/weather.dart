@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -809,7 +808,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       if (maxTemp != null) {
         final double value = maxTemp.toDouble();
 
-        if (highTemp == null || value > highTemp!) {
+        if (highTemp == null || value > highTemp) {
           highTemp = value;
         }
       }
@@ -817,13 +816,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
       if (minTemp != null) {
         final double value = minTemp.toDouble();
 
-        if (lowTemp == null || value < lowTemp!) {
+        if (lowTemp == null || value < lowTemp) {
           lowTemp = value;
         }
       }
 
       if (rain != null) {
-        if (rainProbability == null || rain > rainProbability!) {
+        if (rainProbability == null || rain > rainProbability) {
           rainProbability = rain;
         }
       }
@@ -1066,57 +1065,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
     );
   }
 
-  IconData _getWeatherConditionIcon(String? symbol, bool? isDaytime) {
-    final value = symbol?.toLowerCase() ?? '';
-
-    if (value.contains('thunder')) {
-      return Icons.thunderstorm;
-    }
-
-    if (value.contains('rain') || value.contains('shower')) {
-      return Icons.water_drop;
-    }
-
-    if (value.contains('snow')) {
-      return Icons.ac_unit;
-    }
-
-    if (value.contains('clear-night') || value.contains('night')) {
-      return Icons.nightlight_round;
-    }
-
-    if (value.contains('cloudy') || value.contains('cloud')) {
-      return isDaytime == true ? Icons.wb_cloudy : Icons.cloud;
-    }
-
-    return isDaytime == true ? Icons.wb_sunny : Icons.nightlight_round;
-  }
-
-  Color _getWeatherConditionColor(String? symbol, bool? isDaytime) {
-    final value = symbol?.toLowerCase() ?? '';
-
-    if (value.contains('thunder')) {
-      return Colors.deepPurple;
-    }
-
-    if (value.contains('rain') || value.contains('shower')) {
-      return Colors.blue;
-    }
-
-    if (value.contains('snow')) {
-      return Colors.lightBlue;
-    }
-
-    if (value.contains('cloud')) {
-      return Colors.grey;
-    }
-
-    if (isDaytime == false) {
-      return Colors.blueGrey;
-    }
-
-    return const Color(0xFFFFB800);
-  }
 
   Widget _weatherNewsRow({required String image, required String title, required String tag, required Color tagColor, required Color tagBackground, required String time}) {
     return Padding(
@@ -1343,45 +1291,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
-  Widget _weatherStoryItem({required String image, required String title, required String readTime}) {
-    return SizedBox(
-      height: Dimensions.h_55,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(Dimensions.h_5),
-            child: SizedBox(
-              width: Dimensions.w_65,
-              height: Dimensions.h_50,
-              child: Image.asset(image, fit: BoxFit.cover),
-            ),
-          ),
-          SizedBox(width: Dimensions.w_10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: _pageTheme.primaryColor, fontSize: FontSize.sp_12, height: 1.3, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(height: Dimensions.h_5),
-                Text(
-                  readTime,
-                  style: TextStyle(color: _pageTheme.primaryColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget outdoorLifePlanner(WeatherController controller) {
     final outdoorActivities = controller.weatherCardData?.cards?.outdoorLifePlanner ?? [];
     return CommonCard(
@@ -1411,7 +1320,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               scoreColor: _getScoreColor(item.displayScore, item.suitable),
               scoreBgColor: _getScoreBackgroundColor(item.displayScore, item.suitable),
             );
-          }).toList(),
+          }),
 
           SizedBox(height: Dimensions.h_8),
 

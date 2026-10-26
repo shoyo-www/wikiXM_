@@ -12,6 +12,7 @@ import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/drawer/src/slider_drawer.dart';
+import 'package:wikixm/constants/appcolor.dart';
 
 class MarketPlace extends StatefulWidget {
   const MarketPlace({super.key});
@@ -54,12 +55,12 @@ class _MarketPlaceState extends State<MarketPlace> {
   @override
   Widget build(BuildContext context) {
     bool isLight = Theme.of(context).brightness == Brightness.light;
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final line = isLight ? Colors.grey : Colors.white24;
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final ink = AppColor.ink(context);
+    final muted = AppColor.muted(context);
+    final line = AppColor.border(context);
+    final blue = AppColor.blue(context);
+    final green = AppColor.green(context);
+    final blueSoft = AppColor.blueSoft(context);
     return GetBuilder(
       init: garageController,
       id: ControllerBuilders.filterController,
@@ -132,7 +133,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                                   contentPadding: EdgeInsets.symmetric(horizontal: Dimensions.w_12),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(Dimensions.h_50),
-                                    borderSide: BorderSide(color: isLight ? Colors.grey : Colors.white24, width: 0.4),
+                                    borderSide: BorderSide(color: AppColor.border(context), width: 0.4),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(Dimensions.h_50),
@@ -284,10 +285,10 @@ class _MarketPlaceState extends State<MarketPlace> {
     final categories = (controller.marketFilters?.categories ?? []).where((category) => category.value?.isNotEmpty == true).toList();
     final deals = controller.contentData?.deals;
     final allDeals = deals?.options?.where((deal) => deal.value == '0').firstOrNull;
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final surface = isLight ? Colors.white : const Color(0xFF102A47);
-    final border = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
+    final ink = AppColor.ink(context);
+    final blue = AppColor.blue(context);
+    final surface = AppColor.surface(context);
+    final border = AppColor.line(context);
 
     return SizedBox(
       height: Dimensions.h_25,
@@ -419,13 +420,13 @@ class _MarketPlaceState extends State<MarketPlace> {
   }
 
   Widget filtersWidget(bool isLight, GarageController controller) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final surface = isLight ? Colors.white : const Color(0xFF102A47);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final border = isLight ? Colors.grey : Colors.white24;
+    final ink = AppColor.ink(context);
+    final muted = AppColor.muted(context);
+    final surface = AppColor.surface(context);
+    final blue = AppColor.blue(context);
+    final border = AppColor.border(context);
     final filterData = controller.marketFilters;
-    final red = isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96);
+    final red = AppColor.red(context);
     Widget sectionTitle(String title) {
       return Padding(
         padding: EdgeInsets.only(bottom: Dimensions.h_7),
@@ -757,8 +758,8 @@ class _MarketPlaceState extends State<MarketPlace> {
   }
 
   Widget itemsGrid(bool isLight, GarageController controller) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
+    final ink = AppColor.ink(context);
+    final blue = AppColor.blue(context);
     if (controller.isLoading) {
       return GridView.builder(
         shrinkWrap: true,
@@ -979,7 +980,7 @@ class _MarketPlaceState extends State<MarketPlace> {
   }
 
   Widget itemShimmer({required bool isLight}) {
-    final shimmerBase = isLight ? const Color(0xFFE8EDF4) : const Color(0xFF1D3045);
+    final shimmerBase = AppColor.shimmerBase(context);
     return CommonCard(
       padding: EdgeInsets.zero,
       child: Column(
@@ -1057,8 +1058,8 @@ class _MarketPlaceState extends State<MarketPlace> {
   }
 
   Widget loadingShimmer({required bool isLight}) {
-    final shimmerBase = isLight ? const Color(0xFFE9EEF5) : const Color(0xFF18334F);
-    final shimmerHighlight = isLight ? const Color(0xFFF7F9FC) : const Color(0xFF294863);
+    final shimmerBase = AppColor.marketPlaceShimmerBase(context);
+    final shimmerHighlight = AppColor.shimmerHighlight(context);
 
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,

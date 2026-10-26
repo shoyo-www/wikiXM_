@@ -207,6 +207,7 @@ class Dimensions {
   static double get h_310 => SizeConfig.h(310.0);
   static double get h_312 => SizeConfig.h(312.0);
   static double get h_316 => SizeConfig.h(316.0);
+  static double get h_320 => SizeConfig.h(320.0);
   static double get h_330 => SizeConfig.h(330.0);
   static double get h_335 => SizeConfig.h(335.0);
   static double get h_340 => SizeConfig.h(340.0);

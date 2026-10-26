@@ -2,14 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
-import 'package:wikixm/Presentation/widgets/town_search.dart';
 import 'package:wikixm/approutes.dart';
 import 'package:wikixm/constants/appcolor.dart';
-
 import '../../constants/constants.dart';
 import '../../constants/fontsize.dart';
 import '../../constants/images.dart';
-import '../../data/datasource/local/local_storage.dart';
 import '../widgets/cache_image.dart';
 
 class FirstVisit extends StatelessWidget {

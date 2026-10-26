@@ -224,7 +224,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                                       if (item?.role == 'Mayor') ...[
                                                         Container(
                                                           padding: EdgeInsets.symmetric(horizontal: Dimensions.w_2, vertical: Dimensions.h_1),
-                                                          decoration: BoxDecoration(color: isLight ? const Color(0xffbae7c4) : AppColor.darkGreenSportsSecondaryText, borderRadius: BorderRadius.circular(4)),
+                                                          decoration: BoxDecoration(color: AppColor.newsGreenSoft(context), borderRadius: BorderRadius.circular(4)),
                                                           child: Text(
                                                             'MAYOR',
                                                             style: TextStyle(color: isLight ? AppColor.darkGreenSportsSecondaryText : AppColor.white, fontSize: FontSize.sp_8, fontWeight: FontWeight.w600),
@@ -283,19 +283,19 @@ class _NewsScreenState extends State<NewsScreen> {
                             Container(
                               margin: EdgeInsets.only(top: Dimensions.h_10),
                               padding: EdgeInsets.only(top: Dimensions.h_5, left: Dimensions.w_10, bottom: Dimensions.h_10),
-                              decoration: BoxDecoration(color: isLight ? const Color(0xffefebfc) : const Color(0xFF211841), borderRadius: BorderRadius.circular(6)),
+                              decoration: BoxDecoration(color: AppColor.newsScreenPurpleSoft(context), borderRadius: BorderRadius.circular(6)),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     "TODAY'S COMMUNITY QUESTION",
-                                    style: TextStyle(color: isLight ? AppColor.intelligencePurple : const Color(0xffbfa7ff), fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
+                                    style: TextStyle(color: AppColor.intelligencePurpleText(context), fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
                                   ),
                                   SizedBox(height: Dimensions.h_5),
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Icon(CupertinoIcons.question_circle_fill, color: isLight ? AppColor.intelligencePurple : const Color(0xff5326cf), size: Dimensions.h_35),
+                                      Icon(CupertinoIcons.question_circle_fill, color: AppColor.intelligencePurpleAccent(context), size: Dimensions.h_35),
                                       SizedBox(width: Dimensions.w_10),
                                       Expanded(
                                         child: Column(
@@ -319,7 +319,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                   Container(
                                     padding: EdgeInsets.symmetric(vertical: Dimensions.h_6),
                                     margin: EdgeInsets.only(left: Dimensions.w_30, right: Dimensions.w_20),
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: isLight ? AppColor.intelligencePurple : const Color(0xFF5326cf)),
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), color: AppColor.intelligencePurpleAccent(context)),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -525,7 +525,7 @@ class _NewsScreenState extends State<NewsScreen> {
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 itemCount: quickActionList.length,
-                                separatorBuilder: (_, __) => SizedBox(width: Dimensions.w_3),
+                                separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_3),
                                 itemBuilder: (context, index) {
                                   final item = quickActionList[index];
                                   return SizedBox(
@@ -583,7 +583,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                             Container(
                                               margin: EdgeInsets.only(left: Dimensions.w_4),
                                               padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
-                                              decoration: BoxDecoration(color: !isLight ? const Color(0xffffc264) : const Color(0xFF97590a), borderRadius: BorderRadius.circular(999)),
+                                              decoration: BoxDecoration(color: AppColor.orangeAccent(context), borderRadius: BorderRadius.circular(999)),
                                               child: Text(
                                                 'COMING SOON',
                                                 style: TextStyle(color: !isLight ? AppColor.black : AppColor.white, fontSize: FontSize.sp_7, fontWeight: FontWeight.w800, letterSpacing: 0.5, height: 1),
@@ -718,8 +718,8 @@ class _NewsScreenState extends State<NewsScreen> {
     return Container(
       padding: EdgeInsets.only(top: Dimensions.h_5, left: Dimensions.w_6, right: Dimensions.w_6, bottom: Dimensions.h_4),
       decoration: BoxDecoration(
-        color: isLight ? const Color(0xfffdf5e9) : const Color(0xff271f17),
-        border: Border.all(color: isLight ? const Color(0xfff9bfa5) : const Color(0xff271f17)),
+        color: AppColor.newsScreenOrangeSoft(context),
+        border: Border.all(color: AppColor.newsScreenOrange2(context)),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -731,7 +731,7 @@ class _NewsScreenState extends State<NewsScreen> {
               children: [
                 Text(
                   sponsorConfig?.title ?? "TODAY'S COMMUNITY PARTNER",
-                  style: TextStyle(color: isLight ? AppColor.alertRed : const Color(0xFFe1ad77), fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
+                  style: TextStyle(color: AppColor.alertRedText(context), fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: Dimensions.h_5),
                 Text(
@@ -748,11 +748,11 @@ class _NewsScreenState extends State<NewsScreen> {
                   padding: EdgeInsets.symmetric(vertical: Dimensions.h_5, horizontal: Dimensions.w_10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: isLight ? AppColor.alertRed : const Color(0xFFe1ad77), width: 0.5),
+                    border: Border.all(color: AppColor.alertRedText(context), width: 0.5),
                   ),
                   child: Text(
                     sponsorData?.impact?.label ?? sponsorConfig?.impactLabel ?? 'Learn More',
-                    style: TextStyle(color: isLight ? AppColor.alertRed : const Color(0xFFe1ad77), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w800),
+                    style: TextStyle(color: AppColor.alertRedText(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w800),
                   ),
                 ),
               ],
@@ -916,7 +916,7 @@ class _NewsScreenState extends State<NewsScreen> {
               children: [
                 Row(
                   children: [
-                    AppCacheImage(imageUrl: dashboardController.entertainmentData?.hero?.aiBrief?.guide?.image ?? '', size: Dimensions.h_25, widthSize: Dimensions.h_25, isCircle: true, isShadow: false),
+                    AppCacheImage(imageUrl:  'https://preetis-html.vercel.app/assets/images/garage/my-garage-version1/ai-guide.webp', size: Dimensions.h_25, widthSize: Dimensions.h_25, isCircle: true, isShadow: false),
                     SizedBox(width: Dimensions.w_5),
                     Expanded(
                       child: Text(
@@ -934,10 +934,10 @@ class _NewsScreenState extends State<NewsScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: Dimensions.h_6),
+                SizedBox(height: Dimensions.h_8),
                 ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(left: Dimensions.w_8),
+                  padding: EdgeInsets.only(left: Dimensions.w_10),
                   shrinkWrap: true,
                   itemCount: controller.feedData?.rightRail?.morningBrief?.items?.length ?? 0,
                   itemBuilder: (c, i) {
@@ -984,7 +984,7 @@ class _NewsScreenState extends State<NewsScreen> {
               child: Container(
                 height: Dimensions.h_312,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color(0xE6020B15).withValues(alpha: 0.60), Color(0x99020B15).withValues(alpha: 0.40), Color(0x99020B15).withValues(alpha: 0.20), Color(0x00000000), Color(0x00000000)], stops: [0.20, 0.45, 0.65, 0.78, 1]),
+                  gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color(0xE6020B15).withValues(alpha: 0.60), Color(0x99020B15).withValues(alpha: 0.40), Color(0x99020B15).withValues(alpha: 0.20), Color(0x00000000), Color(0x00000000)], stops: const [0.20, 0.45, 0.65, 0.78, 1]),
                 ),
               ),
             ),
@@ -1024,8 +1024,8 @@ class _NewsScreenState extends State<NewsScreen> {
                   decoration: BoxDecoration(
                     boxShadow: isLight ? null : [BoxShadow(color: Color(0xE6020B15), offset: Offset(0, 150), spreadRadius: 70, blurRadius: 1)],
                     gradient: isLight
-                        ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00FFFFFF), Color(0x33FFFFFF), Color(0xCCFFFFFF), Color(0xFFFFFFFF), AppColor.background], stops: [0.08, 0.25, 0.45, 0.75, 1.0])
-                        : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00000000), Color(0x00000000), Color(0xE6020B15).withValues(alpha: 0.78), Color(0xE6020B15), Color(0x99020B15)], stops: [0.08, 0.20, 0.35, 0.78, 1]),
+                        ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: const [Color(0x00FFFFFF), Color(0x33FFFFFF), Color(0xCCFFFFFF), Color(0xFFFFFFFF), AppColor.background], stops: const [0.08, 0.25, 0.45, 0.75, 1.0])
+                        : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00000000), Color(0x00000000), Color(0xE6020B15).withValues(alpha: 0.78), Color(0xE6020B15), Color(0x99020B15)], stops: const [0.08, 0.20, 0.35, 0.78, 1]),
                   ),
                   child: Column(
                     children: [

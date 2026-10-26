@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:wikixm/Presentation/widgets/common_card.dart';
 import 'package:wikixm/constants/appcolor.dart';
 
@@ -98,7 +97,7 @@ class CommonSliderDrawer extends StatelessWidget {
         margin: EdgeInsets.only(bottom: Dimensions.h_2),
         padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_8),
         decoration: BoxDecoration(
-          color: isSelected ? (isLight ? const Color(0xFFEDF3FB) : const Color(0xFF14223A)) : Colors.transparent,
+          color: isSelected ? (AppColor.townHallDrawerBlueSoft(context)) : Colors.transparent,
           borderRadius: BorderRadius.circular(Dimensions.h_6),
           border: isSelected ? Border.all(color: theme.primaryColorDark.withValues(alpha: 0.50), width: 0.5) : null,
         ),
@@ -132,15 +131,15 @@ class CommonSliderDrawer extends StatelessWidget {
           ),
         ),
         SizedBox(height: Dimensions.h_8),
-        _quickActionItem(context, icon: CupertinoIcons.pencil, title: 'Raise an Issue or Idea', subtitle: 'Start a new project', iconColor: isLight ? const Color(0xFF0640E3) : const Color(0xFF6AA4FF), backgroundColor: isLight ? const Color(0xFFE5ECFE) : const Color(0xFF111D3A), onTap: () {}),
+        _quickActionItem(context, icon: CupertinoIcons.pencil, title: 'Raise an Issue or Idea', subtitle: 'Start a new project', iconColor: AppColor.townHallDrawerBlue(context), backgroundColor: AppColor.levelBgColor(context), onTap: () {}),
 
         _quickActionItem(
           context,
           icon: CupertinoIcons.chat_bubble_fill,
           title: 'Join a Discussion',
           subtitle: 'Contribute to solutions',
-          iconColor: isLight ? const Color(0xFF5B24D6) : const Color(0xFFA98CFF),
-          backgroundColor: isLight ? const Color(0xFFECE6FD) : const Color(0xFF241D47),
+          iconColor: AppColor.townHallDrawerPurple(context),
+          backgroundColor: AppColor.townHallScreenLevelBgColor(context),
           onTap: () {},
         ),
 
@@ -149,14 +148,14 @@ class CommonSliderDrawer extends StatelessWidget {
           icon: CupertinoIcons.calendar_badge_plus,
           title: 'Create Meeting Request',
           subtitle: 'Propose a Town Hall topic',
-          iconColor: isLight ? const Color(0xFFD81324) : const Color(0xFFFF7B84),
-          backgroundColor: isLight ? const Color(0xFFFDE7E9) : const Color(0xFF3A1720),
+          iconColor: AppColor.getIconColorVoteIcon(context),
+          backgroundColor: AppColor.getIconBackgroundVoteIcon(context),
           onTap: () {},
         ),
 
-        _quickActionItem(context, icon: CupertinoIcons.paperplane_fill, title: 'Track My Activity', subtitle: 'See my impact', iconColor: isLight ? const Color(0xFF0D6B3F) : const Color(0xFF4FC98A), backgroundColor: isLight ? const Color(0xFFE8F3EC) : const Color(0xFF102B1F), onTap: () {}),
+        _quickActionItem(context, icon: CupertinoIcons.paperplane_fill, title: 'Track My Activity', subtitle: 'See my impact', iconColor: AppColor.getIconColorMeetIcon(context), backgroundColor: AppColor.getIconBackgroundPhotoIcon(context), onTap: () {}),
 
-        _quickActionItem(context, icon: CupertinoIcons.person_add_solid, title: 'Invite a Neighbor', subtitle: 'Grow our community', iconColor: isLight ? const Color(0xFFB94705) : const Color(0xFFFF9D4D), backgroundColor: isLight ? const Color(0xFFFDEADA) : const Color(0xFF3D2411), onTap: () {}),
+        _quickActionItem(context, icon: CupertinoIcons.person_add_solid, title: 'Invite a Neighbor', subtitle: 'Grow our community', iconColor: AppColor.getIconColorDiscussIcon(context), backgroundColor: AppColor.getIconBackgroundDiscussIcon(context), onTap: () {}),
       ],
     );
   }
@@ -213,16 +212,16 @@ class CommonSliderDrawer extends StatelessWidget {
       child: Column(
         children: [
           _governmentItem(context, icon: Icons.account_balance_outlined, title: 'All Levels', location: 'Issaquah, WA', projects: '24', iconColor: Colors.white, isSelected: true, onTap: onAllLevels),
-          _governmentItem(context, icon: Icons.account_balance_outlined, title: 'City Government', location: 'Issaquah, WA', projects: '8', iconColor: isLight ? const Color(0xFF0F7A3D) : const Color(0xFF4CC98B), onTap: onCity),
+          _governmentItem(context, icon: Icons.account_balance_outlined, title: 'City Government', location: 'Issaquah, WA', projects: '8', iconColor: AppColor.levelTextColor(context), onTap: onCity),
           Container(height: 0.3, color: Theme.of(context).highlightColor),
-          _governmentItem(context, icon: Icons.account_balance_outlined, title: 'County Government', location: 'King County', projects: '16', iconColor: isLight ? const Color(0xFF3341D8) : const Color(0xFF7F95FF), onTap: onCounty),
+          _governmentItem(context, icon: Icons.account_balance_outlined, title: 'County Government', location: 'King County', projects: '16', iconColor: AppColor.townHallScreenLevelTextColor(context), onTap: onCounty),
 
           Container(height: 0.3, color: Theme.of(context).highlightColor),
 
-          _governmentItem(context, icon: Icons.account_balance_outlined, title: 'State', location: 'Washington ', projects: '31', iconColor: isLight ? const Color(0xFF6D28E0) : const Color(0xFFB092FF), onTap: onState),
+          _governmentItem(context, icon: Icons.account_balance_outlined, title: 'State', location: 'Washington ', projects: '31', iconColor: AppColor.townHallScreenLevelTextColor2(context), onTap: onState),
           Container(height: 0.3, color: Theme.of(context).highlightColor),
 
-          _governmentItem(context, icon: Icons.account_balance_outlined, title: 'Federal Government', location: 'United States', projects: '27', iconColor: isLight ? const Color(0xFF12246E) : const Color(0xFF9FBDFF), onTap: onFederal),
+          _governmentItem(context, icon: Icons.account_balance_outlined, title: 'Federal Government', location: 'United States', projects: '27', iconColor: AppColor.townHallScreenLevelTextColor3(context), onTap: onFederal),
         ],
       ),
     );

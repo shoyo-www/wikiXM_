@@ -54,7 +54,7 @@ class AppScaffold extends StatelessWidget {
                       right: 0,
                       bottom: Platform.isAndroid ? Dimensions.h_5 : 0,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_20),
+                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10),
                         child: Platform.isAndroid
                             ? Container(
                                 height: Dimensions.h_42,
@@ -109,7 +109,7 @@ class AppScaffold extends StatelessWidget {
                                 iconSize: Dimensions.h_11,
                                 currentIndex: controller.tabIndex.value,
                                 split: false,
-                                tint: isLight ? AppColor.darkBlue : const Color(0xFF73aaff),
+                                tint: AppColor.darkBlueLink(context),
                                 backgroundColor: Colors.transparent,
                                 splitSpacing: Dimensions.w_10,
                                 rightCount: 0,

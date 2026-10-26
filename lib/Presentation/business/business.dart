@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -66,7 +65,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
           SliverToBoxAdapter(
             child: Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xff00111f), Color(0xff00111f).withValues(alpha: 0.7), Colors.white], stops: [0.0, 0.55, 0.7]),
+                gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xff00111f), Color(0xff00111f).withValues(alpha: 0.7), Colors.white], stops: const [0.0, 0.55, 0.7]),
               ),
               child: firstCard(),
             ),
@@ -351,7 +350,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
                           height: Dimensions.h_100,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(Dimensions.h_8),
-                            gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [const Color(0xFF0B6030), const Color(0xF50B6030), const Color(0xEF0B6030), const Color(0xF50B6030), Colors.transparent], stops: const [0, .35, .50, .65, 1]),
+                            gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: const [Color(0xFF0B6030), Color(0xF50B6030), Color(0xEF0B6030), Color(0xF50B6030), Colors.transparent], stops: const [0, .35, .50, .65, 1]),
                           ),
                         ),
                       ),
@@ -1319,7 +1318,6 @@ class _BusinessScreenState extends State<BusinessScreen> {
                   Column(
                     children: [
                       ...List.generate(dealList.length, (index) {
-                        final deal = dealList[index];
                         return Column(
                           children: [
                             Padding(
@@ -1788,7 +1786,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: intelligenceList.length,
-        separatorBuilder: (_, __) => SizedBox(width: Dimensions.w_5),
+        separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_5),
         itemBuilder: (context, index) {
           final item = intelligenceList[index];
 
@@ -2026,7 +2024,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                   colors: [Color(0xE6020B15).withValues(alpha: 0.75), Color(0x99020B15).withValues(alpha: 0.50), Color(0x99020B15).withValues(alpha: 0.15), Color(0x00000000), Color(0x00000000)],
-                  stops: [0.15, 0.35, 0.55, 0.78, 1],
+                  stops: const [0.15, 0.35, 0.55, 0.78, 1],
                 ),
               ),
             ),

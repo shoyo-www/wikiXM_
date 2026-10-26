@@ -10,7 +10,7 @@ import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import '../../constants/constants.dart';
 import '../../constants/fontsize.dart';
-import '../widgets/AnimatedImage.dart';
+import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/circular_percent.dart';
 import '../widgets/common_bullet.dart';
@@ -64,7 +64,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: Dimensions.h_15),
-                            CommonSectionHeader(title: "What Matters Most".toUpperCase(), actionText: "View All", secondActionText: "", onActionTap: () {}),
+                            CommonSectionHeader(title: "What Matters Most", actionText: "View All", secondActionText: "", onActionTap: () {}),
                             SizedBox(height: Dimensions.h_10),
                             upcomingEventsGrid(isLight),
                             SizedBox(height: Dimensions.h_15),
@@ -184,7 +184,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                                             Container(
                                               margin: EdgeInsets.only(left: Dimensions.w_4),
                                               padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
-                                              decoration: BoxDecoration(color: !isLight ? const Color(0xffffc264) : const Color(0xFF97590a), borderRadius: BorderRadius.circular(999)),
+                                              decoration: BoxDecoration(color: AppColor.orangeAccent(context), borderRadius: BorderRadius.circular(999)),
                                               child: Text(
                                                 'COMING SOON',
                                                 style: TextStyle(color: !isLight ? AppColor.black : AppColor.white, fontSize: FontSize.sp_7, fontWeight: FontWeight.w800, letterSpacing: 0.5, height: 1),
@@ -253,7 +253,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     return Column(
       children: [
-        CommonSectionHeader(title: (memories?.title ?? 'School Memories').toUpperCase(), actionText: memories?.link?.text ?? 'View All', onActionTap: () {}),
+        CommonSectionHeader(title: (memories?.title ?? 'School Memories'), actionText: memories?.link?.text ?? 'View All', onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
@@ -347,7 +347,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
 
     Color getEventIconColor() {
-      return isLight ? AppColor.accentBlue : const Color(0xFF7C9AC5);
+      return AppColor.accentBlueMuted(context);
     }
 
     if (events.isEmpty) {
@@ -356,7 +356,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
     return Column(
       children: [
         SizedBox(height: Dimensions.h_15),
-        CommonSectionHeader(title: (eventsData?.title ?? 'Upcoming Events').toUpperCase(), actionText: '', secondActionText: '', onActionTap: () {}),
+        CommonSectionHeader(title: (eventsData?.title ?? 'Upcoming Events'), actionText: '', secondActionText: '', onActionTap: () {}),
         SizedBox(height: Dimensions.h_10),
         CommonCard(
           padding: EdgeInsets.only(top: Dimensions.h_4, bottom: Dimensions.h_4),
@@ -414,9 +414,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     String getFullImageUrl(String? image) {
       if (image == null || image.isEmpty) return '';
-
       if (image.startsWith('http')) return image;
-
       return 'https://staging.wikixm.com$image';
     }
 
@@ -441,7 +439,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     return Column(
       children: [
-        CommonSectionHeader(title: (spotlight?.title ?? 'Student Spotlight').toUpperCase(), actionText: spotlight?.link?.text ?? 'View All', onActionTap: () {}),
+        CommonSectionHeader(title: (spotlight?.title ?? 'Student Spotlight'), actionText: spotlight?.link?.text ?? 'View All', onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
@@ -450,7 +448,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
           child: Column(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimensions.h_8), topRight: Radius.circular(Dimensions.h_8)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimensions.h_10), topRight: Radius.circular(Dimensions.h_10)),
                 child: AppCacheImage(size: Dimensions.h_140, widthSize: Get.width, imageUrl: getFullImageUrl(spotlight?.image), isShadow: false, radius: 0, borderColor: Colors.grey.shade200),
               ),
 
@@ -519,7 +517,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
     final filters = browse?.filters ?? [];
     return Column(
       children: [
-        CommonSectionHeader(title: (browse?.title ?? 'Browse Schools').toUpperCase(), actionText: browse?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
+        CommonSectionHeader(title: (browse?.title ?? 'Browse Schools'), actionText: browse?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
         SizedBox(height: Dimensions.h_10),
         CommonCard(
           child: Column(
@@ -573,26 +571,26 @@ class _SchoolScreenState extends State<SchoolScreen> {
           return CupertinoIcons.chat_bubble;
 
         default:
-          return CupertinoIcons.circle;
+          return CupertinoIcons.chat_bubble_text;
       }
     }
 
     Color getIconColor(String? iconClass) {
       switch (iconClass?.toLowerCase()) {
         case 'meet-icon':
-          return isLight ? const Color(0xFF0D6B3F) : const Color(0xFF4FC98A);
+          return AppColor.getIconColorMeetIcon(context);
 
         case 'vote-icon':
-          return isLight ? const Color(0xFFD81324) : const Color(0xFFFF7B84);
+          return AppColor.getIconColorVoteIcon(context);
 
         case 'photo-icon':
-          return isLight ? const Color(0xFF0D6B3F) : const Color(0xFF4FC98A);
+          return AppColor.getIconColorMeetIcon(context);
 
         case 'welcome-icon':
-          return isLight ? const Color(0xFF0F766E) : const Color(0xFF3FB8AB);
+          return AppColor.getIconColorWelcomeIcon(context);
 
         case 'discuss-icon':
-          return isLight ? const Color(0xFFB94705) : const Color(0xFFFF9D4D);
+          return AppColor.getIconColorDiscussIcon(context);
 
         default:
           return Theme.of(context).primaryColor;
@@ -603,16 +601,16 @@ class _SchoolScreenState extends State<SchoolScreen> {
       switch (iconClass?.toLowerCase()) {
         case 'meet-icon':
         case 'photo-icon':
-          return isLight ? const Color(0xFFE8F3EC) : const Color(0xFF102B1F);
+          return AppColor.getIconBackgroundPhotoIcon(context);
 
         case 'vote-icon':
-          return isLight ? const Color(0xFFFDE7E9) : const Color(0xFF3A1720);
+          return AppColor.getIconBackgroundVoteIcon(context);
 
         case 'welcome-icon':
-          return isLight ? const Color(0xFFE5F3F4) : const Color(0xFF132B38);
+          return AppColor.getIconBackgroundWelcomeIcon(context);
 
         case 'discuss-icon':
-          return isLight ? const Color(0xFFFDEADA) : const Color(0xFF3D2411);
+          return AppColor.getIconBackgroundDiscussIcon(context);
 
         default:
           return Theme.of(context).focusColor;
@@ -621,7 +619,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     return Column(
       children: [
-        CommonSectionHeader(title: "What Should I Do Today?".toUpperCase(), actionText: "View All", secondActionText: "", onActionTap: () {}),
+        CommonSectionHeader(title: "What Should I Do Today?", actionText: "View All", secondActionText: "", onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
@@ -634,7 +632,6 @@ class _SchoolScreenState extends State<SchoolScreen> {
               return Column(
                 children: [
                   _actionItem(context: context, isLight: isLight, icon: getActionIcon(item.icon), title: item.title ?? '', subtitle: item.description ?? '', points: '+${item.points ?? 0} pts', iconColor: getIconColor(item.iconClass), iconBackground: getIconBackground(item.iconClass)),
-
                   if (index != items.length - 1) _divider(context, isLight),
                 ],
               );
@@ -669,18 +666,29 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
 
     Color getBoardIconColor() {
-      return isLight ? AppColor.accentBlue : const Color(0xFF7C9AC5);
+      return AppColor.accentBlueMuted(context);
     }
 
     return Column(
       children: [
-        CommonSectionHeader(title: (boardData?.title ?? 'School Board & District').toUpperCase(), actionText: "", secondActionText: "", onActionTap: () {}),
+        CommonSectionHeader(title: (boardData?.title ?? 'School Board & District'), actionText: "", secondActionText: "", onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
         CommonCard(
           padding: EdgeInsets.only(top: Dimensions.h_4, bottom: Dimensions.h_4),
-          child: ListView.separated(
+          child: items.isEmpty ? SizedBox(
+            height: Dimensions.h_100,
+            child: Center(
+              child: Padding(
+                padding:  EdgeInsets.only(left: Dimensions.w_10,right: Dimensions.w_10),
+                child: Text(textAlign: TextAlign.center,'No school board or district updates are available yet.',style: TextStyle(
+                  fontSize: FontSize.sp_14,
+                  fontWeight: FontWeight.w500
+                )),
+              ),
+            ),
+          ): ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
@@ -731,7 +739,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: isLight ? AppColor.primaryNavyNew : const Color(0xFFB6C3D5), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, height: 1),
+                  style: TextStyle(color: AppColor.primaryNavyText(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, height: 1),
                 ),
               if (subtitle.isNotEmpty) SizedBox(height: Dimensions.h_5),
               Text(
@@ -779,19 +787,19 @@ class _SchoolScreenState extends State<SchoolScreen> {
     Color getIconColor(String? iconClass) {
       switch (iconClass?.toLowerCase()) {
         case 'budget':
-          return isLight ? const Color(0xFFB47A2A) : const Color(0xFFD6A85D);
+          return AppColor.getIconColorBudget(context);
 
         case 'graduation':
-          return isLight ? const Color(0xFF4B8278) : const Color(0xFF75B5A8);
+          return AppColor.getIconColorGraduation(context);
 
         case 'transport':
-          return isLight ? const Color(0xFF3F75A8) : const Color(0xFF74A9DD);
+          return AppColor.getIconColorTransport(context);
 
         case 'elementary':
-          return isLight ? const Color(0xFFB56D3C) : const Color(0xFFD99A70);
+          return AppColor.getIconColorElementary(context);
 
         case 'reading':
-          return isLight ? const Color(0xFF4A70AA) : const Color(0xFF7FA5E0);
+          return AppColor.getIconColorReading(context);
 
         default:
           return isLight ? AppColor.primaryNavyNew : AppColor.white;
@@ -801,19 +809,19 @@ class _SchoolScreenState extends State<SchoolScreen> {
     Color getIconBackground(String? iconClass) {
       switch (iconClass?.toLowerCase()) {
         case 'budget':
-          return isLight ? const Color(0xFFF7F1E7) : const Color(0xFF2D251A);
+          return AppColor.getIconBackgroundBudget(context);
 
         case 'graduation':
-          return isLight ? const Color(0xFFEAF4F1) : const Color(0xFF18332E);
+          return AppColor.getIconBackgroundGraduation(context);
 
         case 'transport':
-          return isLight ? const Color(0xFFEAF2FA) : const Color(0xFF172B40);
+          return AppColor.getIconBackgroundTransport(context);
 
         case 'elementary':
-          return isLight ? const Color(0xFFFAF0E9) : const Color(0xFF39261D);
+          return AppColor.getIconBackgroundElementary(context);
 
         case 'reading':
-          return isLight ? const Color(0xFFEAF0FA) : const Color(0xFF1D2940);
+          return AppColor.getIconBackgroundReading(context);
 
         default:
           return isLight ? Theme.of(context).focusColor : const Color(0xFF1E2A3A);
@@ -823,13 +831,13 @@ class _SchoolScreenState extends State<SchoolScreen> {
     Color getPriorityColor(String? priorityClass) {
       switch (priorityClass?.toLowerCase()) {
         case 'high':
-          return isLight ? const Color(0xFFC34B4B) : const Color(0xFFFF8585);
+          return AppColor.getPriorityColorHigh(context);
 
         case 'medium':
-          return isLight ? const Color(0xFFB87520) : const Color(0xFFFFB85C);
+          return AppColor.getPriorityColorMedium(context);
 
         case 'low':
-          return isLight ? const Color(0xFF4D8A72) : const Color(0xFF72C7A5);
+          return AppColor.getPriorityColorLow(context);
 
         default:
           return isLight ? Theme.of(context).highlightColor : const Color(0xFFB8C4D6);
@@ -839,13 +847,13 @@ class _SchoolScreenState extends State<SchoolScreen> {
     Color getPriorityBackground(String? priorityClass) {
       switch (priorityClass?.toLowerCase()) {
         case 'high':
-          return isLight ? const Color(0xFFFCEDED) : const Color(0xFF3D2025);
+          return AppColor.getPriorityBackgroundHigh(context);
 
         case 'medium':
-          return isLight ? const Color(0xFFFCF4E7) : const Color(0xFF3A2B17);
+          return AppColor.getPriorityBackgroundMedium(context);
 
         case 'low':
-          return isLight ? const Color(0xFFE8F4EE) : const Color(0xFF19352A);
+          return AppColor.getPriorityBackgroundLow(context);
 
         default:
           return isLight ? Theme.of(context).focusColor : const Color(0xFF202B3A);
@@ -854,7 +862,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     return Column(
       children: [
-        CommonSectionHeader(title: (topicsData?.title ?? 'Active Education Topics').toUpperCase(), actionText: topicsData?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
+        CommonSectionHeader(title: (topicsData?.title ?? 'Active Education Topics'), actionText: topicsData?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
 
         SizedBox(height: Dimensions.h_10),
 
@@ -881,7 +889,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   iconColor: getIconColor(item.iconClass),
                   iconBackground: getIconBackground(item.iconClass),
                   isLight: isLight,
-                  trailing: _priorityBadge(label: item.priority ?? '', color: getPriorityColor(item.priorityClass), backgroundColor: getPriorityBackground(item.priorityClass)),
+                  trailing: (item.priority?.isNotEmpty ?? false) ? _priorityBadge(label: item.priority ?? '', color: getPriorityColor(item.priorityClass), backgroundColor: getPriorityBackground(item.priorityClass)) : SizedBox.shrink(),
                 ),
               );
             },
@@ -894,7 +902,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
   Widget _scoreFilter({required String title, bool isSelected = false}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: Dimensions.w_15),
-      height: Dimensions.h_20,
+      height: Dimensions.h_25,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: isSelected ? AppColor.darkBlue : Theme.of(context).scaffoldBackgroundColor,
@@ -931,9 +939,10 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
         case 'community':
           return CupertinoIcons.group;
-
+        case 'education':
+          return CupertinoIcons.chat_bubble_text;
         default:
-          return CupertinoIcons.circle;
+          return CupertinoIcons.chat_bubble_text;
       }
     }
 
@@ -960,7 +969,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
 
     return Column(
       children: [
-        CommonSectionHeader(title: (pulse?.title ?? 'Education Community Pulse').toUpperCase(), actionText: pulse?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
+        CommonSectionHeader(title: (pulse?.title ?? 'Education Community Pulse'), actionText: pulse?.link?.text ?? '', secondActionText: "", onActionTap: () {}),
         SizedBox(height: Dimensions.h_10),
         CommonCard(
           child: Column(
@@ -1039,13 +1048,8 @@ class _SchoolScreenState extends State<SchoolScreen> {
                           style: TextStyle(color: stable ? Theme.of(context).hintColor : (isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark), fontSize: FontSize.sp_10, fontWeight: FontWeight.w700, height: 1),
                         ),
                       ),
-
                       SizedBox(width: Dimensions.w_15),
-
-                      /// Arrow
                       if (!stable && positive) Icon(Icons.arrow_upward_outlined, color: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark, size: Dimensions.h_12),
-
-                      /// Change
                       SizedBox(
                         width: Dimensions.w_28,
                         child: Text(
@@ -1120,7 +1124,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
           SizedBox(width: Dimensions.w_6),
           Text(
             points,
-            style: TextStyle(color: pointsColor ?? (isLight ? const Color(0xFF0D6B3F) : const Color(0xFF4FC98A)), fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1),
+            style: TextStyle(color: pointsColor ?? (AppColor.getIconColorMeetIcon(context)), fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1),
           ),
         ],
       ],
@@ -1162,10 +1166,10 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        (live?.title ?? '').toUpperCase(),
+                        (live?.title ?? ''),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w800, height: 1),
+                        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800, height: 1),
                       ),
                     ),
                     Row(
@@ -1174,12 +1178,12 @@ class _SchoolScreenState extends State<SchoolScreen> {
                         Container(
                           width: Dimensions.h_5,
                           height: Dimensions.h_5,
-                          decoration: BoxDecoration(color: isLight ? const Color(0xFF1FA85B) : const Color(0xFF4FC98A), shape: BoxShape.circle),
+                          decoration: BoxDecoration(color: AppColor.schoolScreenGreen(context), shape: BoxShape.circle),
                         ),
                         SizedBox(width: Dimensions.w_3),
                         Text(
                           live?.status?.toUpperCase() ?? '',
-                          style: TextStyle(color: isLight ? const Color(0xFF1FA85B) : const Color(0xFF4FC98A), fontSize: FontSize.sp_10, fontWeight: FontWeight.w900, height: 1),
+                          style: TextStyle(color: AppColor.schoolScreenGreen(context), fontSize: FontSize.sp_10, fontWeight: FontWeight.w900, height: 1),
                         ),
                       ],
                     ),
@@ -1354,7 +1358,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
         AnimatedWeatherImage(height: Dimensions.h_350, image: imageUrl),
         Positioned.fill(
           child: Container(
-            height: Dimensions.h_350,
+            height: Dimensions.h_250,
             decoration: BoxDecoration(
               gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent], stops: const [0.0, 0.30, 0.58, 1.0]),
             ),
@@ -1632,12 +1636,12 @@ class _SchoolScreenState extends State<SchoolScreen> {
                       SizedBox(height: Dimensions.h_5),
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6, vertical: Dimensions.h_4),
-                        decoration: BoxDecoration(color: isLight ? const Color(0xFFf2f6fd) : const Color(0xFF102844), borderRadius: BorderRadius.circular(6)),
+                        decoration: BoxDecoration(color: AppColor.schoolScreenBlueSoft(context), borderRadius: BorderRadius.circular(6)),
                         child: Text(
                           item.topic ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: isLight ? const Color(0xFF0754e8) : const Color(0xFF82b4ff), fontSize: FontSize.sp_9, fontWeight: FontWeight.w900, height: 1),
+                          style: TextStyle(color: AppColor.schoolScreenBlue(context), fontSize: FontSize.sp_9, fontWeight: FontWeight.w900, height: 1),
                         ),
                       ),
                       const Spacer(),
@@ -1699,14 +1703,29 @@ class _SchoolScreenState extends State<SchoolScreen> {
     }
 
     final selectedFilter = schoolController.selectedSchoolFilter;
-
     final filteredSchools = selectedFilter == 'all'
         ? schools
         : schools.where((school) {
             return school.type == selectedFilter;
           }).toList();
     final showViewAll = selectedFilter == 'all';
-
+    if (filteredSchools.isEmpty) {
+      return SizedBox(
+        height: Dimensions.h_180,
+        width: double.infinity,
+        child: Center(
+          child: Text(
+            'No schools are available',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: FontSize.sp_14,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ),
+      );
+    }
     return SizedBox(
       height: Dimensions.h_180,
       child: ListView.separated(
@@ -1715,14 +1734,13 @@ class _SchoolScreenState extends State<SchoolScreen> {
         itemCount: filteredSchools.length + (showViewAll ? 1 : 0),
         separatorBuilder: (context, index) => SizedBox(width: Dimensions.w_8),
         itemBuilder: (context, index) {
-          if (showViewAll && index == filteredSchools.length) {
-            return _buildViewAllSchoolsCard(isLight);
-          }
+          // if (showViewAll && index == filteredSchools.length) {
+          //   return _buildViewAllSchoolsCard(isLight);
+          // }
           if (index >= filteredSchools.length) {
             return const SizedBox();
           }
           final item = filteredSchools[index];
-
           return SizedBox(
             width: Dimensions.w_120,
             child: CommonCard(
@@ -1789,36 +1807,6 @@ class _SchoolScreenState extends State<SchoolScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildViewAllSchoolsCard(bool isLight) {
-    return SizedBox(
-      width: Dimensions.w_110,
-      child: CommonCard(
-        padding: EdgeInsets.zero,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(Dimensions.h_8),
-          onTap: () {},
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.grid_view_rounded, color: Theme.of(context).primaryColorDark, size: Dimensions.h_25),
-
-              SizedBox(height: Dimensions.h_8),
-
-              Text(
-                'View All',
-                style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w800),
-              ),
-              Text(
-                '14 Schools',
-                style: TextStyle(color: isLight ? Theme.of(Get.context!).highlightColor : const Color(0xFF9DABC0), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

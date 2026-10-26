@@ -11,10 +11,8 @@ import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
 import 'package:wikixm/approutes.dart';
 import 'package:wikixm/constants/appcolor.dart';
-import 'package:wikixm/data/datasource/local/local_storage.dart';
 import '../../constants/constants.dart';
 import '../../constants/fontsize.dart';
-import '../../constants/images.dart';
 import '../../data/datasource/remote/models/response/town_hall_response.dart';
 import '../widgets/bill_widget.dart';
 import '../widgets/cache_image.dart';
@@ -75,7 +73,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
                       sliderDrawerKey.currentState?.openSlider();
                     },
                     expandedHeight: Dimensions.h_210,
-                    expandedColor: isLight ? Colors.black : Colors.white,
+                    expandedColor: AppColor.townHallScreenBlack(context),
                     collapsedColor: Theme.of(context).highlightColor,
                     hero: buildHeroHeader(isLight, controller),
                     slivers: [
@@ -127,7 +125,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
                                               Container(
                                                 margin: EdgeInsets.only(left: Dimensions.w_4),
                                                 padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
-                                                decoration: BoxDecoration(color: !isLight ? const Color(0xffffc264) : const Color(0xFF97590a), borderRadius: BorderRadius.circular(999)),
+                                                decoration: BoxDecoration(color: AppColor.orangeAccent(context), borderRadius: BorderRadius.circular(999)),
                                                 child: Text(
                                                   'COMING SOON',
                                                   style: TextStyle(color: !isLight ? AppColor.black : AppColor.white, fontSize: FontSize.sp_7, fontWeight: FontWeight.w800, letterSpacing: 0.5, height: 1),
@@ -965,7 +963,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
                             Container(
                               margin: EdgeInsets.only(left: Dimensions.w_2),
                               padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
-                              decoration: BoxDecoration(color: isLight ? const Color(0xFFeaf3ed) : const Color(0xFF12281d), borderRadius: BorderRadius.circular(4)),
+                              decoration: BoxDecoration(color: AppColor.townHallScreenGreenSoft(context), borderRadius: BorderRadius.circular(4)),
                               child: Row(
                                 children: [
                                   Icon(CupertinoIcons.check_mark_circled_solid, color: isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark, size: Dimensions.h_10),
@@ -1050,29 +1048,6 @@ class _TownHallScreenState extends State<TownHallScreen> {
     }
   }
 
-  Widget _drawerItem({required IconData icon, required String title, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: () {
-        onTap();
-        sliderDrawerKey.currentState?.closeSlider();
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_10),
-        child: Row(
-          children: [
-            Icon(icon, color: Theme.of(context).primaryColor, size: Dimensions.h_18),
-
-            SizedBox(width: Dimensions.w_8),
-
-            Text(
-              title,
-              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   TextStyle _tableHeaderStyle() {
     return TextStyle(color: Theme.of(context).hintColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, height: 1);
@@ -1106,11 +1081,11 @@ class _TownHallScreenState extends State<TownHallScreen> {
     Color getSentimentColor(String label) {
       switch (label.toLowerCase()) {
         case 'positive':
-          return isLight ? const Color(0xFF0F7A44) : const Color(0xFF4FC98A);
+          return AppColor.getSentimentColorPositive(context);
         case 'neutral':
-          return isLight ? const Color(0xFFf09708) : const Color(0xFFf5b13d);
+          return AppColor.getSentimentColorNeutral(context);
         case 'negative':
-          return isLight ? const Color(0xFFe5231f) : const Color(0xFFd93643);
+          return AppColor.getSentimentColorNegative(context);
         default:
           return Theme.of(context).primaryColor;
       }
@@ -1174,11 +1149,11 @@ class _TownHallScreenState extends State<TownHallScreen> {
                   style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, height: 1),
                 ),
                 const Spacer(),
-                Icon(Icons.sentiment_satisfied_alt_outlined, color: isLight ? const Color(0xFF10783F) : const Color(0xFF56CF90), size: Dimensions.h_12),
+                Icon(Icons.sentiment_satisfied_alt_outlined, color: AppColor.townHallScreenGreenDeep(context), size: Dimensions.h_12),
                 SizedBox(width: Dimensions.w_4),
                 Text(
                   overall?.value ?? '',
-                  style: TextStyle(color: isLight ? const Color(0xFF10783F) : const Color(0xFF56CF90), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700, height: 1),
+                  style: TextStyle(color: AppColor.townHallScreenGreenDeep(context), fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w700, height: 1),
                 ),
               ],
             ),
@@ -1212,7 +1187,6 @@ class _TownHallScreenState extends State<TownHallScreen> {
   }
 
   Widget _representativeRow({required Representative representative}) {
-    final bool isLight = Theme.of(context).brightness == Brightness.light;
 
     final rank = '${representative.rank ?? ''}';
     final name = representative.name ?? '';
@@ -1227,27 +1201,27 @@ class _TownHallScreenState extends State<TownHallScreen> {
 
     switch (level) {
       case 'City':
-        levelTextColor = isLight ? const Color(0xFF0F7A3D) : const Color(0xFF4CC98B);
+        levelTextColor = AppColor.levelTextColor(context);
 
-        levelBgColor = isLight ? const Color(0xFFE8F3EC) : const Color(0xFF102B1F);
+        levelBgColor = AppColor.getIconBackgroundPhotoIcon(context);
         break;
 
       case 'County':
-        levelTextColor = isLight ? const Color(0xFF3341D8) : const Color(0xFF7F95FF);
+        levelTextColor = AppColor.townHallScreenLevelTextColor(context);
 
-        levelBgColor = isLight ? const Color(0xFFE5ECFE) : const Color(0xFF111D3A);
+        levelBgColor = AppColor.levelBgColor(context);
         break;
 
       case 'State':
-        levelTextColor = isLight ? const Color(0xFF6D28E0) : const Color(0xFFB092FF);
+        levelTextColor = AppColor.townHallScreenLevelTextColor2(context);
 
-        levelBgColor = isLight ? const Color(0xFFECE6FD) : const Color(0xFF241D47);
+        levelBgColor = AppColor.townHallScreenLevelBgColor(context);
         break;
 
       case 'Federal':
-        levelTextColor = isLight ? const Color(0xFF12246E) : const Color(0xFF9FBDFF);
+        levelTextColor = AppColor.townHallScreenLevelTextColor3(context);
 
-        levelBgColor = isLight ? const Color(0xFFE5ECFE) : const Color(0xFF111D3A);
+        levelBgColor = AppColor.levelBgColor(context);
         break;
 
       default:
@@ -1260,21 +1234,21 @@ class _TownHallScreenState extends State<TownHallScreen> {
 
     switch (confidence) {
       case 'High':
-        confidenceTextColor = isLight ? const Color(0xFF10783F) : const Color(0xFF56CF90);
+        confidenceTextColor = AppColor.townHallScreenGreenDeep(context);
 
-        confidenceBgColor = isLight ? const Color(0xFFE8F3EC) : const Color(0xFF102B1F);
+        confidenceBgColor = AppColor.getIconBackgroundPhotoIcon(context);
         break;
 
       case 'Medium':
-        confidenceTextColor = isLight ? const Color(0xFFB94705) : const Color(0xFFFFA761);
+        confidenceTextColor = AppColor.confidenceTextColor(context);
 
-        confidenceBgColor = isLight ? const Color(0xFFFDEADA) : const Color(0xFF3D2411);
+        confidenceBgColor = AppColor.getIconBackgroundDiscussIcon(context);
         break;
 
       case 'Low':
-        confidenceTextColor = isLight ? const Color(0xFFD81324) : const Color(0xFFFF8A92);
+        confidenceTextColor = AppColor.townHallScreenConfidenceTextColor(context);
 
-        confidenceBgColor = isLight ? const Color(0xFFFDE7E9) : const Color(0xFF3A1720);
+        confidenceBgColor = AppColor.getIconBackgroundVoteIcon(context);
         break;
 
       default:
@@ -1372,7 +1346,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: isLight ? AppColor.darkBlue : const Color(0xFF4B8BFF), fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1),
+                style: TextStyle(color: AppColor.darkBlueAccent(context), fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1),
               ),
             ),
             SizedBox(width: Dimensions.w_4),
@@ -1394,7 +1368,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
                 child: Container(
                   width: constraints.maxWidth * (percentage / 100),
                   height: Dimensions.h_2,
-                  decoration: BoxDecoration(color: isLight ? AppColor.darkBlue : const Color(0xFF4B8BFF), borderRadius: BorderRadius.circular(10)),
+                  decoration: BoxDecoration(color: AppColor.darkBlueAccent(context), borderRadius: BorderRadius.circular(10)),
                 ),
               ),
             );
@@ -1648,13 +1622,13 @@ class _TownHallScreenState extends State<TownHallScreen> {
                       if (topItems.length > 1) ...[
                         _verticalDivider(),
                         SizedBox(width: Dimensions.w_10),
-                        _impactItem(icon: CupertinoIcons.person_2_fill, iconColor: !isLight ? const Color(0xffffc264) : const Color(0xFF97590a), value: '${topItems[1].value}${topItems[1].suffix ?? ''}', title: topItems[1].label ?? '', subtitle: topItems[1].note ?? ''),
+                        _impactItem(icon: CupertinoIcons.person_2_fill, iconColor: AppColor.orangeAccent(context), value: '${topItems[1].value}${topItems[1].suffix ?? ''}', title: topItems[1].label ?? '', subtitle: topItems[1].note ?? ''),
                       ],
 
                       if (topItems.length > 2) ...[
                         _verticalDivider(),
                         SizedBox(width: Dimensions.w_10),
-                        _impactItem(icon: CupertinoIcons.shield_fill, iconColor: !isLight ? const Color(0xffffc264) : const Color(0xFF97590a), value: '${topItems[2].value}${topItems[2].suffix ?? ''}', title: topItems[2].label ?? '', subtitle: topItems[2].note ?? ''),
+                        _impactItem(icon: CupertinoIcons.shield_fill, iconColor: AppColor.orangeAccent(context), value: '${topItems[2].value}${topItems[2].suffix ?? ''}', title: topItems[2].label ?? '', subtitle: topItems[2].note ?? ''),
                       ],
 
                       if (topItems.length > 3) ...[
@@ -1736,8 +1710,6 @@ class _TownHallScreenState extends State<TownHallScreen> {
     final brief = townHallController.townHallData?.aiBrief;
     final kicker = brief?.kicker;
     final columns = brief?.columns ?? [];
-    final whyItMatters = brief?.whyItMatters;
-    final actions = brief?.actions;
     final footer = brief?.footer;
 
     final localGreen = isLight ? AppColor.townHallGreen : AppColor.townHallGreenDark;
@@ -1761,29 +1733,29 @@ class _TownHallScreenState extends State<TownHallScreen> {
               if (kicker?.badge != null && kicker!.badge!.isNotEmpty)
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_2),
-                  decoration: BoxDecoration(color: isLight ? const Color(0xFFE8EDFF) : const Color(0xFF19284D), borderRadius: BorderRadius.circular(4)),
+                  decoration: BoxDecoration(color: AppColor.townHallScreenBlueSoft(context), borderRadius: BorderRadius.circular(4)),
                   child: Text(
                     kicker.badge!,
-                    style: TextStyle(color: isLight ? AppColor.darkBlue : const Color(0xFF73aaff), fontSize: FontSize.sp_7, fontWeight: FontWeight.w800),
+                    style: TextStyle(color: AppColor.darkBlueLink(context), fontSize: FontSize.sp_7, fontWeight: FontWeight.w800),
                   ),
                 ),
             ],
           ),
           SizedBox(height: Dimensions.h_5),
-          if (columns.isNotEmpty) _aiBriefColumn(icon: CupertinoIcons.briefcase_fill, iconColor: localGreen, iconBackground: isLight ? const Color(0xFFE8F4EE) : const Color(0xFF18352C), item: columns[0], isLight: isLight),
+          if (columns.isNotEmpty) _aiBriefColumn(icon: CupertinoIcons.briefcase_fill, iconColor: localGreen, iconBackground: AppColor.townHallScreenGreenSoft2(context), item: columns[0], isLight: isLight),
 
           if (columns.length > 1) ...[
             SizedBox(height: Dimensions.h_5),
             Container(height: 0.2, color: Theme.of(context).dividerColor),
             SizedBox(height: Dimensions.h_5),
-            _aiBriefColumn(icon: CupertinoIcons.person_2_fill, iconColor: isLight ? const Color(0xFF365DEB) : const Color(0xFF73aaff), iconBackground: isLight ? const Color(0xFFE8EDFF) : const Color(0xFF19284D), item: columns[1], isLight: isLight),
+            _aiBriefColumn(icon: CupertinoIcons.person_2_fill, iconColor: AppColor.townHallScreenBlue(context), iconBackground: AppColor.townHallScreenBlueSoft(context), item: columns[1], isLight: isLight),
           ],
 
           if (columns.length > 2) ...[
             SizedBox(height: Dimensions.h_5),
             Container(height: 0.2, color: Theme.of(context).dividerColor),
             SizedBox(height: Dimensions.h_5),
-            _aiBriefColumn(icon: CupertinoIcons.shield_fill, iconColor: const Color(0xFFE83D4F), iconBackground: isLight ? const Color(0xFFFFE8E8) : const Color(0xFF432326), item: columns[2], isLight: isLight),
+            _aiBriefColumn(icon: CupertinoIcons.shield_fill, iconColor: const Color(0xFFE83D4F), iconBackground: AppColor.townHallScreenRedSoft(context), item: columns[2], isLight: isLight),
           ],
           SizedBox(height: Dimensions.h_8),
           Row(
@@ -1825,9 +1797,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
     final toneColor = item.tone == 'red'
         ? const Color(0xFFE83D4F)
         : item.tone == 'blue'
-        ? isLight
-              ? const Color(0xFF365DEB)
-              : const Color(0xFF73aaff)
+        ? AppColor.townHallScreenBlue(context)
         : isLight
         ? AppColor.townHallGreen
         : AppColor.townHallGreenDark;
@@ -1983,10 +1953,10 @@ class _TownHallScreenState extends State<TownHallScreen> {
             Container(
               padding: EdgeInsets.fromLTRB(Dimensions.w_5, Dimensions.h_1, Dimensions.w_5, Dimensions.h_5),
               decoration: BoxDecoration(
-                boxShadow: [BoxShadow(color: isLight ? Colors.white : Color(0xE6020B15), offset: Offset(0, 150), spreadRadius: 70, blurRadius: 1)],
+                boxShadow: [BoxShadow(color: AppColor.townHallScreenWhite(context), offset: Offset(0, 150), spreadRadius: 70, blurRadius: 1)],
                 gradient: isLight
-                    ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00FFFFFF), Color(0x33FFFFFF), Color(0xCCFFFFFF), Color(0xFFFFFFFF), AppColor.background], stops: [0.08, 0.25, 0.45, 0.75, 1.0])
-                    : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00000000), Color(0x00000000), Color(0xE6020B15).withValues(alpha: 0.78), Color(0xE6020B15), Color(0x99020B15)], stops: [0.08, 0.20, 0.35, 0.78, 1]),
+                    ? LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: const [Color(0x00FFFFFF), Color(0x33FFFFFF), Color(0xCCFFFFFF), Color(0xFFFFFFFF), AppColor.background], stops: const [0.08, 0.25, 0.45, 0.75, 1.0])
+                    : LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00000000), Color(0x00000000), Color(0xE6020B15).withValues(alpha: 0.78), Color(0xE6020B15), Color(0x99020B15)], stops: const [0.08, 0.20, 0.35, 0.78, 1]),
               ),
               child: IntrinsicHeight(
                 child: Row(
@@ -2027,7 +1997,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
                         margin: EdgeInsets.only(left: Dimensions.w_8, top: Dimensions.h_5, bottom: Dimensions.h_8),
                         padding: EdgeInsets.symmetric(horizontal: Dimensions.w_15, vertical: Dimensions.h_4),
                         decoration: BoxDecoration(
-                          color: isLight ? Colors.white : Colors.black45,
+                          color: AppColor.groupDetailWhite(context),
                           border: Border.all(color: isLight ? AppColor.sportsLightBorder : Colors.white, width: 0.7),
                           borderRadius: BorderRadius.circular(4),
                         ),

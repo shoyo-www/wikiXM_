@@ -20,5 +20,12 @@ class AppRoutes {
   static const String marketPlace = '/marketPlace';
   static const String microsite = '/microsite';
   static const String adsWidget = '/adsWidget';
+  static const String notifications = '/notifications';
+  static const String groups = '/groups';
+  static const String groupDetail = '/groupDetail';
+  static const String createGroup = '/createGroup';
+  static const String activityDetail = '/activityDetail';
+  static const String detailPage = '/detailPage';
+  static const String groupUserProfile = '/groupUserProfile';
 
 }

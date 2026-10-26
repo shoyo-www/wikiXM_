@@ -178,30 +178,6 @@ extension _HomeWidgetBuilders on _HomeState {
     );
   }
 
-  Widget _buildBriefPoint(String text, DashboardController controller) {
-    return GetBuilder(
-      init: controller,
-      id: ControllerBuilders.homeSectionsController,
-      builder: (context) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(CupertinoIcons.checkmark_circle_fill, color: const Color(0xFF2F24D9), size: Dimensions.h_10),
-            SizedBox(width: Dimensions.w_4),
-            Expanded(
-              child: Text(
-                text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: Colors.black87, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, height: 1.1),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Widget _buildBriefButton({required IconData icon, required String label, bool filled = false, VoidCallback? onTap, bool isback = false}) {
     return GestureDetector(
       onTap: onTap,

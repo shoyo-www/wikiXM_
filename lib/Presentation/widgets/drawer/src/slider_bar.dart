@@ -10,11 +10,10 @@ class SliderBar extends StatelessWidget {
   final Widget sliderMenu;
 
   const SliderBar(
-      {Key? key,
+      {super.key,
       required this.slideDirection,
       required this.sliderMenuOpenSize,
-      required this.sliderMenu})
-      : super(key: key);
+      required this.sliderMenu});
 
   @override
   Widget build(BuildContext context) {

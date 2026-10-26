@@ -13,7 +13,7 @@ import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import 'package:wikixm/data/datasource/remote/models/response/my_garage_dashboard.dart';
 import '../../constants/fontsize.dart';
-import '../widgets/AnimatedImage.dart';
+import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/common_bullet.dart';
 import '../widgets/drawer/src/slider_drawer.dart';
@@ -184,7 +184,7 @@ class _GarageScreenState extends State<GarageScreen> {
                                               Container(
                                                 margin: EdgeInsets.only(left: Dimensions.w_4),
                                                 padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_3),
-                                                decoration: BoxDecoration(color: !isLight ? const Color(0xffffc264) : const Color(0xFF97590a), borderRadius: BorderRadius.circular(999)),
+                                                decoration: BoxDecoration(color: AppColor.orangeAccent(context), borderRadius: BorderRadius.circular(999)),
                                                 child: Text(
                                                   'COMING SOON',
                                                   style: TextStyle(color: !isLight ? AppColor.black : AppColor.white, fontSize: FontSize.sp_7, fontWeight: FontWeight.w800, letterSpacing: 0.5, height: 1),
@@ -290,18 +290,17 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget topSellers(bool isLight) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
+    final line = AppColor.line(context);
 
-    final orange = isLight ? const Color(0xFFA14F00) : const Color(0xFFFFC36C);
-    final orangeSoft = isLight ? const Color(0xFFFFF3E4) : const Color(0xFF49371F);
+    final orange = AppColor.addItemOrange(context);
+    final orangeSoft = AppColor.garageScreenOrangeSoft(context);
 
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
 
-    final gold = isLight ? const Color(0xFF9A6200) : const Color(0xFFFFD277);
+    final gold = AppColor.gold(context);
 
     final topSeller = garageController.dashboardData?.sections?.topSellers;
 
@@ -349,7 +348,7 @@ class _GarageScreenState extends State<GarageScreen> {
             child: Row(
               children: [
                 ...?topSeller?.filters?.where((filter) => filter.enabled == true).map((filter) {
-                  final isSelected = (topSeller?.defaultSort ?? 'speed') == filter.key;
+                  final isSelected = (topSeller.defaultSort ?? 'speed') == filter.key;
 
                   return Expanded(
                     child: GestureDetector(
@@ -511,31 +510,29 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget myListings(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
+    final surface = AppColor.addItemSurface(context);
 
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
+    final ink = AppColor.ink(context);
 
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
+    final copy = AppColor.copy(context);
 
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
+    final muted = AppColor.muted(context);
 
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
+    final line = AppColor.line(context);
 
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
+    final blue = AppColor.blue(context);
 
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final blueSoft = AppColor.blueSoft(context);
 
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
+    final green = AppColor.green(context);
 
-    final greenSoft = isLight ? const Color(0xFFE8F7EF) : const Color(0xFF123D36);
+    final greenSoft = AppColor.garageScreenGreenSoft(context);
 
-    final red = isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96);
 
-    final redSoft = isLight ? const Color(0xFFFFF0F1) : const Color(0xFF48242B);
 
-    final orange = isLight ? const Color(0xFFA14F00) : const Color(0xFFFFC36C);
+    final orange = AppColor.addItemOrange(context);
 
-    final orangeSoft = isLight ? const Color(0xFFFFF3E4) : const Color(0xFF49371F);
+    final orangeSoft = AppColor.garageScreenOrangeSoft(context);
 
     final inventory =
         garageController.dashboardData?.inventory;
@@ -781,7 +778,7 @@ class _GarageScreenState extends State<GarageScreen> {
 
                 saves: (item.totalSaves ?? 0).toString(),
 
-                days: item.itemCondition.toString() ?? '',
+                days: item.itemCondition.toString(),
 
                 trend: '',
 
@@ -996,31 +993,29 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget myInventory(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
+    final surface = AppColor.addItemSurface(context);
 
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
+    final ink = AppColor.ink(context);
 
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
+    final muted = AppColor.muted(context);
 
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
+    final line = AppColor.line(context);
 
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
+    final orange = AppColor.addItemOrange(context);
 
-    final orange = isLight ? const Color(0xFFA14F00) : const Color(0xFFFFC36C);
+    final orangeSoft = AppColor.garageScreenOrangeSoft(context);
 
-    final orangeSoft = isLight ? const Color(0xFFFFF3E4) : const Color(0xFF49371F);
+    final blue = AppColor.blue(context);
 
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
+    final blueSoft = AppColor.blueSoft(context);
 
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final green = AppColor.green(context);
 
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
+    final greenSoft = AppColor.garageScreenGreenSoft(context);
 
-    final greenSoft = isLight ? const Color(0xFFE8F7EF) : const Color(0xFF123D36);
+    final red = AppColor.red(context);
 
-    final red = isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96);
-
-    final redSoft = isLight ? const Color(0xFFFFF0F1) : const Color(0xFF48242B);
+    final redSoft = AppColor.redSoft(context);
 
     final counts = garageController.dashboardData?.counts;
 
@@ -1154,27 +1149,24 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget bestMovesToday(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
+    final surface = AppColor.addItemSurface(context);
 
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
+    final ink = AppColor.ink(context);
 
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
+    final copy = AppColor.copy(context);
 
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
+    final muted = AppColor.muted(context);
 
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
+    final line = AppColor.line(context);
 
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
+    final blue = AppColor.blue(context);
 
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
 
-    final red = isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96);
+    final red = AppColor.red(context);
 
-    final redSoft = isLight ? const Color(0xFFFFF0F1) : const Color(0xFF48242B);
+    final redSoft = AppColor.redSoft(context);
 
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
 
-    final greenSoft = isLight ? const Color(0xFFE8F7EF) : const Color(0xFF123D36);
     final bestMoves = garageController.dashboardData?.bestMoves;
     final moves = <Map<String, dynamic>>[];
     if (bestMoves?.priceReview != null) {
@@ -1281,16 +1273,16 @@ class _GarageScreenState extends State<GarageScreen> {
   Color _bestMoveSoftColor(String key, bool isLight) {
     switch (key) {
       case 'price_review':
-        return isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+        return AppColor.blueSoft(context);
 
       case 'complete_draft':
-        return isLight ? const Color(0xFFFFF4E5) : const Color(0xFF493719);
+        return AppColor.bestMoveSoftColorCompleteDraft(context);
 
       case 'inventory_review':
-        return isLight ? const Color(0xFFE7F8F1) : const Color(0xFF163F35);
+        return AppColor.bestMoveSoftColorInventoryReview(context);
 
       default:
-        return isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+        return AppColor.blueSoft(context);
     }
   }
 
@@ -1313,16 +1305,16 @@ class _GarageScreenState extends State<GarageScreen> {
   Color _bestMoveColor(String key, bool isLight) {
     switch (key) {
       case 'price_review':
-        return isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
+        return AppColor.blue(context);
 
       case 'complete_draft':
-        return isLight ? const Color(0xFFD97706) : const Color(0xFFFBBF24);
+        return AppColor.bestMoveColorCompleteDraft(context);
 
       case 'inventory_review':
-        return isLight ? const Color(0xFF059669) : const Color(0xFF34D399);
+        return AppColor.bestMoveColorInventoryReview(context);
 
       default:
-        return isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
+        return AppColor.blue(context);
     }
   }
 
@@ -1418,9 +1410,9 @@ class _GarageScreenState extends State<GarageScreen> {
             child: OutlinedButton(
               onPressed: enabled ? () {} : null,
               style: OutlinedButton.styleFrom(
-                foregroundColor: isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68),
-                side: BorderSide(color: isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF), width: 0.4),
-                backgroundColor: isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68),
+                foregroundColor: AppColor.blueSoft(context),
+                side: BorderSide(color: AppColor.blue(context), width: 0.4),
+                backgroundColor: AppColor.blueSoft(context),
                 padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.h_5)),
               ),
@@ -1587,16 +1579,16 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget cash(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
+    final surface = AppColor.addItemSurface(context);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
     final muted = isLight ? Colors.grey.shade800 : Colors.grey.shade200;
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
-    final greenDeep = isLight ? const Color(0xFF05633B) : const Color(0xFF45BF86);
-    final greenSoft = isLight ? const Color(0xFFE8F7EF) : const Color(0xFF123D36);
-    final red = isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96);
-    final redSoft = isLight ? const Color(0xFFFFF0F1) : const Color(0xFF48242B);
-    final line = isLight ? Colors.grey : Colors.white24;
+    final green = AppColor.green(context);
+    final greenDeep = AppColor.greenDeep(context);
+    final greenSoft = AppColor.garageScreenGreenSoft(context);
+    final red = AppColor.red(context);
+    final redSoft = AppColor.redSoft(context);
+    final line = AppColor.border(context);
     final greenGradient = Color.lerp(greenSoft, surface, 0.16)!;
     final redGradient = Color.lerp(redSoft, surface, 0.12)!;
     final valueOverview = garageController.dashboardData?.sections?.valueOverview;
@@ -1630,7 +1622,7 @@ class _GarageScreenState extends State<GarageScreen> {
             padding: EdgeInsets.fromLTRB(Dimensions.w_8, Dimensions.h_8, Dimensions.w_8, Dimensions.h_8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(Dimensions.h_10),
-              border: Border.all(color: isLight ? Colors.grey : Colors.white24, width: 0.4),
+              border: Border.all(color: AppColor.border(context), width: 0.4),
               gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [greenGradient, surface], stops: const [0.0, 0.76]),
             ),
             child: Column(
@@ -1683,7 +1675,7 @@ class _GarageScreenState extends State<GarageScreen> {
                   borderRadius: BorderRadius.circular(20),
                   child: SizedBox(
                     height: Dimensions.h_5,
-                    child: LinearProgressIndicator(value: progressValue, backgroundColor: isLight ? const Color(0xFFD6EDE1) : const Color(0xFF234B40), valueColor: AlwaysStoppedAnimation<Color>(green)),
+                    child: LinearProgressIndicator(value: progressValue, backgroundColor: AppColor.garageScreenGreenSoft2(context), valueColor: AlwaysStoppedAnimation<Color>(green)),
                   ),
                 ),
 
@@ -1743,7 +1735,7 @@ class _GarageScreenState extends State<GarageScreen> {
             padding: EdgeInsets.fromLTRB(Dimensions.w_8, Dimensions.h_8, Dimensions.w_8, Dimensions.h_8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(Dimensions.h_10),
-              border: Border.all(color: isLight ? Colors.grey : Colors.white24, width: 0.4),
+              border: Border.all(color: AppColor.border(context), width: 0.4),
               gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [redGradient, surface], stops: const [0.0, 0.78]),
             ),
             child: Column(
@@ -1790,8 +1782,8 @@ class _GarageScreenState extends State<GarageScreen> {
                   padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_4),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(Dimensions.h_6),
-                    border: Border.all(color: isLight ? const Color(0xFFE5C9CD) : const Color(0xFF66373D), width: 0.7),
-                    color: isLight ? const Color(0xFFFFF8F8) : const Color(0xFF251A20),
+                    border: Border.all(color: AppColor.garageScreenRed(context), width: 0.7),
+                    color: AppColor.garageScreenRedSoft(context),
                   ),
                   child: Column(
                     children: [
@@ -1838,16 +1830,16 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget garageValue(bool isLight) {
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
     final muted = isLight ? Colors.grey.shade800 : Colors.grey.shade200;
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
-    final orange = isLight ? const Color(0xFFA14F00) : const Color(0xFFFFC36C);
-    final orangeSoft = isLight ? const Color(0xFFFFF3E4) : const Color(0xFF49371F);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
-    final greenSoft = isLight ? const Color(0xFFE8F7EF) : const Color(0xFF123D36);
+    final line = AppColor.line(context);
+    final orange = AppColor.addItemOrange(context);
+    final orangeSoft = AppColor.garageScreenOrangeSoft(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
+    final green = AppColor.green(context);
+    final greenSoft = AppColor.garageScreenGreenSoft(context);
     final garageValueData = garageController.dashboardData?.sections?.valueOverview?.garageValue;
     final metrics = garageValueData?.metrics ?? [];
 
@@ -1898,7 +1890,7 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget _garageDivider(Color color, bool isLight) {
-    return Container(height: 0.2, width: Get.width, color: isLight ? Colors.grey : Colors.white24);
+    return Container(height: 0.2, width: Get.width, color: AppColor.border(context));
   }
 
   Widget _garageValueRow({required IconData icon, required Color iconColor, required Color iconBackground, required String value, required String title, required String subtitle, required Color ink, required Color copy, required Color muted}) {
@@ -1949,15 +1941,15 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget sellerProfile(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
-    final gold = isLight ? const Color(0xFF9A6200) : const Color(0xFFFFD277);
-    final goldSoft = isLight ? const Color(0xFFFFF6DD) : const Color(0xFF44391E);
+    final surface = AppColor.addItemSurface(context);
+    final ink = AppColor.ink(context);
+    final copy = AppColor.copy(context);
+    final line = AppColor.line(context);
+    final blue = AppColor.blue(context);
+    final blueSoft = AppColor.blueSoft(context);
+    final green = AppColor.green(context);
+    final gold = AppColor.gold(context);
+    final goldSoft = AppColor.goldSoft(context);
     final seller = garageController.dashboardData?.sections?.sellerProfile;
     final name = seller?.name ?? '';
     final location = seller?.location ?? '';
@@ -2004,7 +1996,7 @@ class _GarageScreenState extends State<GarageScreen> {
             width: double.infinity,
             padding: EdgeInsets.all(Dimensions.w_6),
             decoration: BoxDecoration(
-              color: isLight ? const Color(0xFFF4F8FC) : const Color(0xFF112B44),
+              color: AppColor.garageScreenBlueSoft(context),
               borderRadius: BorderRadius.circular(Dimensions.h_7),
               border: Border.all(color: line, width: 0.6),
             ),
@@ -2121,31 +2113,31 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget aiSellingBrief(bool isLight) {
-    final surface = isLight ? const Color(0xFFFFFFFF) : const Color(0xFF0B2035);
+    final surface = AppColor.addItemSurface(context);
 
-    final ink = isLight ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
+    final ink = AppColor.ink(context);
 
-    final copy = isLight ? const Color(0xFF344779) : const Color(0xFFC9D5E8);
+    final copy = AppColor.copy(context);
 
-    final muted = isLight ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
+    final muted = AppColor.muted(context);
 
-    final line = isLight ? const Color(0xFFD6E3EE) : const Color(0xFF294762);
+    final line = AppColor.line(context);
 
-    final blue = isLight ? const Color(0xFF075DC9) : const Color(0xFF78ADFF);
+    final blue = AppColor.blue(context);
 
-    final blueSoft = isLight ? const Color(0xFFE8F2FF) : const Color(0xFF173D68);
+    final blueSoft = AppColor.blueSoft(context);
 
-    final red = isLight ? const Color(0xFFB4232D) : const Color(0xFFFF8E96);
+    final red = AppColor.red(context);
 
-    final redSoft = isLight ? const Color(0xFFFFF0F1) : const Color(0xFF48242B);
+    final redSoft = AppColor.redSoft(context);
 
-    final orange = isLight ? const Color(0xFFA14F00) : const Color(0xFFFFC36C);
+    final orange = AppColor.addItemOrange(context);
 
-    final orangeSoft = isLight ? const Color(0xFFFFF3E4) : const Color(0xFF49371F);
+    final orangeSoft = AppColor.garageScreenOrangeSoft(context);
 
-    final green = isLight ? const Color(0xFF087C4B) : const Color(0xFF64D9A2);
+    final green = AppColor.green(context);
 
-    final greenSoft = isLight ? const Color(0xFFE8F7EF) : const Color(0xFF123D36);
+    final greenSoft = AppColor.garageScreenGreenSoft(context);
 
     final listingReview = garageController.dashboardData?.sections?.valueOverview?.listingReview;
 
