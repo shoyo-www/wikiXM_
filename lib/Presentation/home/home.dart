@@ -18,7 +18,9 @@ import '../../constants/fontsize.dart';
 import '../first_visit/first_visit.dart';
 import '../widgets/ad_widget.dart';
 import '../widgets/common_scaffold.dart';
+import '../widgets/after_route_transition.dart';
 import '../widgets/countdownWidget.dart';
+import '../widgets/entrance_animation.dart';
 
 part 'home_widgets/home_widgets.dart';
 
@@ -45,92 +47,92 @@ class _HomeState extends State<Home> {
         collapsedColor: Theme.of(context).highlightColor,
         hero: buildHeroHeader(isLight: isLight),
         slivers: [
-          SliverToBoxAdapter(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: isLight ? [AppColor.background, AppColor.background] : [Color(0xff00111f), Color(0xff00111f)], stops: const [0.0, 0.90]),
-              ),
-              child: Column(
-                children: [
-                  CommonAiBrief(
-                    margin: EdgeInsets.symmetric(horizontal: Dimensions.w_5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+          // built lazily: each section is only built and laid out as it scrolls near the screen, instead of all ~20 up front
+          AfterRouteTransition(
+            placeholder: const SliverToBoxAdapter(),
+            child: SliverList(
+            delegate: SliverChildListDelegate(
+              entranceList([
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: isLight ? [AppColor.background, AppColor.background] : [Color(0xff00111f), Color(0xff00111f)], stops: const [0.0, 0.90]),
+                  ),
+                  child: Column(
+                    children: [
+                      CommonAiBrief(
+                        margin: EdgeInsets.symmetric(horizontal: Dimensions.w_5),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppCacheImage(imageUrl: dashboardController.entertainmentData?.hero?.aiBrief?.guide?.image ?? '', size: Dimensions.h_25, widthSize: Dimensions.h_25, isCircle: true, isShadow: false),
-                            SizedBox(width: Dimensions.w_5),
-                            Text(
-                              'YOUR AI COMMUNITY UPDATE',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800, height: 1),
+                            Row(
+                              children: [
+                                AppCacheImage(imageUrl: dashboardController.entertainmentData?.hero?.aiBrief?.guide?.image ?? '', size: Dimensions.h_25, widthSize: Dimensions.h_25, isCircle: true, isShadow: false),
+                                SizedBox(width: Dimensions.w_5),
+                                Text(
+                                  'YOUR AI COMMUNITY UPDATE',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800, height: 1),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        SizedBox(height: Dimensions.h_4),
-                        GetBuilder(
-                          id: ControllerBuilders.homeSectionsController,
-                          init: dashboardController,
-                          builder: (context) {
-                            final highlights = dashboardController.communityData?.guide?.highlights?.take(3).toList() ?? [];
-                            return ListView.builder(
-                              padding: EdgeInsets.only(left: Dimensions.w_10,top: Dimensions.h_5),
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: highlights.length,
-                              itemBuilder: (context, index) {
-                                final text = highlights[index].text ?? '';
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: Dimensions.h_6),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding:  EdgeInsets.only(top: Dimensions.h_2),
-                                        child: Icon(CupertinoIcons.checkmark_circle_fill, color: AppColor.darkGreenSportsSecondaryText, size: Dimensions.h_11),
+                            SizedBox(height: Dimensions.h_4),
+                            GetBuilder(
+                              id: ControllerBuilders.homeCommunity,
+                              init: dashboardController,
+                              builder: (context) {
+                                final highlights = dashboardController.communityData?.guide?.highlights?.take(3).toList() ?? [];
+                                return ListView.builder(
+                                  padding: EdgeInsets.only(left: Dimensions.w_10,top: Dimensions.h_5),
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: highlights.length,
+                                  itemBuilder: (context, index) {
+                                    final text = highlights[index].text ?? '';
+                                    return Padding(
+                                      padding: EdgeInsets.only(bottom: Dimensions.h_6),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding:  EdgeInsets.only(top: Dimensions.h_2),
+                                            child: Icon(CupertinoIcons.checkmark_circle_fill, color: AppColor.darkGreenSportsSecondaryText, size: Dimensions.h_11),
+                                          ),
+                                          SizedBox(width: Dimensions.w_4),
+                                          Expanded(
+                                            child: Text(
+                                              text,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      SizedBox(width: Dimensions.w_4),
-                                      Expanded(
-                                        child: Text(
-                                          text,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
-                        ),
-                        SizedBox(height: Dimensions.h_5),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildBriefButton(icon: Icons.arrow_forward, label: 'View Full Brief', filled: true, isback: true, onTap: () {}),
                             ),
-                            SizedBox(width: Dimensions.w_10),
-                            Expanded(
-                              child: _buildBriefButton(icon: CupertinoIcons.sparkles, label: 'Ask AI', onTap: () => Get.toNamed(AppRoutes.askGuide)),
+                            SizedBox(height: Dimensions.h_5),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildBriefButton(icon: Icons.arrow_forward, label: 'View Full Brief', filled: true, isback: true, onTap: () {}),
+                                ),
+                                SizedBox(width: Dimensions.w_10),
+                                Expanded(
+                                  child: _buildBriefButton(icon: CupertinoIcons.sparkles, label: 'Ask AI', onTap: () => Get.toNamed(AppRoutes.askGuide)),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: Dimensions.h_10),
+                    ],
                   ),
-                  SizedBox(height: Dimensions.h_10),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                ),
                 buildTownBrief(),
                 _HomeTownNeedsYou(state: this),
                 CommunityJourneyCard(controller: dashboardController),
@@ -149,7 +151,7 @@ class _HomeState extends State<Home> {
                       ),
                       SizedBox(height: Dimensions.h_8),
                       GetBuilder(
-                        id: ControllerBuilders.homeSectionsController,
+                        id: ControllerBuilders.homeCommunity,
                         init: dashboardController,
                         builder: (controller) {
                           return Container(
@@ -207,7 +209,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 SizedBox(height: Dimensions.h_10),
-                userEvents(),
+                GetBuilder<DashboardController>(id: ControllerBuilders.homeController, builder: (_) => userEvents()),
                 Container(
                   margin: EdgeInsets.symmetric(horizontal: Dimensions.w_6),
                   height: Dimensions.h_110,
@@ -276,7 +278,10 @@ class _HomeState extends State<Home> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: Container(
+                          child: GetBuilder<DashboardController>(
+                            id: ControllerBuilders.homeWeather,
+                            builder: (controller) {
+                            return Container(
                             padding: EdgeInsets.only(top: Dimensions.h_5, left: Dimensions.w_5, bottom: Dimensions.h_10),
                             decoration: BoxDecoration(
                               color: Theme.of(context).cardColor,
@@ -341,6 +346,8 @@ class _HomeState extends State<Home> {
                                 ),
                               ],
                             ),
+                            );
+                            },
                           ),
                         ),
                         SizedBox(width: Dimensions.w_6),
@@ -374,9 +381,13 @@ class _HomeState extends State<Home> {
                                   ],
                                 ),
                                 SizedBox(height: Dimensions.h_5),
-                                Column(
+                                GetBuilder<DashboardController>(
+                                  id: ControllerBuilders.homeCommunity,
+                                  builder: (controller) {
+                                    final items = controller.communityData?.happeningWeek?.items ?? [];
+                                    return Column(
                                   children: List.generate(3, (index) {
-                                    final event = dashboardController.communityData?.happeningWeek?.items?[index];
+                                    final event = index < items.length ? items[index] : null;
                                     return Padding(
                                       padding: EdgeInsets.only(bottom: index == 3 - 1 ? 0 : Dimensions.h_5),
                                       child: Row(
@@ -416,6 +427,8 @@ class _HomeState extends State<Home> {
                                       ),
                                     );
                                   }),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
@@ -467,8 +480,9 @@ class _HomeState extends State<Home> {
                 localSponsors(),
                 supportSection(),
                 SizedBox(height: Dimensions.h_60),
-              ],
+              ]),
             ),
+          ),
           ),
         ],
       ),
@@ -625,7 +639,7 @@ class _HomeState extends State<Home> {
   Widget buildTownBrief() {
     return GetBuilder(
       init: dashboardController,
-      id: ControllerBuilders.homeSectionsController,
+      id: ControllerBuilders.homeWeather,
       builder: (controller) {
         return Container(
           margin: EdgeInsets.symmetric(horizontal: Dimensions.w_1),
@@ -778,7 +792,7 @@ class _HomeState extends State<Home> {
           SizedBox(height: Dimensions.h_5),
           GetBuilder(
             init: dashboardController,
-            id: ControllerBuilders.homeSectionsController,
+            id: ControllerBuilders.homeInsights,
             builder: (context) {
               return Container(
                 padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_4),
@@ -992,7 +1006,7 @@ class _HomeState extends State<Home> {
           SizedBox(height: Dimensions.h_5),
           GetBuilder(
             init: dashboardController,
-            id: ControllerBuilders.homeController,
+            id: ControllerBuilders.homeMarket,
             builder: (_) {
               final spotlight = dashboardController.homeMarketPlace?.businessSpotlight;
 
@@ -1140,7 +1154,7 @@ class _HomeState extends State<Home> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(Dimensions.h_8),
               child: GetBuilder(
-                id: ControllerBuilders.homeSectionsController,
+                id: ControllerBuilders.homeInsights,
                 init: dashboardController,
                 builder: (controller) {
                   return Stack(
@@ -1436,7 +1450,7 @@ class _HomeState extends State<Home> {
           CommonCard(
             padding: EdgeInsets.zero,
             child: GetBuilder(
-              id: ControllerBuilders.homeSectionsController,
+              id: ControllerBuilders.homeInsights,
               init: dashboardController,
               builder: (controller) {
                 return Column(
@@ -1550,7 +1564,7 @@ class _HomeState extends State<Home> {
                 SizedBox(height: Dimensions.h_8),
                 GetBuilder(
                   init: dashboardController,
-                  id: ControllerBuilders.homeSectionsController,
+                  id: ControllerBuilders.homeCommunity,
                   builder: (controller) {
                     final items = (dashboardController.communityData?.whatMatters?.items ?? []).take(3).toList();
                     return CommonCard(
@@ -1636,7 +1650,7 @@ class _HomeState extends State<Home> {
             margin: EdgeInsets.symmetric(horizontal: Dimensions.w_2),
             padding: EdgeInsets.fromLTRB(Dimensions.w_6, Dimensions.h_8, Dimensions.w_6, Dimensions.h_8),
             child: GetBuilder(
-              id: ControllerBuilders.homeSectionsController,
+              id: ControllerBuilders.homeCommunity,
               init: dashboardController,
               builder: (controller) {
                 return Column(
@@ -1868,7 +1882,7 @@ class _HomeState extends State<Home> {
         : 'Evening';
 
     return GetBuilder(
-      id: ControllerBuilders.homeController,
+      id: ControllerBuilders.homeHero,
       init: dashboardController,
       builder: (controller) {
         final liveFeedItems = controller.homeData?.liveFeed?.items;
@@ -1877,7 +1891,7 @@ class _HomeState extends State<Home> {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            AppCacheImage(imageUrl: isLight ? Images.cityImageMobileDay : Images.cityImageMobile, widthSize: Get.width, size: Dimensions.h_310, fit: BoxFit.fill, radius: 0),
+            Hero(tag: Images.cityHeroTag, child: AppCacheImage(imageUrl: isLight ? Images.cityImageMobileDay : Images.cityImageMobile, widthSize: Get.width, size: Dimensions.h_310, fit: BoxFit.fill, radius: 0)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1966,7 +1980,7 @@ class _HomeState extends State<Home> {
                             Expanded(
                               child: GetBuilder(
                                 init: dashboardController,
-                                id: ControllerBuilders.homeSectionsController,
+                                id: ControllerBuilders.homeCommunity,
                                 builder: (context) {
                                   return Text(
                                     "You're only "
@@ -2117,7 +2131,7 @@ class CommunityJourneyCard extends StatelessWidget {
           ),
           SizedBox(height: Dimensions.h_8),
           GetBuilder(
-            id: ControllerBuilders.homeSectionsController,
+            id: ControllerBuilders.homeCommunity,
             init: controller,
             builder: (controller) {
               return CommonCard(

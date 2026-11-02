@@ -81,7 +81,7 @@ class SliderDrawer extends StatefulWidget {
   final Color? backgroundColor;
 
   const SliderDrawer(
-      {Key? key,
+      {super.key,
       required this.slider,
       required this.child,
       this.isDraggable = true,
@@ -91,8 +91,7 @@ class SliderDrawer extends StatefulWidget {
       this.slideDirection = SlideDirection.leftToRight,
       this.sliderBoxShadow,
       this.appBar,
-      this.backgroundColor})
-      : super(key: key);
+      this.backgroundColor});
 
   @override
   SliderDrawerState createState() => SliderDrawerState();

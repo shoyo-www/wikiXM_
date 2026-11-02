@@ -27,5 +27,8 @@ class AppRoutes {
   static const String activityDetail = '/activityDetail';
   static const String detailPage = '/detailPage';
   static const String groupUserProfile = '/groupUserProfile';
+  static const String myGroup = '/myGroup';
+  static const String searchGroups = '/searchGroups';
+  static const String publicProfile = '/publicProfile';
 
 }

@@ -77,6 +77,9 @@ class AppCacheImage extends StatelessWidget {
   }
 
   Widget _shimmerBox({required double width, required double height}) {
+    // A transparent Shimmer is still a shader mask, and CachedNetworkImage fades the placeholder out with opacity:
+    // Impeller can't apply opacity to that mask and logs "SetInheritedOpacity ... CanAcceptOpacity" on every image load.
+    if (isShimmer != true) return SizedBox(width: width, height: height);
     return Shimmer.fromColors(
       baseColor: isShimmer == true ? Colors.grey.shade300 : Colors.transparent,
       highlightColor: isShimmer == true ? Colors.grey.shade100 : Colors.transparent,
@@ -185,6 +188,8 @@ class AppCacheImage extends StatelessWidget {
 
     if (isNetwork) {
       return CachedNetworkImage(
+        // No fade-out: fading the Shimmer placeholder applies opacity to a shader mask, which Impeller rejects.
+        fadeOutDuration: Duration.zero,
         imageUrl: fallback,
         width: width,
         height: height,
@@ -255,6 +260,8 @@ class AppCacheImage extends StatelessWidget {
       }
 
       return CachedNetworkImage(
+        // No fade-out: fading the Shimmer placeholder applies opacity to a shader mask, which Impeller rejects.
+        fadeOutDuration: Duration.zero,
         height: safeHeight,
         width: safeWidth,
         memCacheHeight: safeHeight.toInt(),

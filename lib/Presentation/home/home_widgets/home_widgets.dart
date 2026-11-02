@@ -100,7 +100,7 @@ extension _HomeWidgetBuilders on _HomeState {
   Widget _buildRankedCardSection({required double bottomMargin}) {
     final DashboardController dashboardController = Get.find<DashboardController>();
     return GetBuilder(
-      id: ControllerBuilders.homeSectionsController,
+      id: ControllerBuilders.homeInsights,
       init: dashboardController,
       builder: (_) {
         return Container(

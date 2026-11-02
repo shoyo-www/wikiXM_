@@ -206,8 +206,8 @@ class SportsScreenShimmer extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: itemCount,
-        separatorBuilder: (_, __) => SizedBox(width: Dimensions.w_8),
-        itemBuilder: (_, __) {
+        separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_8),
+        itemBuilder: (_, _) {
           return Container(
             width: itemWidth,
             padding: EdgeInsets.all(Dimensions.h_6),
@@ -349,8 +349,8 @@ class SportsScreenShimmer extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: 3,
-        separatorBuilder: (_, __) => SizedBox(width: Dimensions.w_5),
-        itemBuilder: (_, __) {
+        separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_5),
+        itemBuilder: (_, _) {
           return Container(
             width: Dimensions.w_100,
             padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_8),

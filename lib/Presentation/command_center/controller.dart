@@ -18,13 +18,13 @@ class CommandCenterController extends GetxController {
 
   Future<void> getData() async {
     isLoading = true;
-    update([ControllerBuilders.commandCenterController]);
+    update([ControllerBuilders.commandCenterLoading]);
     var data = await commandCenterRepositoryImpl.getData();
     data.fold(
       (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.commandCenterController]);
+          update([ControllerBuilders.commandCenterLoading]);
         }
       },
       (r) {
@@ -32,10 +32,22 @@ class CommandCenterController extends GetxController {
         if (status == true) {
           commandCenterData = r.data;
           isLoading = false;
-          update([ControllerBuilders.commandCenterController]);
+          update([
+            ControllerBuilders.commandCenterLoading,
+            ControllerBuilders.commandCenterHero,
+            ControllerBuilders.commandCenterBrief,
+            ControllerBuilders.commandCenterPriorities,
+            ControllerBuilders.commandCenterBills,
+            ControllerBuilders.commandCenterPlan,
+            ControllerBuilders.commandCenterLiveCivic,
+            ControllerBuilders.commandCenterTownHall,
+            ControllerBuilders.commandCenterProgress,
+            ControllerBuilders.commandCenterRepresentatives,
+            ControllerBuilders.commandCenterMeetings,
+          ]);
         } else {
           isLoading = false;
-          update([ControllerBuilders.commandCenterController]);
+          update([ControllerBuilders.commandCenterLoading]);
         }
       },
     );

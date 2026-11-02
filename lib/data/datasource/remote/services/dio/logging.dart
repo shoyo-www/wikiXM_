@@ -31,7 +31,9 @@ class Logging extends Interceptor {
       print('URL    : ${options.uri}');
       print('HEADERS');
       options.headers.forEach((key, value) {
-        print('$key : $value');
+        if (kDebugMode) {
+          print('$key : $value');
+        }
       });
       print('QUERY  : ${options.queryParameters}');
       print('BODY   : ${options.data}');
@@ -50,7 +52,7 @@ class Logging extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     if (kDebugMode) {
       print('ERROR CODE -:> ${err.response?.statusCode}');
       log('ERROR RESPONSE -:> ${err.response?.data}');

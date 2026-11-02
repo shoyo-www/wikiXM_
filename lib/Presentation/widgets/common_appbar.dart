@@ -28,18 +28,15 @@ class CommonBlurAppBar extends StatelessWidget {
     final topPadding = MediaQuery.paddingOf(context).top;
     return SizedBox(
       height: topPadding + Dimensions.h_50,
-      child: Stack(
+      // one shared backdrop read for all bands instead of one screen copy per band
+      child: BackdropGroup(
+        child: Stack(
         children: [
-          _BlurBand(
-            top: 0,
-            height: topPadding + Dimensions.h_16,
-            sigma: 2.8 * blurOpacity,
-            color: Colors.black87.withValues(alpha: 0.01 * blurOpacity),
-          ),
+          // was two stacked bands (sigma 2.8 then 2.2); one pass at their combined sigma looks the same at half the cost
           _BlurBand(
             top: 0,
             height: topPadding + Dimensions.h_16 + Dimensions.h_1,
-            sigma: 2.2 * blurOpacity,
+            sigma: 3.56 * blurOpacity,
             color: Colors.white.withValues(alpha: 0.01 * blurOpacity),
           ),
           _BlurBand(
@@ -48,14 +45,9 @@ class CommonBlurAppBar extends StatelessWidget {
             sigma: 1.5 * blurOpacity,
             color: Colors.white.withValues(alpha: 0.01 * blurOpacity),
           ),
-          _BlurBand(
-            top: topPadding + Dimensions.h_16 + Dimensions.h_8,
-            height: Dimensions.h_8,
-            sigma: 0.1 * blurOpacity,
-            color: Colors.white12.withValues(alpha: 0.01 * blurOpacity),
-          ),
           Padding(padding: EdgeInsets.fromLTRB(Dimensions.w_10, topPadding + Dimensions.h_10, Dimensions.w_10, Dimensions.h_1), child: child ?? (showBackButton ? _buildBackHeader() : _buildFullHeader())),
         ],
+        ),
       ),
     );
   }
@@ -146,19 +138,31 @@ class CommonBlurAppBar extends StatelessWidget {
   }
 
   Widget _buildBackHeader() {
+    return Row(
+      children: [
+        _circleButton(symbol: 'chevron.left', icon: Icons.arrow_back_ios_new, onTap: () => Get.back()),
+        if (isDrawer) ...[
+          const Spacer(),
+          _circleButton(symbol: 'line.3.horizontal', icon: CupertinoIcons.line_horizontal_3, onTap: onTap ?? () {}),
+        ],
+      ],
+    );
+  }
+
+  Widget _circleButton({required String symbol, required IconData icon, required VoidCallback onTap}) {
     return Platform.isIOS
         ? CNButton.icon(
-            icon: CNSymbol('chevron.left', size: Dimensions.h_10),
+            icon: CNSymbol(symbol, size: Dimensions.h_10),
             size: Dimensions.h_25,
-            onPressed: () => Get.back(),
+            onPressed: onTap,
           )
         : GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Get.back(),
+            onTap: onTap,
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration:  BoxDecoration(shape: BoxShape.circle, color: Theme.of(Get.context!).cardColor),
-              child: Icon(Icons.arrow_back_ios_new, color: Theme.of(Get.context!).primaryColorDark, size: Dimensions.h_11),
+              child: Icon(icon, color: Theme.of(Get.context!).primaryColorDark, size: Dimensions.h_11),
             ),
           );
   }
@@ -185,7 +189,7 @@ class _BlurBand extends StatelessWidget {
       height: height,
       child: IgnorePointer(
         child: ClipRect(
-          child: BackdropFilter(
+          child: BackdropFilter.grouped(
             filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
             child: Container(color: color),
           ),

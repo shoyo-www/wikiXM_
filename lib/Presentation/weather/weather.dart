@@ -24,7 +24,13 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen> {
   final WeatherController weatherController = Get.put(WeatherController());
-  int currentIndex = 0;
+  final ValueNotifier<int> currentIndex = ValueNotifier(0);
+
+  @override
+  void dispose() {
+    currentIndex.dispose();
+    super.dispose();
+  }
   bool _isDay = true;
 
   ThemeData get _pageTheme => _isDay ? AppTheme.lightTheme : AppTheme.darkTheme;
@@ -66,13 +72,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   ),
                           ),
                         ),
-                        SliverToBoxAdapter(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                            color: _pageTheme.scaffoldBackgroundColor,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                        // built lazily: sections are only built and laid out as they scroll near the screen
+                        SliverPadding(
+                          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+                          sliver: SliverList(
+                            delegate: SliverChildListDelegate([
                                 SizedBox(height: controller.closeAlert ? Dimensions.h_10 : Dimensions.h_130),
                                 aiWeather(controller),
                                 SizedBox(height: Dimensions.h_10),
@@ -414,10 +418,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 SizedBox(height: Dimensions.h_10),
                                 yourWeekAhead(controller),
                                 SizedBox(height: Dimensions.h_15),
-                              ],
+                              ]),
                             ),
                           ),
-                        ),
                       ],
                     );
                   },
@@ -679,12 +682,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   autoPlay: items.length > 1,
                   enlargeCenterPage: true,
                   padEnds: false,
-                  onPageChanged: (index, reason) {
-                    if (!mounted) return;
-                    setState(() {
-                      currentIndex = index;
-                    });
-                  },
+                  onPageChanged: (index, reason) => currentIndex.value = index,
                 ),
                 itemBuilder: (context, index, realIndex) {
                   final item = items[index];
@@ -764,22 +762,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
           if (items.isNotEmpty) ...[
             SizedBox(height: Dimensions.h_6),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                items.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  width: currentIndex == index ? Dimensions.h_8 : Dimensions.h_4,
-                  height: Dimensions.h_4,
-                  decoration: BoxDecoration(
-                    color: currentIndex == index
-                        ? _isDay == false
-                              ? Colors.white
-                              : Colors.black
-                        : Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
+            ValueListenableBuilder<int>(
+              valueListenable: currentIndex,
+              builder: (context, current, _) => Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  items.length,
+                  (index) => AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: current == index ? Dimensions.h_8 : Dimensions.h_4,
+                    height: Dimensions.h_4,
+                    decoration: BoxDecoration(
+                      color: current == index
+                          ? _isDay == false
+                                ? Colors.white
+                                : Colors.black
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -2112,15 +2113,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
       id: ControllerBuilders.weatherController,
       init: weatherController,
       builder: (controller) {
-        final bool isNight = controller.weatherHeroData?.sceneId.toString().toLowerCase().contains('night') ?? false;
         return Stack(
           clipBehavior: Clip.none,
           children: [
             AppCacheImage(imageUrl: controller.weatherHeroData?.city?.cityImage ?? '', widthSize: Get.width, fit: BoxFit.cover, isShadow: false, size: Dimensions.h_310, radius: 0),
-            if (isNight) Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.50))),
-            Positioned.fill(
-              child: IgnorePointer(child: WeatherAnimationOverlay(type: getWeatherAnimationType(controller.weatherHeroData?.sceneId))),
-            ),
+            Positioned.fill(child: WeatherSceneView(scene: controller.weatherScene)),
             Padding(
               padding: EdgeInsets.only(left: Dimensions.w_12, top: Dimensions.h_85),
               child: Column(

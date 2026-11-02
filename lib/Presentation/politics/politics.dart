@@ -15,6 +15,7 @@ import '../widgets/cache_image.dart';
 import '../widgets/circular_percent.dart';
 import '../widgets/common_bullet.dart';
 import '../widgets/common_header.dart';
+import '../widgets/entrance_animation.dart';
 import '../widgets/svg_widget.dart';
 
 class PoliticsScreen extends StatefulWidget {
@@ -51,19 +52,21 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
                   hero: buildHeroHeader(isLight),
                   slivers: [
                     SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          SizedBox(height: Dimensions.h_5),
-                          aiBrief(),
-                        ],
+                      child: EntranceAnimation(
+                        child: Column(
+                          children: [
+                            SizedBox(height: Dimensions.h_5),
+                            aiBrief(),
+                          ],
+                        ),
                       ),
                     ),
-                    SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                    // built lazily: sections are only built and laid out as they scroll near the screen
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate(
+                          entranceList([
                             SizedBox(height: Dimensions.h_15),
                             representatives(isLight),
                             SizedBox(height: Dimensions.h_15),
@@ -127,7 +130,7 @@ class _PoliticsScreenState extends State<PoliticsScreen> {
                             SizedBox(height: Dimensions.h_10),
                             democracyStartsAtHome(isLight),
                             SizedBox(height: Dimensions.h_20),
-                          ],
+                          ]),
                         ),
                       ),
                     ),

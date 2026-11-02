@@ -93,8 +93,8 @@ class NewsScreenShimmer extends StatelessWidget {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: 3,
-                        separatorBuilder: (_, __) => const SizedBox(width: 6),
-                        itemBuilder: (_, __) => SizedBox(width: 110, child: _repCard(baseColor, highlightColor)),
+                        separatorBuilder: (_, _) => const SizedBox(width: 6),
+                        itemBuilder: (_, _) => SizedBox(width: 110, child: _repCard(baseColor, highlightColor)),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -108,7 +108,7 @@ class NewsScreenShimmer extends StatelessWidget {
                     const SizedBox(height: 8),
                     SizedBox(
                       height: 170,
-                      child: ListView.separated(scrollDirection: Axis.horizontal, itemCount: 4, separatorBuilder: (_, __) => const SizedBox(width: 5), itemBuilder: (_, __) => _topicCard(baseColor, highlightColor)),
+                      child: ListView.separated(scrollDirection: Axis.horizontal, itemCount: 4, separatorBuilder: (_, _) => const SizedBox(width: 5), itemBuilder: (_, _) => _topicCard(baseColor, highlightColor)),
                     ),
                     const SizedBox(height: 16),
                     _sectionHeader(baseColor, highlightColor),
@@ -122,8 +122,8 @@ class NewsScreenShimmer extends StatelessWidget {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: 3,
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
-                        itemBuilder: (_, __) => SizedBox(width: 110, child: _regionCard(baseColor, highlightColor)),
+                        separatorBuilder: (_, _) => const SizedBox(width: 8),
+                        itemBuilder: (_, _) => SizedBox(width: 110, child: _regionCard(baseColor, highlightColor)),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -134,8 +134,8 @@ class NewsScreenShimmer extends StatelessWidget {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: 4,
-                        separatorBuilder: (_, __) => const SizedBox(width: 6),
-                        itemBuilder: (_, __) => SizedBox(width: 85, child: _communityCard(baseColor, highlightColor)),
+                        separatorBuilder: (_, _) => const SizedBox(width: 6),
+                        itemBuilder: (_, _) => SizedBox(width: 85, child: _communityCard(baseColor, highlightColor)),
                       ),
                     ),
                     const SizedBox(height: 10),

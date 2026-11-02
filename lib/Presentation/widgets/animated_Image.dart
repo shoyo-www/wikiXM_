@@ -15,11 +15,13 @@ class AnimatedWeatherImage extends StatefulWidget {
 
 class _AnimatedWeatherImageState extends State<AnimatedWeatherImage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  late Animation<double> _scale;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(seconds: 6))..repeat(reverse: true);
+    _scale = Tween(begin: 1.0, end: 1.08).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -33,13 +35,11 @@ class _AnimatedWeatherImageState extends State<AnimatedWeatherImage> with Single
     return SizedBox(
       width: Get.width,
       height: widget.height ?? Dimensions.h_310,
+      // ScaleTransition only repaints: the image widget is built once instead of every frame of the endless zoom
       child: ClipRect(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            final t = Curves.easeInOut.transform(_controller.value);
-            return Transform.scale(
-              scale: 1.0 + (t * 0.08),
+        child: RepaintBoundary(
+          child: ScaleTransition(
+            scale: _scale,
               child: AppCacheImage(
                 imageUrl:
                     widget.image ??
@@ -48,8 +48,7 @@ class _AnimatedWeatherImageState extends State<AnimatedWeatherImage> with Single
                 size: Dimensions.h_310,
                 radius: 0,
               ),
-            );
-          },
+          ),
         ),
       ),
     );

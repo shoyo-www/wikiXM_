@@ -5,7 +5,6 @@ import '../widgets/common_shimmer.dart';
 import 'package:wikixm/Presentation/widgets/common_card.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
-import 'package:wikixm/approutes.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
@@ -14,6 +13,7 @@ import '../widgets/drawer/src/slider_direction.dart';
 import '../widgets/drawer/src/slider_drawer.dart';
 import 'controller.dart';
 import '../widgets/cache_image.dart';
+import '../widgets/entrance_animation.dart';
 
 class GroupDetail extends StatefulWidget {
   const GroupDetail({super.key});
@@ -29,17 +29,22 @@ class _GroupDetailState extends State<GroupDetail> {
   @override
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
+    // Page builder only flips shimmer <-> content on first load; each section below has its own
+    // builder id so tab/filter changes rebuild just the parts that changed.
     return GetBuilder(
       init: groupController,
       id: ControllerBuilders.interestDetailController,
       builder: (controller) {
-        final discovery = controller.interestData?.discovery;
         return SliderDrawer(
           key: sliderDrawerKey,
           sliderOpenSize: Dimensions.w_260,
           isDraggable: false,
           slideDirection: SlideDirection.rightToLeft,
-          slider: Container(height: double.infinity, color: Theme.of(context).cardColor, child: filtersWidget(isLight, controller)),
+          slider: Container(
+            height: double.infinity,
+            color: Theme.of(context).cardColor,
+            child: GetBuilder<GroupController>(id: ControllerBuilders.interestFilters, builder: (c) => filtersWidget(isLight, c)),
+          ),
           child: AppScaffold(
             top: false,
             bottom: false,
@@ -52,46 +57,54 @@ class _GroupDetailState extends State<GroupDetail> {
                     expandedHeight: Dimensions.h_210,
                     expandedColor: Colors.white,
                     collapsedColor: Theme.of(context).highlightColor,
-                    hero: buildHeroHeader(isLight, controller.interestData?.discovery),
+                    hero: GetBuilder<GroupController>(id: ControllerBuilders.interestHero, builder: (c) => buildHeroHeader(isLight, c.interestData?.discovery)),
                     slivers: [
                       SliverToBoxAdapter(
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: staggered([
                               SizedBox(height: Dimensions.h_5),
-                              buildTabs(isLight, controller, controller.interestData?.discovery?.tabs ?? []),
+                              GetBuilder<GroupController>(id: ControllerBuilders.interestTabs, builder: (c) => buildTabs(isLight, c, c.interestData?.discovery?.tabs ?? [])),
                               SizedBox(height: Dimensions.h_10),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      discovery?.heading ?? '',
-                                      style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_15, fontWeight: FontWeight.w800),
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => sliderDrawerKey.currentState?.openSlider(),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
+                              GetBuilder<GroupController>(
+                                id: ControllerBuilders.interestHeader,
+                                builder: (c) => Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
                                       children: [
-                                        Text(
-                                          'FILTERS ',
-                                          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
+                                        Expanded(
+                                          child: Text(
+                                            c.interestData?.discovery?.heading ?? '',
+                                            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_15, fontWeight: FontWeight.w800),
+                                          ),
                                         ),
-                                        Icon(Icons.filter_list_alt, color: Theme.of(context).highlightColor, size: Dimensions.h_12),
+                                        GestureDetector(
+                                          onTap: () => sliderDrawerKey.currentState?.openSlider(),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'FILTERS ',
+                                                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
+                                              ),
+                                              Icon(Icons.filter_list_alt, color: Theme.of(context).highlightColor, size: Dimensions.h_12),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(height: Dimensions.h_10),
+                                    buildCategories(isLight, c, c.interestData?.discovery?.categories ?? []),
+                                  ],
+                                ),
                               ),
                               SizedBox(height: Dimensions.h_10),
-                              buildCategories(isLight, controller, discovery?.categories ?? []),
-                              SizedBox(height: Dimensions.h_10),
-                              buildItems(controller),
+                              GetBuilder<GroupController>(id: ControllerBuilders.interestItems, builder: buildItems),
                               SizedBox(height: Dimensions.h_30),
-                            ],
+                            ]),
                           ),
                         ),
                       ),
@@ -282,7 +295,8 @@ class _GroupDetailState extends State<GroupDetail> {
     }
     final items = controller.interestData?.items ?? [];
     if (items.isEmpty) {
-      return CommonCard(
+      return EntranceAnimation(
+        child: CommonCard(
         width: Get.width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -343,6 +357,7 @@ class _GroupDetailState extends State<GroupDetail> {
             SizedBox(height: Dimensions.h_15),
           ],
         ),
+        ),
       );
     }
     if (controller.interestData?.discovery?.type == 'groups') {
@@ -352,7 +367,7 @@ class _GroupDetailState extends State<GroupDetail> {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: items.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: Dimensions.w_6, mainAxisSpacing: Dimensions.h_6, mainAxisExtent: Dimensions.h_250),
-        itemBuilder: (c, i) => groupCard(controller, items[i]),
+        itemBuilder: (c, i) => EntranceAnimation(key: ValueKey(items[i]), index: i, child: groupCard(controller, items[i])),
       );
     }
     return ListView.builder(
@@ -362,7 +377,7 @@ class _GroupDetailState extends State<GroupDetail> {
       itemCount: items.length,
       itemBuilder: (c, i) {
         final item = items[i];
-        return controller.interestData?.discovery?.type == 'people' ? personCard(item) : eventCard(item);
+        return EntranceAnimation(key: ValueKey(item), index: i, child: controller.interestData?.discovery?.type == 'people' ? personCard(item) : eventCard(item));
       },
     );
   }
@@ -626,9 +641,7 @@ class _GroupDetailState extends State<GroupDetail> {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
-                      Get.toNamed(AppRoutes.groupUserProfile);
-                    },
+                    onTap: groupController.openGroupProfile,
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: Dimensions.h_8),
                       decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(Dimensions.h_8)),

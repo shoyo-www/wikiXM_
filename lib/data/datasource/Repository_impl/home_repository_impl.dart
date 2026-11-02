@@ -44,7 +44,8 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, WeatherAlertsResponse>> getWeatherAlerts() async {
     try {
       final response = await _restClient.get(url: Apis.weather);
-      return Right(weatherAlertsResponseFromJson(response));
+      // the Home responses land while pages are animating; parse them off the UI thread like getHomeData
+      return Right(await compute(weatherAlertsResponseFromJson, response as String));
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     }
@@ -74,7 +75,7 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, CommunityResponse>> getHomeCommunity() async {
     try {
       final response = await _restClient.get(url: Apis.communityHome);
-      return Right(communityResponseFromJson(response));
+      return Right(await compute(communityResponseFromJson, response as String));
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     }
@@ -84,7 +85,7 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, HomeInsightsResponse>> homeInsights() async {
     try {
       final response = await _restClient.get(url: Apis.homeInsights);
-      return Right(homeInsightsResponseFromJson(response));
+      return Right(await compute(homeInsightsResponseFromJson, response as String));
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     }
@@ -94,7 +95,7 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, HomeMarketPlace>> homeMarketPlace() async {
     try {
       final response = await _restClient.get(url: Apis.homeMarketPlace);
-      return Right(homeMarketPlaceFromJson(response));
+      return Right(await compute(homeMarketPlaceFromJson, response as String));
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     }

@@ -63,7 +63,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: GetBuilder(
           init: townHallController,
-          id: ControllerBuilders.townHallController,
+          id: ControllerBuilders.townHallLoading,
           builder: (controller) {
             return controller.isLoading
                 ? EventsScreenShimmer()
@@ -83,27 +83,27 @@ class _TownHallScreenState extends State<TownHallScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              aiBriefCard(isLight),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallBrief, builder: (_) => aiBriefCard(isLight)),
                               SizedBox(height: Dimensions.h_8),
-                              firstCard(isLight, controller),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallImpact, builder: (controller) => firstCard(isLight, controller)),
                               SizedBox(height: Dimensions.h_10),
-                              LegislativeBillsSection(isLight: isLight, bills: controller.townHallData?.bills),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallBills, builder: (controller) => LegislativeBillsSection(isLight: isLight, bills: controller.townHallData?.bills)),
                               SizedBox(height: Dimensions.h_15),
-                              nextTownHallMeeting(context, isLight, controller.townHallData?.nextMeeting),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallMeeting, builder: (controller) => nextTownHallMeeting(context, isLight, controller.townHallData?.nextMeeting)),
                               SizedBox(height: Dimensions.h_10),
-                              topPriorities(context, isLight),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallPriorities, builder: (_) => topPriorities(context, isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              representativeScorecard(context),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallRepresentatives, builder: (_) => representativeScorecard(context)),
                               SizedBox(height: Dimensions.h_15),
-                              engagement(context, isLight),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallEngagement, builder: (_) => engagement(context, isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              projects(context, isLight),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallProjects, builder: (_) => projects(context, isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              transparency(isLight, context),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallTransparency, builder: (_) => transparency(isLight, context)),
                               SizedBox(height: Dimensions.h_10),
-                              communitySentimentWidget(isLight),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallSentiment, builder: (_) => communitySentimentWidget(isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              communityPoll(context, isLight),
+                              GetBuilder<TownHallController>(id: ControllerBuilders.townHallPoll, builder: (_) => communityPoll(context, isLight)),
                               SizedBox(height: Dimensions.h_10),
                               CommonCard(
                                 child: Row(
@@ -1905,7 +1905,9 @@ class _TownHallScreenState extends State<TownHallScreen> {
   }
 
   Widget buildHeroHeader(bool isLight, TownHallController controller) {
-    return Stack(
+    return GetBuilder<TownHallController>(
+      id: ControllerBuilders.townHallHero,
+      builder: (controller) => Stack(
       clipBehavior: Clip.none,
       children: [
         AppCacheImage(imageUrl: "https://staging.wikixm.com${controller.townHallData?.hero?.background?.src}", widthSize: Get.width, size: Dimensions.h_310, fit: BoxFit.cover, radius: 0),
@@ -2031,6 +2033,7 @@ class _TownHallScreenState extends State<TownHallScreen> {
           ],
         ),
       ],
+      ),
     );
   }
 }

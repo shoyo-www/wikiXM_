@@ -44,18 +44,18 @@ class DashboardController extends GetxController {
 
   void changeEventFilter(int index) {
     selectedEventFilter = index;
-    update([ControllerBuilders.entertainmentController]);
+    update([ControllerBuilders.eventsPlanner]);
   }
 
   void getCommunityData() async {
     final bool isDataEmpty = communityOverview == null && feedData == null;
     if (isDataEmpty) {
       isLoading = true;
-      update([ControllerBuilders.communityIntelligence]);
+      update([ControllerBuilders.communityLoading]);
     }
     await Future.wait([getCommunityOverview(), getCommunityFeed()]);
     isLoading = false;
-    update([ControllerBuilders.communityIntelligence]);
+    update([ControllerBuilders.communityLoading]);
   }
 
   void getData() {
@@ -79,9 +79,9 @@ class DashboardController extends GetxController {
         bool status = r.success ?? false;
         if (status == true) {
           communityOverview = r.data;
-          update([ControllerBuilders.communityIntelligence]);
+          update([ControllerBuilders.communityHero, ControllerBuilders.communitySnapshot]);
         } else {
-          update([ControllerBuilders.communityIntelligence]);
+          update([ControllerBuilders.communityHero, ControllerBuilders.communitySnapshot]);
         }
       },
     );
@@ -90,20 +90,34 @@ class DashboardController extends GetxController {
   Future<void> getEntertainment() async {
     if (entertainmentData == null) {
       isLoading = true;
-      update([ControllerBuilders.entertainmentController]);
+      update([ControllerBuilders.eventsLoading]);
     }
     final data = await homeRepository.getEntertainment();
     data.fold(
       (l) {
         isLoading = false;
-        update([ControllerBuilders.entertainmentController]);
+        update([ControllerBuilders.eventsLoading]);
       },
       (r) {
         if (r.success == true) {
           entertainmentData = r.data;
         }
         isLoading = false;
-        update([ControllerBuilders.entertainmentController]);
+        update([
+          ControllerBuilders.eventsLoading,
+          ControllerBuilders.eventsHero,
+          ControllerBuilders.eventsAiBrief,
+          ControllerBuilders.eventsUpcoming,
+          ControllerBuilders.eventsToday,
+          ControllerBuilders.eventsCategories,
+          ControllerBuilders.eventsContributors,
+          ControllerBuilders.eventsFeaturedNews,
+          ControllerBuilders.eventsNews,
+          ControllerBuilders.eventsPlanner,
+          ControllerBuilders.eventsExplore,
+          ControllerBuilders.eventsVenues,
+          ControllerBuilders.eventsBusinesses,
+        ]);
       },
     );
   }
@@ -118,10 +132,29 @@ class DashboardController extends GetxController {
         bool status = r.success ?? false;
         if (status == true) {
           feedData = r.data;
-          update([ControllerBuilders.communityIntelligence]);
-          update([ControllerBuilders.communityIntelligence]);
+          update([
+            ControllerBuilders.communityHero,
+            ControllerBuilders.communityBrief,
+            ControllerBuilders.communityTopStory,
+            ControllerBuilders.communityRepresentatives,
+            ControllerBuilders.communityQuestion,
+            ControllerBuilders.communityMeetings,
+            ControllerBuilders.communityLocalIntelligence,
+            ControllerBuilders.communityRegion,
+            ControllerBuilders.communitySponsor,
+          ]);
         } else {
-          update([ControllerBuilders.communityIntelligence]);
+          update([
+            ControllerBuilders.communityHero,
+            ControllerBuilders.communityBrief,
+            ControllerBuilders.communityTopStory,
+            ControllerBuilders.communityRepresentatives,
+            ControllerBuilders.communityQuestion,
+            ControllerBuilders.communityMeetings,
+            ControllerBuilders.communityLocalIntelligence,
+            ControllerBuilders.communityRegion,
+            ControllerBuilders.communitySponsor,
+          ]);
         }
       },
     );
@@ -129,13 +162,12 @@ class DashboardController extends GetxController {
 
   Future<void> getHomeData() async {
     isLoading = true;
-    update([ControllerBuilders.homeController]);
     var data = await homeRepository.getHomeData();
     data.fold(
       (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeController, ControllerBuilders.homeHero]);
         }
       },
       (r) {
@@ -144,10 +176,10 @@ class DashboardController extends GetxController {
           homeData = r.data;
           LocalStorage.writeString(GetXStorageConstants.townName, r.data?.header?.location?.name ?? '');
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeController, ControllerBuilders.homeHero]);
         } else {
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeController, ControllerBuilders.homeHero]);
         }
       },
     );
@@ -155,13 +187,12 @@ class DashboardController extends GetxController {
 
   Future<void> getHomeMarket() async {
     isLoading = true;
-    update([ControllerBuilders.homeController]);
     var data = await homeRepository.homeMarketPlace();
     data.fold(
       (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeMarket]);
         }
       },
       (r) {
@@ -169,10 +200,10 @@ class DashboardController extends GetxController {
         if (status == true) {
           homeMarketPlace = r.data;
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeMarket]);
         } else {
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeMarket]);
         }
       },
     );
@@ -184,16 +215,16 @@ class DashboardController extends GetxController {
       (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.homeSectionsController]);
+          update([ControllerBuilders.homeCommunity]);
         }
       },
       (r) {
         bool status = r.success ?? false;
         if (status == true) {
           communityData = r.data;
-          update([ControllerBuilders.homeSectionsController]);
+          update([ControllerBuilders.homeCommunity]);
         } else {
-          update([ControllerBuilders.homeSectionsController]);
+          update([ControllerBuilders.homeCommunity]);
         }
       },
     );
@@ -226,16 +257,16 @@ class DashboardController extends GetxController {
       (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.homeSectionsController]);
+          update([ControllerBuilders.homeInsights]);
         }
       },
       (r) {
         bool status = r.success ?? false;
         if (status == true) {
           homeInsights = r.data;
-          update([ControllerBuilders.homeSectionsController]);
+          update([ControllerBuilders.homeInsights]);
         } else {
-          update([ControllerBuilders.homeSectionsController]);
+          update([ControllerBuilders.homeInsights]);
         }
       },
     );
@@ -268,13 +299,12 @@ class DashboardController extends GetxController {
 
   Future<void> getWeatherAlerts() async {
     isLoading = true;
-    update([ControllerBuilders.homeController]);
     var data = await homeRepository.getWeatherAlerts();
     data.fold(
       (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeWeather, ControllerBuilders.homeHero]);
         }
       },
       (r) {
@@ -282,10 +312,10 @@ class DashboardController extends GetxController {
         if (status == true) {
           weatherData = r.data;
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeWeather, ControllerBuilders.homeHero]);
         } else {
           isLoading = false;
-          update([ControllerBuilders.homeController]);
+          update([ControllerBuilders.homeWeather, ControllerBuilders.homeHero]);
         }
       },
     );

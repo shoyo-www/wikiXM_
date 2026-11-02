@@ -6,14 +6,13 @@ import 'slider_direction.dart';
 
 class SliderShadow extends StatelessWidget {
   const SliderShadow({
-    Key? key,
+    super.key,
     required AnimationController? animationDrawerController,
     required this.animation,
     required this.sliderBoxShadow,
     required this.slideDirection,
     required this.sliderOpenSize,
-  })  : _animationDrawerController = animationDrawerController,
-        super(key: key);
+  })  : _animationDrawerController = animationDrawerController;
 
   final AnimationController? _animationDrawerController;
   final Animation animation;

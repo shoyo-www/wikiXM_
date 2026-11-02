@@ -16,6 +16,7 @@ import '../../constants/extensions.dart';
 import '../../constants/fontsize.dart';
 import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
+import '../widgets/entrance_animation.dart';
 import '../widgets/sports_cards.dart';
 import 'package:wikixm/data/datasource/remote/models/response/sports_response.dart';
 import '../widgets/sports_community.dart';
@@ -55,13 +56,13 @@ class _SportsScreenState extends State<SportsScreen> {
                   hero: buildHeroHeader(isLight),
                   slivers: [
                     SliverToBoxAdapter(child: SizedBox(height: Dimensions.h_5)),
-                    SliverToBoxAdapter(child: firstCard()),
-                    SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                    SliverToBoxAdapter(child: EntranceAnimation(child: firstCard())),
+                    // built lazily: sections are only built and laid out as they scroll near the screen
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate(
+                          entranceList([
                             SizedBox(height: Dimensions.h_15),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,15 +107,13 @@ class _SportsScreenState extends State<SportsScreen> {
                                 ],
                               ),
                             ),
-                            GetBuilder(
-                              init: sportsController,
-                              id: ControllerBuilders.sportsController,
+                            Builder(
                               builder: (context) {
-                                if (sportsController.sportsData?.upcomingGames?.games?.isEmpty ?? false || sportsController.isLoading) {
-                                  return SizedBox.shrink();
-                                }
-                                final game = sportsController.sportsData?.upcomingGames?.games?.first;
-                                final targetDate = DateFormat('yyyy-MM-dd h:mm a').parse('${game?.date} ${game?.time}');
+                                final games = sportsController.sportsData?.upcomingGames?.games ?? [];
+                                if (games.isEmpty) return SizedBox.shrink();
+                                final game = games.first;
+                                final targetDate = DateFormat('yyyy-MM-dd h:mm a').tryParse('${game.date} ${game.time}');
+                                if (targetDate == null) return SizedBox.shrink();
                                 final remaining = targetDate.difference(DateTime.now());
                                 final days = remaining.inDays;
                                 final hours = remaining.inHours % 24;
@@ -138,9 +137,7 @@ class _SportsScreenState extends State<SportsScreen> {
                               ],
                             ),
                             SizedBox(height: Dimensions.h_8),
-                            GetBuilder(
-                              id: ControllerBuilders.sportsController,
-                              init: sportsController,
+                            Builder(
                               builder: (context) {
                                 return SizedBox(
                                   height: Dimensions.h_180,
@@ -526,10 +523,8 @@ class _SportsScreenState extends State<SportsScreen> {
                               ],
                             ),
                             SizedBox(height: Dimensions.h_8),
-                            GetBuilder(
-                              init: sportsController,
-                              id: ControllerBuilders.sportsController,
-                              builder: (c) {
+                            Builder(
+                              builder: (_) {
                                 final historyList = (sportsController.sportsData?.history?.timeline ?? []).reversed.toList();
                                 return SizedBox(
                                   height: Dimensions.h_170,
@@ -750,9 +745,7 @@ class _SportsScreenState extends State<SportsScreen> {
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(color: context.sports.border),
                                 ),
-                                child: GetBuilder(
-                                  id: ControllerBuilders.sportsController,
-                                  init: sportsController,
+                                child: Builder(
                                   builder: (context) {
                                     final games = (sportsController.sportsData?.upcomingGames?.games ?? []);
                                     return ListView.separated(
@@ -870,9 +863,7 @@ class _SportsScreenState extends State<SportsScreen> {
                             SizedBox(height: Dimensions.h_10),
                             SizedBox(
                               height: Dimensions.h_100,
-                              child: GetBuilder(
-                                init: sportsController,
-                                id: ControllerBuilders.sportsController,
+                              child: Builder(
                                 builder: (context) {
                                   return ListView.separated(
                                     scrollDirection: Axis.horizontal,
@@ -1080,7 +1071,7 @@ class _SportsScreenState extends State<SportsScreen> {
                                 ],
                               ),
                             ),
-                          ],
+                          ]),
                         ),
                       ),
                     ),
@@ -1480,9 +1471,7 @@ class _SportsScreenState extends State<SportsScreen> {
                   ],
                 ),
                 SizedBox(height: Dimensions.h_6),
-                GetBuilder(
-                  id: ControllerBuilders.sportsController,
-                  init: sportsController,
+                Builder(
                   builder: (context) {
                     return ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
@@ -1535,10 +1524,9 @@ class _SportsScreenState extends State<SportsScreen> {
   }
 
   Widget buildHeroHeader(bool isLight) {
-    return GetBuilder(
-      id: ControllerBuilders.sportsController,
-      init: sportsController,
-      builder: (controller) {
+    return Builder(
+      builder: (_) {
+        final controller = sportsController;
         return Stack(
           clipBehavior: Clip.none,
           children: [

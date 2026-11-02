@@ -17,6 +17,7 @@ import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/common_bullet.dart';
 import '../widgets/common_header.dart';
+import '../widgets/entrance_animation.dart';
 import 'events_screen_shimmer.dart';
 
 class EventsScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _EventsScreenState extends State<EventsScreen> {
       bodyPadding: EdgeInsets.zero,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: GetBuilder(
-        id: ControllerBuilders.entertainmentController,
+        id: ControllerBuilders.eventsLoading,
         init: dashboardController,
         builder: (controller) {
           return controller.isLoading
@@ -55,29 +56,36 @@ class _EventsScreenState extends State<EventsScreen> {
                   collapsedColor: Theme.of(context).highlightColor,
                   hero: buildHeroHeader(isLight),
                   slivers: [
-                    SliverToBoxAdapter(child: Column(children: [aiBrief()])),
                     SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                      child: EntranceAnimation(
+                        child: GetBuilder<DashboardController>(
+                          id: ControllerBuilders.eventsAiBrief,
+                          builder: (_) => Column(children: [aiBrief()]),
+                        ),
+                      ),
+                    ),
+                    // built lazily: sections are only built and laid out as they scroll near the screen
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate(
+                          entranceList([
                             SizedBox(height: Dimensions.h_15),
                             CommonSectionHeader(title: "Upcoming Events".toUpperCase(), actionText: "View All Events", secondActionText: "", onActionTap: () {}),
                             SizedBox(height: Dimensions.h_10),
-                            upcomingEventsGrid(),
+                            GetBuilder<DashboardController>(id: ControllerBuilders.eventsUpcoming, builder: (_) => upcomingEventsGrid()),
                             SizedBox(height: Dimensions.h_10),
-                            todayInTown(),
+                            GetBuilder<DashboardController>(id: ControllerBuilders.eventsToday, builder: (_) => todayInTown()),
                             SizedBox(height: Dimensions.h_10),
-                            popularCategories(),
+                            GetBuilder<DashboardController>(id: ControllerBuilders.eventsCategories, builder: (_) => popularCategories()),
                             SizedBox(height: Dimensions.h_10),
-                            topContributors(),
+                            GetBuilder<DashboardController>(id: ControllerBuilders.eventsContributors, builder: (_) => topContributors()),
                             SizedBox(height: Dimensions.h_10),
-                            featureStory(context),
+                            GetBuilder<DashboardController>(id: ControllerBuilders.eventsFeaturedNews, builder: (_) => featureStory(context)),
                             SizedBox(height: Dimensions.h_10),
-                            commonArticleGrid(),
+                            GetBuilder<DashboardController>(id: ControllerBuilders.eventsNews, builder: (_) => commonArticleGrid()),
                             SizedBox(height: Dimensions.h_10),
-                            eventsPlanner(),
+                            GetBuilder<DashboardController>(id: ControllerBuilders.eventsPlanner, builder: (_) => eventsPlanner()),
                             SizedBox(height: Dimensions.h_10),
                             Container(
                               width: Get.width,
@@ -164,6 +172,11 @@ class _EventsScreenState extends State<EventsScreen> {
                               ),
                             ),
                             SizedBox(height: Dimensions.h_15),
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.eventsExplore,
+                              builder: (controller) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                             Text(
                               ' GET INVOLVED',
                               style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700, height: 1),
@@ -310,8 +323,13 @@ class _EventsScreenState extends State<EventsScreen> {
                                 ],
                               ),
                             ),
+                                ],
+                              ),
+                            ),
                             SizedBox(height: Dimensions.h_10),
-                            CommonCard(
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.eventsVenues,
+                              builder: (_) => CommonCard(
                               padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_8),
                               child: Column(
                                 children: [
@@ -359,9 +377,12 @@ class _EventsScreenState extends State<EventsScreen> {
                                   ),
                                 ],
                               ),
+                              ),
                             ),
                             SizedBox(height: Dimensions.h_10),
-                            CommonCard(
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.eventsBusinesses,
+                              builder: (_) => CommonCard(
                               padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_8),
                               child: Column(
                                 children: [
@@ -409,6 +430,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                   ),
                                 ],
                               ),
+                              ),
                             ),
                             SizedBox(height: Dimensions.h_10),
                             CommonCard(
@@ -443,7 +465,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                 ],
                               ),
                             ),
-                          ],
+                          ]),
                         ),
                       ),
                     ),
@@ -1454,7 +1476,7 @@ class _EventsScreenState extends State<EventsScreen> {
 
   Widget buildHeroHeader(bool isLight) {
     return GetBuilder(
-      id: ControllerBuilders.entertainmentController,
+      id: ControllerBuilders.eventsHero,
       init: dashboardController,
       builder: (c) {
         return Stack(

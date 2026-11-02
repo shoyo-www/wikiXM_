@@ -15,6 +15,7 @@ import '../widgets/cache_image.dart';
 import '../widgets/circular_percent.dart';
 import '../widgets/common_bullet.dart';
 import '../widgets/common_header.dart';
+import '../widgets/entrance_animation.dart';
 
 class SchoolScreen extends StatefulWidget {
   const SchoolScreen({super.key});
@@ -36,7 +37,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: GetBuilder(
         init: schoolController,
-        id: ControllerBuilders.educationController,
+        id: ControllerBuilders.schoolLoading,
         builder: (controller) {
           return controller.isLoading
               ? EventsScreenShimmer()
@@ -49,39 +50,39 @@ class _SchoolScreenState extends State<SchoolScreen> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: Column(
-                        children: [
+                        children: staggered([
                           SizedBox(height: Dimensions.h_5),
-                          aiBrief(),
+                          GetBuilder<SchoolController>(id: ControllerBuilders.schoolBrief, builder: (_) => aiBrief()),
                           SizedBox(height: Dimensions.h_10),
-                          firstCard(isLight),
-                        ],
+                          GetBuilder<SchoolController>(id: ControllerBuilders.schoolLive, builder: (_) => firstCard(isLight)),
+                        ]),
                       ),
                     ),
-                    SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                    // built lazily: sections are only built and laid out as they scroll near the screen
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate(
+                          entranceList([
                             SizedBox(height: Dimensions.h_15),
                             CommonSectionHeader(title: "What Matters Most", actionText: "View All", secondActionText: "", onActionTap: () {}),
                             SizedBox(height: Dimensions.h_10),
-                            upcomingEventsGrid(isLight),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolMatters, builder: (_) => upcomingEventsGrid(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            whatToday(context, isLight),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolToday, builder: (_) => whatToday(context, isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            educationCommunityPulse(isLight),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolPulse, builder: (_) => educationCommunityPulse(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            browseSchool(isLight),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolBrowse, builder: (_) => browseSchool(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            activeEducationTopics(isLight),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolTopics, builder: (_) => activeEducationTopics(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            schoolBoardDistrictSection(isLight),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolBoard, builder: (_) => schoolBoardDistrictSection(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            studentSpotlight(context),
-                            upcomingEvents(isLight, context),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolSpotlight, builder: (_) => studentSpotlight(context)),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolEvents, builder: (_) => upcomingEvents(isLight, context)),
                             SizedBox(height: Dimensions.h_15),
-                            schoolMemories(context),
+                            GetBuilder<SchoolController>(id: ControllerBuilders.schoolMemories, builder: (_) => schoolMemories(context)),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -211,7 +212,7 @@ class _SchoolScreenState extends State<SchoolScreen> {
                               ),
                             ),
                             SizedBox(height: Dimensions.h_20),
-                          ],
+                          ]),
                         ),
                       ),
                     ),
@@ -1346,6 +1347,9 @@ class _SchoolScreenState extends State<SchoolScreen> {
   }
 
   Widget buildHeroHeader(bool isLight, SchoolController controller) {
+    return GetBuilder<SchoolController>(
+      id: ControllerBuilders.schoolHero,
+      builder: (controller) {
     final heroImage = controller.educationData?.hero?.image ?? '';
     final imageUrl = heroImage.isNotEmpty
         ? heroImage.startsWith('http')
@@ -1446,6 +1450,8 @@ class _SchoolScreenState extends State<SchoolScreen> {
           ),
         ),
       ],
+    );
+      },
     );
   }
 

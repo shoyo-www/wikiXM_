@@ -52,6 +52,8 @@ class Images {
   static const adsShop = 'assets/images/adsShop.png';
   static const ad = 'assets/images/ad.png';
   static const cityImageMobileDay = 'assets/images/city_mobile_day.png';
+  // Hero tag for the city image, so it glides from first visit into the dashboard header
+  static const cityHeroTag = 'cityHero';
   static const weatherClearNight = 'assets/images/weather-clear-night.svg';
   static const weatherCloudy = 'assets/images/weather-cloudy.svg';
   static const weatherFog = 'assets/images/weather-fog.svg';

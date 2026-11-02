@@ -108,7 +108,7 @@ class _TownSearchState extends State<TownSearch> {
             ),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => widget.isSignIn ? Navigator.pop(context) : Get.toNamed(AppRoutes.dashboard),
+              onTap: () => widget.isSignIn ? Navigator.pop(context) : Get.offAllNamed(AppRoutes.dashboard),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: Dimensions.h_6),
                 margin: EdgeInsets.only(top: Dimensions.h_15),
@@ -180,7 +180,7 @@ class _TownSearchState extends State<TownSearch> {
                             return GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () {
-                                Get.toNamed(AppRoutes.dashboard);
+                                Get.offAllNamed(AppRoutes.dashboard);
                                 controller.towns?.clear();
                                 controller.update([ControllerBuilders.searchTownController]);
                               },

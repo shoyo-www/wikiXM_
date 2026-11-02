@@ -34,7 +34,7 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
       bodyPadding: EdgeInsets.zero,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: GetBuilder(
-        id: ControllerBuilders.commandCenterController,
+        id: ControllerBuilders.commandCenterLoading,
         init: commandCenterController,
         builder: (controller) {
           return controller.isLoading
@@ -50,7 +50,7 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                       child: Column(
                         children: [
                           SizedBox(height: Dimensions.h_5),
-                          aiBrief(),
+                          GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterBrief, builder: (_) => aiBrief()),
                         ],
                       ),
                     ),
@@ -61,21 +61,21 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: Dimensions.h_15),
-                            topPriorities(isLight),
+                            GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterPriorities, builder: (_) => topPriorities(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            activeBills(isLight),
+                            GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterBills, builder: (_) => activeBills(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            civicActivePlan(isLight),
+                            GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterPlan, builder: (_) => civicActivePlan(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            liveCivic(isLight),
+                            GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterLiveCivic, builder: (_) => liveCivic(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            communityTownHall(isLight),
+                            GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterTownHall, builder: (_) => communityTownHall(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            communityProgress(isLight),
+                            GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterProgress, builder: (_) => communityProgress(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            topRepresentatives(isLight),
+                            GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterRepresentatives, builder: (_) => topRepresentatives(isLight)),
                             SizedBox(height: Dimensions.h_15),
-                            upcomingMeeting(isLight),
+                            GetBuilder<CommandCenterController>(id: ControllerBuilders.commandCenterMeetings, builder: (_) => upcomingMeeting(isLight)),
                             SizedBox(height: Dimensions.h_20),
                           ],
                         ),
@@ -1622,7 +1622,9 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
   }
 
   Widget buildHeroHeader(bool isLight) {
-    return Stack(
+    return GetBuilder<CommandCenterController>(
+      id: ControllerBuilders.commandCenterHero,
+      builder: (_) => Stack(
       clipBehavior: Clip.none,
       children: [
         AnimatedWeatherImage(height: Dimensions.h_330, image: "https://preetis-html.vercel.app/assets/images/civic-command-center/version1/hero-issaquah.webp"),
@@ -1713,6 +1715,7 @@ class _CommandCenterScreenState extends State<CommandCenterScreen> {
           ),
         ),
       ],
+      ),
     );
   }
 

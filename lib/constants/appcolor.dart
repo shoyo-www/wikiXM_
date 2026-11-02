@@ -82,7 +82,7 @@ class AppColor {
   static Color ink(BuildContext context) => isLight(context) ? const Color(0xFF08154F) : const Color(0xFFF4F7FF);
   static Color muted(BuildContext context) => isLight(context) ? const Color(0xFF63728F) : const Color(0xFFAAB8CF);
   static Color surface(BuildContext context) => isLight(context) ? Colors.white : const Color(0xFF102A47);
-  static Color border(BuildContext context) => isLight(context) ? Colors.grey : Colors.white24;
+  static Color border(BuildContext context) => isLight(context) ? Colors.grey.shade300 : Colors.white24;
   static Color red(BuildContext context) => isLight(context) ? const Color(0xFFB4232D) : const Color(0xFFFF8E96);
   static Color homeGreenDeep(BuildContext context) => isLight(context) ? Color(0xFF1A623E) : Colors.white;
   static Color micrositeGrey(BuildContext context) => isLight(context) ? Colors.grey : Colors.white54;

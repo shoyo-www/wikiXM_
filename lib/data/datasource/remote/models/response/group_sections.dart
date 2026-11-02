@@ -208,6 +208,7 @@ class FeaturedGroupsItem {
   final String? id;
   final int? groupId;
   final int? templateId;
+  final bool? isOwner;
   final bool? isVirtual;
   final String? title;
   final String? description;
@@ -233,6 +234,7 @@ class FeaturedGroupsItem {
     this.avatars,
     this.isJoined,
     this.canJoin,
+    this.isOwner
   });
 
   factory FeaturedGroupsItem.fromJson(Map<String, dynamic> json) => FeaturedGroupsItem(
@@ -249,6 +251,7 @@ class FeaturedGroupsItem {
     avatars: json["avatars"] == null ? [] : List<dynamic>.from(json["avatars"]!.map((x) => x)),
     isJoined: json["is_joined"],
     canJoin: json["can_join"],
+    isOwner: json['is_owner']
   );
 }
 

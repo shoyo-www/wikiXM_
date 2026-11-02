@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,7 +26,7 @@ class FirstVisit extends StatelessWidget {
           children: [
             Stack(
               children: [
-                AppCacheImage(size: Dimensions.h_290, imageUrl: isLight ? Images.cityImageMobileDay : Images.cityImageMobile, isShadow: false, fit: BoxFit.cover, widthSize: Get.width),
+                Hero(tag: Images.cityHeroTag, child: AppCacheImage(size: Dimensions.h_290, imageUrl: isLight ? Images.cityImageMobileDay : Images.cityImageMobile, isShadow: false, fit: BoxFit.cover, widthSize: Get.width)),
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -110,7 +112,7 @@ class FirstVisit extends StatelessWidget {
                       ),
                       SizedBox(height: Dimensions.h_8),
                       GestureDetector(
-                        onTap: () => Get.toNamed(AppRoutes.dashboard),
+                        onTap: () => Get.offAllNamed(AppRoutes.dashboard),
                         child: Container(
                           padding: EdgeInsets.symmetric(horizontal: Dimensions.w_23, vertical: Dimensions.h_6),
                           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(Dimensions.h_4)),
@@ -365,6 +367,23 @@ class ExploreCard extends StatelessWidget {
   final bool isCommunity;
   final String actionTitle;
 
+  // The explore art is 1536x1024 (3:2); decoding it full size costs ~6MB per tile and stalls the frame it lands in.
+  // Decode only as many pixels as the tile shows: wide enough to cover both its width and its height.
+  Widget art() => LayoutBuilder(
+    builder: (context, box) {
+      final dpr = MediaQuery.devicePixelRatioOf(context);
+      final width = box.hasBoundedWidth ? box.maxWidth : MediaQuery.sizeOf(context).width;
+      final height = box.hasBoundedHeight ? box.maxHeight : 0.0;
+      return Image.asset(
+        image,
+        fit: BoxFit.cover,
+        cacheWidth: (math.max(width, height * 1.5) * dpr).round(),
+        color: sepia ? const Color(0x99704A2A) : null,
+        colorBlendMode: sepia ? BlendMode.color : null,
+      );
+    },
+  );
+
   @override
   Widget build(BuildContext context) {
     bool isLight = Theme.of(context).brightness == Brightness.light;
@@ -379,7 +398,7 @@ class ExploreCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(image, fit: BoxFit.cover, color: sepia ? const Color(0x99704A2A) : null, colorBlendMode: sepia ? BlendMode.color : null),
+                  art(),
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Colors.black.withValues(alpha: .99), Colors.black.withValues(alpha: .70), Colors.black.withValues(alpha: .01), Colors.transparent]),
@@ -451,7 +470,7 @@ class ExploreCard extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(image, fit: BoxFit.cover, color: sepia ? const Color(0x99704A2A) : null, colorBlendMode: sepia ? BlendMode.color : null),
+                  art(),
                   const DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [Color(0xE6000718), Color(0x99000718), Color(0x11000718)], stops: [0, 0.55, 1]),

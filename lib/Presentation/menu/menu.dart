@@ -8,6 +8,7 @@ import 'package:wikixm/approutes.dart';
 import 'package:wikixm/constants/fontsize.dart';
 import '../../constants/constants.dart';
 import '../../data/datasource/local/local_storage.dart';
+import '../widgets/entrance_animation.dart';
 import '../widgets/nav_item.dart';
 
 class Menu extends StatefulWidget {
@@ -28,7 +29,8 @@ class _MenuState extends State<Menu> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(height: Dimensions.h_20),
-          Row(
+          EntranceAnimation(
+            child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -89,6 +91,7 @@ class _MenuState extends State<Menu> {
                 ),
               ),
             ],
+            ),
           ),
           SizedBox(height: Dimensions.h_8),
           Container(
@@ -100,7 +103,7 @@ class _MenuState extends State<Menu> {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: staggered(start: 1, [
                   SizedBox(height: Dimensions.h_8),
                   Padding(
                     padding: EdgeInsets.only(left: Dimensions.w_6),
@@ -313,7 +316,7 @@ class _MenuState extends State<Menu> {
                   SizedBox(height: Dimensions.h_10),
                   MenuText(title: "Logout", color: Colors.redAccent),
                   SizedBox(height: Dimensions.h_70),
-                ],
+                ]),
               ),
             ),
           ),

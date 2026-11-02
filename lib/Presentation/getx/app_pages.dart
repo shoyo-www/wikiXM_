@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+import 'package:get/get_navigation/src/routes/custom_transition.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:wikixm/Presentation/auth/sign_in.dart';
@@ -14,6 +16,9 @@ import 'package:wikixm/Presentation/groups/create_group.dart';
 import 'package:wikixm/Presentation/groups/detail_page.dart';
 import 'package:wikixm/Presentation/groups/group_detail.dart';
 import 'package:wikixm/Presentation/groups/group_profile.dart';
+import 'package:wikixm/Presentation/groups/my_group.dart';
+import 'package:wikixm/Presentation/groups/search_groups.dart';
+import 'package:wikixm/Presentation/groups/public_profile.dart';
 import 'package:wikixm/Presentation/guide/ask_guide.dart';
 import 'package:wikixm/Presentation/notifications/notifications.dart';
 import 'package:wikixm/Presentation/politics/politics.dart';
@@ -34,7 +39,8 @@ class AppPages {
   static const Transition dashBoard = Transition.fadeIn;
   static var list = [
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.splashScreen, page: () => const SplashScreen()),
-    GetPage(transitionDuration: duration, transition: dashBoard, name: AppRoutes.dashboard, page: () => const DashboardScreen()),
+    // fade + rise + slight zoom so the entry is visible (both screens share the same city image); ease-out so it settles in
+    GetPage(transitionDuration: const Duration(milliseconds: 550), curve: Curves.easeOutCubic, customTransition: DashboardTransition(), transition: dashBoard, name: AppRoutes.dashboard, page: () => const DashboardScreen()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.askGuide, page: () => const AskGuide()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.firstTime, page: () => const FirstVisit()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.signIn, page: () => const SignInScreen()),
@@ -59,5 +65,22 @@ class AppPages {
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.activityDetail, page: () => const ActivityDetail()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.detailPage, page: () => const DetailPage()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupUserProfile, page: () => const GroupUserProfile()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.myGroup, page: () => const MyGroupsScreen()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.searchGroups, page: () => const SearchGroups()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.publicProfile, page: () => const PublicProfile()),
   ];
+}
+
+class DashboardTransition extends CustomTransition {
+  @override
+  Widget buildTransition(BuildContext context, Curve? curve, Alignment? alignment, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    final curved = CurvedAnimation(parent: animation, curve: curve ?? Curves.easeOutCubic);
+    return FadeTransition(
+      opacity: curved,
+      child: SlideTransition(
+        position: Tween(begin: const Offset(0, 0.06), end: Offset.zero).animate(curved),
+        child: ScaleTransition(scale: Tween(begin: 0.96, end: 1.0).animate(curved), child: child),
+      ),
+    );
+  }
 }

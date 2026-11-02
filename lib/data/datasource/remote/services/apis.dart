@@ -45,5 +45,18 @@ class Apis {
   static const groupJoin = '$baseUrl/groups/join';
   static const groupLeave = '$baseUrl/groups/leave';
   static const interestsDetail = '$baseUrl/groups/interests';
+  static const groupDetail = '$baseUrl/groups/';
+  static const activityDetail = '$baseUrl/groups/activities/';
+  static const myGroupSummary = '$baseUrl/groups/my-summary';
+  static const myManagedGroups = '$baseUrl/groups/my-managed';
+  static const myMemberships = '$baseUrl/groups/my-memberships';
+  static const myInvitations = '$baseUrl/groups/my-invitations';
+  static const respondInvitation = '$baseUrl/groups/my-invitations/respond';
+  static const myAttention = '$baseUrl/groups/my-attention';
+  static const myActivities = '$baseUrl/groups/my-activities';
+  static const myGroupSettings = '$baseUrl/groups/account-settings';
+  static const activityProfile = '$baseUrl/groups/people/877/profile';
+  static const discoverOverview = '$baseUrl/groups/discover/overview';
+  static const groupList = '$baseUrl/groups/list';
 }
 

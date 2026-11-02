@@ -13,23 +13,26 @@ class CommonShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: heroHeight,
-            width: Get.width,
-            color: Theme.of(context).scaffoldBackgroundColor,
-            padding: EdgeInsets.fromLTRB(Dimensions.w_8, Dimensions.h_40, Dimensions.w_8, Dimensions.h_10),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: hero),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: body),
-          ),
-        ],
+    return SafeArea(
+      bottom: false,
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: heroHeight,
+              width: Get.width,
+              color: Theme.of(context).scaffoldBackgroundColor,
+              padding: EdgeInsets.fromLTRB(Dimensions.w_8, Dimensions.h_5, Dimensions.w_8, Dimensions.h_10),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: hero),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: body),
+            ),
+          ],
+        ),
       ),
     );
   }

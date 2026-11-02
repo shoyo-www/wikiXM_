@@ -1,627 +1,535 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 
-enum WeatherAnimationType { sunny, clearNight, rain, snow, thunderstorm, cloudy, partlyCloudy, partlyCloudyNight, none }
+/// What a weather scene contains. Pick one with the factories; [WeatherController.weatherScene] maps the API's scene_id to them.
+class WeatherScene {
+  const WeatherScene({
+    required this.id,
+    required this.tint,
+    this.clouds = 0,
+    this.cloudColor = _dayCloud,
+    this.rain = 0,
+    this.snow = 0,
+    this.fog = 0,
+    this.lightning = false,
+    this.sun = false,
+    this.moon = false,
+    this.stars = false,
+    this.glow,
+  });
 
-WeatherAnimationType getWeatherAnimationType(String? sceneId) {
-  switch (sceneId?.toLowerCase().trim()) {
-    case 'sunny':
-    case 'clear':
-    case 'clear-day':
-    case 'day-clear':
-      return WeatherAnimationType.sunny;
+  /// Also the crossfade key: a new id fades the old scene out.
+  final String id;
 
-    case 'clear-night':
-    case 'night-clear':
-    case 'night':
-      return WeatherAnimationType.clearNight;
+  /// Sky wash over the city photo, top to bottom. Sets the mood and keeps white text readable.
+  final List<Color> tint;
 
-    case 'partly-cloudy':
-    case 'partly-cloudy-day':
-    case 'day-partly-cloudy':
-      return WeatherAnimationType.partlyCloudy;
-    case 'night-partly-cloudy':
-    case 'partly-cloudy-night':
-      return WeatherAnimationType.partlyCloudyNight;
-    case 'cloudy':
-    case 'overcast':
-    case 'mostly-cloudy':
-    case 'night-cloudy':
-      return WeatherAnimationType.cloudy;
-    case 'rain':
-    case 'rainy':
-    case 'showers':
-    case 'drizzle':
-    case 'light-rain':
-    case 'heavy-rain':
-      return WeatherAnimationType.rain;
-    case 'snow':
-    case 'snowy':
-    case 'light-snow':
-    case 'heavy-snow':
-      return WeatherAnimationType.snow;
-    case 'thunderstorm':
-    case 'thunderstorms':
-    case 'storm':
-    case 'lightning':
-      return WeatherAnimationType.thunderstorm;
+  /// 0–1 amounts.
+  final double clouds, rain, snow, fog;
+  final Color cloudColor;
+  final bool lightning, sun, moon, stars;
 
-    default:
-      return WeatherAnimationType.none;
-  }
+  /// Warm horizon glow for sunrise / sunset; also drops the sun low.
+  final Color? glow;
+
+  static const _dayCloud = Color(0xFFF5F8FC);
+  static const _greyCloud = Color(0xFFB4BCC8);
+  static const _nightCloud = Color(0xFF7E8BA6);
+  static const _stormCloud = Color(0xFF4B515E);
+  static const _nightTint = [Color(0xB30A1430), Color(0x8C12224A), Color(0x401C2D5C)];
+
+  factory WeatherScene.clear({required bool night}) => night
+      ? const WeatherScene(id: 'clear-night', tint: _nightTint, moon: true, stars: true, clouds: .15, cloudColor: _nightCloud)
+      : const WeatherScene(id: 'clear-day', tint: [Color(0x332F80ED), Color(0x0D2F80ED), Color(0x00000000)], sun: true, clouds: .2);
+
+  factory WeatherScene.partlyCloudy({required bool night}) => night
+      ? const WeatherScene(id: 'partly-cloudy-night', tint: _nightTint, moon: true, stars: true, clouds: .55, cloudColor: _nightCloud)
+      : const WeatherScene(id: 'partly-cloudy-day', tint: [Color(0x262F80ED), Color(0x00000000)], sun: true, clouds: .55);
+
+  factory WeatherScene.cloudy({required bool night}) => night
+      ? const WeatherScene(id: 'cloudy-night', tint: [Color(0xB30E1526), Color(0x80141D33), Color(0x40182238)], clouds: 1, cloudColor: _nightCloud)
+      : const WeatherScene(id: 'cloudy-day', tint: [Color(0x59606A78), Color(0x26606A78), Color(0x0D606A78)], clouds: 1, cloudColor: _greyCloud);
+
+  factory WeatherScene.rain({required bool night}) => night
+      ? const WeatherScene(id: 'rain-night', tint: [Color(0xBF0B1222), Color(0x99101828), Color(0x66141C2C)], clouds: .9, cloudColor: _stormCloud, rain: 1, fog: .25)
+      : const WeatherScene(id: 'rain-day', tint: [Color(0x8C3A4250), Color(0x593A4250), Color(0x333A4250)], clouds: .9, cloudColor: _greyCloud, rain: 1, fog: .25);
+
+  factory WeatherScene.thunderstorm({required bool night}) => WeatherScene(
+    id: night ? 'storm-night' : 'storm-day',
+    tint: night ? const [Color(0xD906090F), Color(0xB30B0F18), Color(0x80101520)] : const [Color(0xB31A1D24), Color(0x8C1F232B), Color(0x591F232B)],
+    clouds: 1,
+    cloudColor: _stormCloud,
+    rain: 1.35,
+    fog: .15,
+    lightning: true,
+  );
+
+  factory WeatherScene.snow({required bool night}) => night
+      ? const WeatherScene(id: 'snow-night', tint: [Color(0xA6142038), Color(0x731C2A48), Color(0x40263452)], clouds: .7, cloudColor: _nightCloud, snow: 1, fog: .15)
+      : const WeatherScene(id: 'snow-day', tint: [Color(0x66C8D2DE), Color(0x33DDE4EC), Color(0x1AFFFFFF)], clouds: .7, cloudColor: _greyCloud, snow: 1, fog: .15);
+
+  factory WeatherScene.fog({required bool night}) => night
+      ? const WeatherScene(id: 'fog-night', tint: [Color(0xB3141A26), Color(0x8C1A2130), Color(0x661E2534)], clouds: .3, cloudColor: _nightCloud, fog: 1)
+      : const WeatherScene(id: 'fog-day', tint: [Color(0x66A0A8B2), Color(0x4DB4BBC4), Color(0x33C8CED6)], clouds: .3, cloudColor: _greyCloud, fog: 1);
+
+  factory WeatherScene.sunrise() => const WeatherScene(id: 'sunrise', tint: [Color(0x803A5BA8), Color(0x40C77DA0), Color(0x26FFB27A)], sun: true, clouds: .35, cloudColor: Color(0xFFFFE2D0), glow: Color(0xFFFFA65C));
+
+  factory WeatherScene.sunset() => const WeatherScene(id: 'sunset', tint: [Color(0x8C2B2A5E), Color(0x598E4A7A), Color(0x40FF8A4C)], sun: true, clouds: .35, cloudColor: Color(0xFFFFC9B0), glow: Color(0xFFFF7A3D));
 }
 
-class WeatherAnimationOverlay extends StatefulWidget {
-  final WeatherAnimationType type;
-  final bool animateClouds;
-  final bool animateRain;
+/// Animated sky for the weather hero, drawn over the city photo. Repaints straight from a clock (no widget rebuilds),
+/// crossfades when the scene changes, and holds still when the system asks for reduced motion.
+class WeatherSceneView extends StatefulWidget {
+  const WeatherSceneView({super.key, required this.scene});
 
-  const WeatherAnimationOverlay({super.key, required this.type, this.animateClouds = true, this.animateRain = true});
+  final WeatherScene scene;
 
   @override
-  State<WeatherAnimationOverlay> createState() => _WeatherAnimationOverlayState();
+  State<WeatherSceneView> createState() => _WeatherSceneViewState();
 }
 
-class _WeatherAnimationOverlayState extends State<WeatherAnimationOverlay> with SingleTickerProviderStateMixin {
-  late final AnimationController _animationController;
+class _WeatherSceneViewState extends State<WeatherSceneView> with SingleTickerProviderStateMixin {
+  // seconds since the scene started; never completes. Tickers pause on their own when the route is covered.
+  late final AnimationController _clock = AnimationController.unbounded(vsync: this, value: 8);
+  _WeatherScenePainter? _painter;
 
   @override
-  void initState() {
-    super.initState();
-
-    _animationController = AnimationController.unbounded(vsync: this, value: 0.0);
-
-    _animationController.animateWith(_ConstantVelocitySimulation(velocity: 1.0));
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _clock.stop();
+    } else if (!_clock.isAnimating) {
+      _clock.animateWith(_Forever(_clock.value));
+    }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _clock.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.type == WeatherAnimationType.none) {
-      return const SizedBox.shrink();
-    }
-
+    // keep the painter (and its cached shaders/particles) across parent rebuilds; only a new scene makes a new one
+    if (_painter?.scene.id != widget.scene.id) _painter = _WeatherScenePainter(widget.scene, _clock);
     return IgnorePointer(
       child: RepaintBoundary(
-        child: AnimatedBuilder(
-          animation: _animationController,
-          builder: (context, child) {
-            return CustomPaint(
-              painter: WeatherOverlayPainter(progress: _animationController.value, type: widget.type, animateClouds: widget.animateClouds, animateRain: widget.animateRain),
-              size: Size.infinite,
-            );
-          },
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 900),
+          child: CustomPaint(key: ValueKey(widget.scene.id), painter: _painter, size: Size.infinite),
         ),
       ),
     );
   }
 }
 
-class _ConstantVelocitySimulation extends Simulation {
-  final double velocity;
+class _Forever extends Simulation {
+  _Forever(this.start);
 
-  _ConstantVelocitySimulation({required this.velocity});
-
-  @override
-  double x(double time) {
-    return velocity * time;
-  }
+  final double start;
 
   @override
-  double dx(double time) {
-    return velocity;
-  }
+  double x(double time) => start + time;
 
   @override
-  bool isDone(double time) {
-    return false;
-  }
+  double dx(double time) => 1;
+
+  @override
+  bool isDone(double time) => false;
 }
 
-class WeatherOverlayPainter extends CustomPainter {
-  final double progress;
-  final WeatherAnimationType type;
-  final bool animateClouds;
-  final bool animateRain;
+class _WeatherScenePainter extends CustomPainter {
+  _WeatherScenePainter(this.scene, this.clock) : super(repaint: clock);
 
-  WeatherOverlayPainter({required this.progress, required this.type, required this.animateClouds, required this.animateRain});
-
-  final List<_RainDrop> _rainDrops = const [
-    _RainDrop(.02, .58, .060, 1.25),
-    _RainDrop(.05, .38, .045, 1.55),
-    _RainDrop(.08, .52, .055, 1.38),
-    _RainDrop(.11, .32, .040, 1.65),
-    _RainDrop(.14, .48, .052, 1.32),
-    _RainDrop(.17, .62, .068, 1.22),
-    _RainDrop(.20, .36, .043, 1.58),
-    _RainDrop(.23, .50, .058, 1.35),
-    _RainDrop(.26, .40, .048, 1.48),
-    _RainDrop(.29, .64, .072, 1.20),
-    _RainDrop(.32, .34, .042, 1.62),
-    _RainDrop(.35, .54, .060, 1.30),
-    _RainDrop(.38, .42, .050, 1.44),
-    _RainDrop(.41, .58, .064, 1.26),
-    _RainDrop(.44, .35, .043, 1.58),
-    _RainDrop(.47, .50, .058, 1.36),
-    _RainDrop(.50, .38, .046, 1.50),
-    _RainDrop(.53, .60, .066, 1.24),
-    _RainDrop(.56, .34, .042, 1.60),
-    _RainDrop(.59, .48, .054, 1.34),
-    _RainDrop(.62, .40, .047, 1.46),
-    _RainDrop(.65, .56, .062, 1.28),
-    _RainDrop(.68, .34, .041, 1.62),
-    _RainDrop(.71, .50, .058, 1.36),
-    _RainDrop(.74, .42, .049, 1.48),
-    _RainDrop(.77, .62, .070, 1.22),
-    _RainDrop(.80, .36, .043, 1.58),
-    _RainDrop(.83, .54, .060, 1.32),
-    _RainDrop(.86, .40, .048, 1.50),
-    _RainDrop(.89, .58, .064, 1.28),
-    _RainDrop(.92, .34, .042, 1.60),
-    _RainDrop(.95, .50, .056, 1.38),
-    _RainDrop(.98, .38, .046, 1.50),
-  ];
-
-  final List<_SnowFlake> _snowFlakes = const [
-    _SnowFlake(.02, .72, .0045, .42, .00),
-    _SnowFlake(.07, .85, .0060, .34, .11),
-    _SnowFlake(.12, .65, .0040, .48, .22),
-    _SnowFlake(.18, .90, .0055, .38, .33),
-    _SnowFlake(.24, .70, .0042, .45, .44),
-    _SnowFlake(.30, .82, .0062, .32, .55),
-    _SnowFlake(.36, .62, .0038, .50, .66),
-    _SnowFlake(.42, .88, .0052, .40, .77),
-    _SnowFlake(.48, .68, .0040, .36, .88),
-    _SnowFlake(.54, .92, .0060, .46, .15),
-    _SnowFlake(.60, .70, .0045, .39, .26),
-    _SnowFlake(.66, .84, .0055, .33, .37),
-    _SnowFlake(.72, .64, .0038, .47, .48),
-    _SnowFlake(.78, .90, .0062, .35, .59),
-    _SnowFlake(.84, .72, .0042, .43, .70),
-    _SnowFlake(.90, .86, .0054, .37, .81),
-    _SnowFlake(.96, .68, .0040, .49, .92),
-    _SnowFlake(.05, .76, .0035, .52, .17),
-    _SnowFlake(.27, .88, .0048, .41, .52),
-    _SnowFlake(.57, .74, .0038, .55, .73),
-  ];
-
-  final List<_CloudData> _clouds = const [
-    _CloudData(top: .30, scale: 0.90, width: .38, speed: .008, opacity: 1.0, delay: .00),
-    _CloudData(top: .48, scale: .55, width: .32, speed: .008, opacity: 1.0, delay: .30),
-    _CloudData(top: .62, scale: .98, width: .27, speed: .008, opacity: 1.0, delay: .60),
-    _CloudData(top: .78, scale: .62, width: .23, speed: .008, opacity: 1.0, delay: .90),
-  ];
+  final WeatherScene scene;
+  final Animation<double> clock;
+  _SceneLayers? _layers;
 
   @override
   void paint(Canvas canvas, Size size) {
     if (size.isEmpty) return;
-
-    if (type == WeatherAnimationType.sunny) {
-      _paintSun(canvas, size);
-      return;
-    }
-
-    if (type == WeatherAnimationType.clearNight) {
-      _paintMoon(canvas, size);
-      return;
-    }
-
-    if (type == WeatherAnimationType.partlyCloudy) {
-      _paintSun(canvas, size);
-    }
-
-    if (type == WeatherAnimationType.partlyCloudyNight) {
-      _paintMoon(canvas, size);
-    }
-
-    final bool showRain = type == WeatherAnimationType.rain || type == WeatherAnimationType.thunderstorm;
-
-    final bool showSnow = type == WeatherAnimationType.snow;
-
-    final bool showClouds = type != WeatherAnimationType.snow && type != WeatherAnimationType.none && type != WeatherAnimationType.partlyCloudy && type != WeatherAnimationType.partlyCloudyNight;
-
-    if (showRain) {
-      _paintRainAtmosphere(canvas, size);
-    }
-
-    if (type == WeatherAnimationType.snow) {
-      _paintSnowAtmosphere(canvas, size);
-    }
-
-    if (type == WeatherAnimationType.partlyCloudy) {
-      _paintPartlyCloudlyAtmosphere(canvas, size);
-    }
-
-    if (type == WeatherAnimationType.thunderstorm) {
-      _paintThunderstormAtmosphere(canvas, size);
-    }
-
-    if (showClouds) {
-      _paintClouds(canvas, size);
-    }
-
-    if (showSnow) {
-      _paintSnow(canvas, size);
-    }
-
-    if (showRain && animateRain) {
-      _paintRain(canvas, size);
-    }
-
-    if (type == WeatherAnimationType.thunderstorm) {
-      _paintLightning(canvas, size);
-    }
-  }
-
-  void _paintRainAtmosphere(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..isAntiAlias = true
-      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.white.withValues(alpha: .60), Colors.white.withValues(alpha: .35), Colors.white.withValues(alpha: .065)]).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-  }
-
-  void _paintSnowAtmosphere(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..isAntiAlias = true
-      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.white.withValues(alpha: .80), Colors.white.withValues(alpha: .60), Colors.white.withValues(alpha: .055)]).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-  }
-
-  void _paintPartlyCloudlyAtmosphere(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..isAntiAlias = true
-      ..shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.white.withValues(alpha: .50), Colors.white.withValues(alpha: .10), Colors.white.withValues(alpha: .005)]).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-  }
-
-  void _paintThunderstormAtmosphere(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..isAntiAlias = true
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [const Color(0xFF20232A).withValues(alpha: .85), const Color(0xFF15171D).withValues(alpha: .60), const Color(0xFF20232A).withValues(alpha: .40)],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-  }
-
-  void _paintSun(Canvas canvas, Size size) {
-    final double radius = size.width * .100;
-    final Offset center = Offset(size.width * .78, size.height * .34);
-
-    final double pulse = 1.0 + math.sin(progress * .8) * .025;
-
-    final Paint outerGlow = Paint()
-      ..isAntiAlias = true
-      ..shader = RadialGradient(colors: [const Color(0xFFFFD54F).withValues(alpha: .40), const Color(0xFFFFC107).withValues(alpha: .30), Colors.transparent], stops: const [.0, .45, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius * 2.8 * pulse));
-
-    canvas.drawCircle(center, radius * 4.8 * pulse, outerGlow);
-
-    final Paint innerGlow = Paint()
-      ..isAntiAlias = true
-      ..shader = RadialGradient(colors: [const Color(0xFFFFF176).withValues(alpha: .40), const Color(0xFFFFD54F).withValues(alpha: .18), Colors.transparent], stops: const [.0, .55, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius * 1.65));
-
-    canvas.drawCircle(center, radius * 1.65, innerGlow);
-
-    final Paint sunPaint = Paint()
-      ..isAntiAlias = true
-      ..shader = RadialGradient(center: const Alignment(-.25, -.30), radius: 1.0, colors: const [Color(0xFFFFF59D), Color(0xFFFFD54F), Color(0xFFFFC107)], stops: const [.0, .48, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius));
-
-    canvas.drawCircle(center, radius, sunPaint);
-
-    final Paint highlightPaint = Paint()
-      ..isAntiAlias = true
-      ..color = Colors.white.withValues(alpha: .22)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
-
-    canvas.drawCircle(Offset(center.dx - radius * .28, center.dy - radius * .30), radius * .22, highlightPaint);
-  }
-
-  void _paintMoon(Canvas canvas, Size size) {
-    final double radius = size.width * .085;
-    final Offset center = Offset(size.width * .78, size.height * .34);
-    final double pulse = 1.0 + math.sin(progress * .8) * .02;
-
-    final Paint glowPaint = Paint()
-      ..isAntiAlias = true
-      ..shader = RadialGradient(colors: [const Color(0xFFF5F3CE).withValues(alpha: .32), const Color(0xFFDDE7F0).withValues(alpha: .15), Colors.transparent], stops: const [0.0, .45, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius * 3.5 * pulse));
-
-    canvas.drawCircle(center, radius * 3.5 * pulse, glowPaint);
-
-    final Paint moonPaint = Paint()
-      ..isAntiAlias = true
-      ..shader = RadialGradient(center: const Alignment(-.35, -.35), colors: const [Color(0xFFFFFFFF), Color(0xFFF1F0D8), Color(0xFFD8D7C2)], stops: [0.0, .55, 1.0]).createShader(Rect.fromCircle(center: center, radius: radius));
-
-    canvas.drawCircle(center, radius, moonPaint);
-
-    final Paint craterPaint = Paint()
-      ..isAntiAlias = true
-      ..color = const Color(0xFFBFC0B2).withValues(alpha: .25);
-
-    canvas.drawCircle(Offset(center.dx + radius * .28, center.dy + radius * .15), radius * .18, craterPaint);
-
-    canvas.drawCircle(Offset(center.dx - radius * .22, center.dy + radius * .30), radius * .11, craterPaint);
-
-    final Paint highlightPaint = Paint()
-      ..isAntiAlias = true
-      ..color = Colors.white.withValues(alpha: .28)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
-
-    canvas.drawCircle(Offset(center.dx - radius * .28, center.dy - radius * .30), radius * .20, highlightPaint);
-  }
-
-  void _paintClouds(Canvas canvas, Size size) {
-    double cloudOpacity = 1;
-
-    switch (type) {
-      case WeatherAnimationType.rain:
-        cloudOpacity = .90;
-        break;
-
-      case WeatherAnimationType.snow:
-        cloudOpacity = 0;
-        break;
-
-      case WeatherAnimationType.thunderstorm:
-        cloudOpacity = .92;
-        break;
-
-      case WeatherAnimationType.cloudy:
-        cloudOpacity = 1;
-        break;
-
-      case WeatherAnimationType.partlyCloudy:
-      case WeatherAnimationType.partlyCloudyNight:
-        cloudOpacity = 1;
-        break;
-
-      case WeatherAnimationType.none:
-      case WeatherAnimationType.sunny:
-      case WeatherAnimationType.clearNight:
-        return;
-    }
-
-    for (final cloud in _clouds) {
-      final double cloudProgress = animateClouds ? ((progress * cloud.speed * 3.5) + cloud.delay) % 1.0 : cloud.delay;
-
-      final double cloudWidth = size.width * cloud.width * cloud.scale;
-
-      final double cloudHeight = cloudWidth * .30;
-
-      final double x = -cloudWidth * 1.3 + cloudProgress * (size.width + cloudWidth * 2.6);
-
-      final double y = size.height * cloud.top;
-
-      _drawCloud(canvas, Offset(x, y), Size(cloudWidth, cloudHeight), cloud.opacity * cloudOpacity);
-    }
-  }
-
-  void _drawCloud(Canvas canvas, Offset position, Size size, double opacity) {
-    final Paint paint = Paint()
-      ..isAntiAlias = true
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.0);
-
-    final bool isThunderstorm = type == WeatherAnimationType.thunderstorm;
-
-    final Color cloudLow = isThunderstorm ? Color.fromRGBO(30, 31, 36, opacity) : Color.fromRGBO(52, 52, 55, opacity);
-
-    final Color cloudMid = isThunderstorm ? Color.fromRGBO(62, 63, 70, opacity) : Color.fromRGBO(98, 98, 102, opacity);
-
-    final Color cloudHigh = isThunderstorm ? Color.fromRGBO(115, 116, 124, opacity * .8) : Color.fromRGBO(165, 165, 168, opacity * .8);
-
-    final double w = size.width;
-    final double h = size.height;
-
-    final double cloudW = w * .78;
-    final double cloudH = h * 1.45;
-
-    final double left = position.dx + (w - cloudW) / 2;
-
-    final double top = position.dy - h * .18;
-
-    final Path cloudPath = Path();
-
-    final Rect baseRect = Rect.fromLTWH(left, top + cloudH * .48, cloudW, cloudH * .34);
-
-    cloudPath.addRRect(RRect.fromRectAndRadius(baseRect, Radius.circular(cloudH * .17)));
-
-    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .16, top + cloudH * .53), radius: cloudH * .22));
-
-    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .32, top + cloudH * .36), radius: cloudH * .30));
-
-    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .50, top + cloudH * .28), radius: cloudH * .37));
-
-    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .68, top + cloudH * .38), radius: cloudH * .29));
-
-    cloudPath.addOval(Rect.fromCircle(center: Offset(left + cloudW * .84, top + cloudH * .53), radius: cloudH * .21));
-
-    paint.shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [cloudHigh, cloudMid, cloudLow], stops: const [0.0, 0.48, 1.0]).createShader(Rect.fromLTWH(left, top, cloudW, cloudH));
-
-    canvas.drawPath(cloudPath, paint);
-
-    paint.shader = RadialGradient(
-      center: Alignment.topCenter,
-      radius: .80,
-      colors: [Color.fromRGBO(205, 205, 208, opacity * .32), Color.fromRGBO(175, 175, 178, opacity * .10), Colors.transparent],
-      stops: const [0.0, 0.45, 1.0],
-    ).createShader(Rect.fromLTWH(left + cloudW * .12, top, cloudW * .76, cloudH * .65));
-
-    canvas.drawOval(Rect.fromLTWH(left + cloudW * .18, top + cloudH * .10, cloudW * .64, cloudH * .42), paint);
-
-    paint.shader = LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.transparent, Color.fromRGBO(20, 20, 23, opacity * .16)]).createShader(Rect.fromLTWH(left, top + cloudH * .42, cloudW, cloudH * .40));
-
-    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(left + cloudW * .04, top + cloudH * .48, cloudW * .92, cloudH * .30), Radius.circular(cloudH * .15)), paint);
-  }
-
-  void _paintSnow(Canvas canvas, Size size) {
-    for (final snow in _snowFlakes) {
-      final double phase = ((progress * snow.speed) + snow.delay) % 1.0;
-
-      final double y = -size.height * .08 + phase * size.height * 1.16;
-
-      final double wave = math.sin(progress * 1.4 + snow.delay * math.pi * 2) * size.width * .018;
-
-      final double x = size.width * snow.x + wave;
-
-      final double radius = size.width * snow.size;
-
-      final Paint paint = Paint()
-        ..isAntiAlias = true
-        ..color = Colors.white.withValues(alpha: snow.opacity);
-
-      canvas.drawCircle(Offset(x, y), radius, paint);
-
-      if (snow.size >= .005) {
-        final Paint glowPaint = Paint()
-          ..isAntiAlias = true
-          ..color = Colors.white.withValues(alpha: snow.opacity * .12)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.0);
-
-        canvas.drawCircle(Offset(x, y), radius * 2.2, glowPaint);
-      }
-    }
-  }
-
-  static const double _slantFactor = .16;
-
-  void _paintRain(Canvas canvas, Size size) {
-    for (int i = 0; i < _rainDrops.length; i++) {
-      final _RainDrop drop = _rainDrops[i];
-
-      final double phase = ((progress * drop.speed * .90) + i * .071) % 1.0;
-
-      final double xBase = size.width * drop.x;
-
-      final double y = -size.height * .10 + phase * size.height * 1.20;
-
-      final double length = size.height * drop.lengthFactor * 1.7;
-
-      final double slant = size.width * _slantFactor * drop.lengthFactor * 4;
-
-      final double x = xBase + phase * slant;
-
-      final double xEnd = x + (length / size.height) * slant;
-
-      final double opacity = drop.alpha;
-
-      final Paint paint = Paint()
-        ..isAntiAlias = true
-        ..strokeWidth = opacity > .5 ? 1.7 : 1.15
-        ..strokeCap = StrokeCap.round
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.transparent,
-            Colors.white.withValues(alpha: opacity * .30),
-            const Color(0xFFE0F2FF).withValues(alpha: opacity),
-          ],
-        ).createShader(Rect.fromLTWH(x, y, 2, length));
-
-      canvas.drawLine(Offset(x, y), Offset(xEnd, y + length), paint);
-    }
-  }
-
-  void _paintLightning(Canvas canvas, Size size) {
-    final double cycle = progress % 10.0;
-
-    double flashOpacity = 0.0;
-
-    if (cycle >= 2.10 && cycle < 2.16) {
-      flashOpacity = .95;
-    } else if (cycle >= 2.16 && cycle < 2.21) {
-      flashOpacity = .32;
-    } else if (cycle >= 2.21 && cycle < 2.27) {
-      flashOpacity = .68;
-    } else if (cycle >= 6.30 && cycle < 6.37) {
-      flashOpacity = .85;
-    } else if (cycle >= 6.37 && cycle < 6.42) {
-      flashOpacity = .22;
-    }
-
-    if (flashOpacity <= 0) return;
-
-    final Paint flashPaint = Paint()..color = Colors.white.withValues(alpha: flashOpacity * .25);
-
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), flashPaint);
-
-    final double boltX = size.width * (cycle < 5.0 ? .58 : .35);
-
-    final Path lightning = Path();
-
-    lightning.moveTo(boltX, -size.height * .02);
-
-    lightning.lineTo(boltX - size.width * .035, size.height * .16);
-
-    lightning.lineTo(boltX + size.width * .025, size.height * .15);
-
-    lightning.lineTo(boltX - size.width * .055, size.height * .37);
-
-    lightning.lineTo(boltX - size.width * .005, size.height * .33);
-
-    lightning.lineTo(boltX - size.width * .075, size.height * .62);
-
-    final Paint glowPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 9.0
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..color = Colors.white.withValues(alpha: flashOpacity * .28)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-
-    canvas.drawPath(lightning, glowPaint);
-
-    final Paint boltPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..color = Colors.white.withValues(alpha: flashOpacity);
-
-    canvas.drawPath(lightning, boltPaint);
+    if (_layers?.size != size) _layers = _SceneLayers(scene, size);
+    _layers!.paint(canvas, clock.value);
   }
 
   @override
-  bool shouldRepaint(covariant WeatherOverlayPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.type != type || oldDelegate.animateClouds != animateClouds || oldDelegate.animateRain != animateRain;
+  bool shouldRepaint(_WeatherScenePainter old) => old.scene.id != scene.id;
+}
+
+/// Everything a scene draws, built once per scene + size: positions, paths, shaders and Paints.
+/// Per frame only positions are recomputed and Paint alphas changed, so painting allocates nothing.
+class _SceneLayers {
+  _SceneLayers(this.scene, this.size) : _rnd = math.Random(scene.id.hashCode) {
+    final w = size.width, h = size.height;
+    // particle counts follow the area so tablets get denser scenes, capped for low-end phones
+    _density = (w * h / (390 * 310)).clamp(.6, 2.2);
+    _tint = Paint()..shader = ui.Gradient.linear(Offset.zero, Offset(0, h), scene.tint, _stops(scene.tint.length));
+    if (scene.glow != null) _buildGlow();
+    if (scene.stars) _buildStars();
+    if (scene.sun) _buildSun();
+    if (scene.moon) _buildMoon();
+    if (scene.clouds > 0) {
+      _farClouds = _buildClouds(count: (scene.clouds * 4).round() + 1, near: false);
+      _nearClouds = _buildClouds(count: (scene.clouds * 3).round(), near: true);
+    }
+    if (scene.rain > 0) {
+      _rainLayers = [
+        _buildRain(count: (scene.rain * 70 * _density).round(), len: (8, 14), speed: (420, 560), width: 1, alpha: .26),
+        _buildRain(count: (scene.rain * 38 * _density).round(), len: (16, 26), speed: (720, 900), width: 1.6, alpha: .45),
+      ];
+    }
+    if (scene.snow > 0) {
+      _snowLayers = [
+        _buildSnow(count: (scene.snow * 60 * _density).round(), radius: 1.1, speed: (16, 26), alpha: .55),
+        _buildSnow(count: (scene.snow * 36 * _density).round(), radius: 1.9, speed: (28, 42), alpha: .75),
+        _buildSnow(count: (scene.snow * 16 * _density).round(), radius: 3, speed: (48, 66), alpha: .9),
+      ];
+    }
+    if (scene.fog > 0) _buildFog();
+  }
+
+  final WeatherScene scene;
+  final Size size;
+  final math.Random _rnd;
+  late final double _density;
+  late final Paint _tint;
+
+  double _between((double, double) range) => range.$1 + _rnd.nextDouble() * (range.$2 - range.$1);
+
+  static List<double> _stops(int n) => [for (var i = 0; i < n; i++) n == 1 ? 0 : i / (n - 1)];
+
+  void paint(Canvas canvas, double t) {
+    canvas.drawRect(Offset.zero & size, _tint);
+    if (_glowPaint != null) _paintGlow(canvas, t);
+    if (_starGroups != null) _paintStars(canvas, t);
+    if (_sunGlow != null) _paintSun(canvas, t);
+    if (_moonGlow != null) _paintMoon(canvas, t);
+    if (_farClouds != null) _paintClouds(canvas, _farClouds!, t);
+    if (_rainLayers != null) _paintRain(canvas, _rainLayers![0], t);
+    if (_snowLayers != null) _paintSnow(canvas, _snowLayers![0], t);
+    if (_fogBlobs != null) _paintFog(canvas, t, front: false);
+    if (_nearClouds != null) _paintClouds(canvas, _nearClouds!, t);
+    if (_snowLayers != null) {
+      _paintSnow(canvas, _snowLayers![1], t);
+      _paintSnow(canvas, _snowLayers![2], t);
+    }
+    if (_rainLayers != null) _paintRain(canvas, _rainLayers![1], t);
+    if (_fogBlobs != null) _paintFog(canvas, t, front: true);
+    if (scene.lightning) _paintLightning(canvas, t);
+  }
+
+  // ---- horizon glow (sunrise / sunset)
+  Paint? _glowPaint;
+
+  void _buildGlow() {
+    final c = scene.glow!;
+    final center = Offset(size.width * .5, size.height * 1.05);
+    _glowPaint = Paint()..shader = ui.Gradient.radial(center, size.width * .95, [c.withValues(alpha: .6), c.withValues(alpha: .22), c.withValues(alpha: 0)], [0, .45, 1]);
+  }
+
+  void _paintGlow(Canvas canvas, double t) {
+    _glowPaint!.color = Color.fromRGBO(0, 0, 0, .85 + .15 * math.sin(t * .15));
+    canvas.drawRect(Offset.zero & size, _glowPaint!);
+  }
+
+  // ---- stars: three twinkle groups, each one draw call
+  List<(Float32List, Paint, double, double)>? _starGroups;
+
+  void _buildStars() {
+    final n = (55 * _density).round();
+    _starGroups = [
+      for (final width in const [1.1, 1.6, 2.2])
+        (
+          Float32List.fromList([for (var i = 0; i < n ~/ 3; i++) ...[_rnd.nextDouble() * size.width, _rnd.nextDouble() * size.height * .62]]),
+          Paint()
+            ..strokeWidth = width
+            ..strokeCap = StrokeCap.round,
+          .4 + _rnd.nextDouble() * .8, // twinkle speed
+          _rnd.nextDouble() * math.pi * 2, // phase
+        ),
+    ];
+  }
+
+  void _paintStars(Canvas canvas, double t) {
+    for (final (points, paint, speed, phase) in _starGroups!) {
+      paint.color = Color.fromRGBO(255, 255, 255, .45 + .4 * math.sin(t * speed + phase).abs());
+      canvas.drawRawPoints(ui.PointMode.points, points, paint);
+    }
+  }
+
+  // ---- sun: glow, slowly turning soft rays, disc
+  Paint? _sunGlow;
+  late Paint _sunRays, _sunDisc;
+  late Path _rayPath;
+  late Offset _sunCenter;
+  late double _sunRadius;
+
+  void _buildSun() {
+    final low = scene.glow != null;
+    _sunRadius = size.shortestSide * (low ? .1 : .085);
+    _sunCenter = Offset(size.width * .78, size.height * (low ? .7 : .3));
+    final warm = low ? const Color(0xFFFFB067) : const Color(0xFFFFE08A);
+    _sunGlow = Paint()..shader = ui.Gradient.radial(_sunCenter, _sunRadius * 5, [warm.withValues(alpha: .55), warm.withValues(alpha: .18), warm.withValues(alpha: 0)], [0, .35, 1]);
+    _sunRays = Paint()..shader = ui.Gradient.radial(Offset.zero, _sunRadius * 3.6, [Colors.white.withValues(alpha: .5), Colors.white.withValues(alpha: 0)]);
+    _sunDisc = Paint()..shader = ui.Gradient.radial(_sunCenter.translate(-_sunRadius * .3, -_sunRadius * .3), _sunRadius * 1.4, [const Color(0xFFFFFBE6), low ? const Color(0xFFFFC27A) : const Color(0xFFFFE27A), low ? const Color(0xFFFF9A4D) : const Color(0xFFFFC94D)], [0, .5, 1]);
+    _rayPath = Path();
+    const rays = 12;
+    for (var i = 0; i < rays; i++) {
+      final a = i / rays * math.pi * 2;
+      final spread = math.pi / rays * .35;
+      final len = _sunRadius * (i.isEven ? 3.4 : 2.6);
+      _rayPath
+        ..moveTo(math.cos(a - spread) * _sunRadius, math.sin(a - spread) * _sunRadius)
+        ..lineTo(math.cos(a) * len, math.sin(a) * len)
+        ..lineTo(math.cos(a + spread) * _sunRadius, math.sin(a + spread) * _sunRadius)
+        ..close();
+    }
+  }
+
+  void _paintSun(Canvas canvas, double t) {
+    _sunGlow!.color = Color.fromRGBO(0, 0, 0, .85 + .15 * math.sin(t * .5));
+    canvas.drawCircle(_sunCenter, _sunRadius * 5, _sunGlow!);
+    _sunRays.color = Color.fromRGBO(0, 0, 0, .55 + .25 * math.sin(t * .35));
+    canvas
+      ..save()
+      ..translate(_sunCenter.dx, _sunCenter.dy)
+      ..rotate(t * .025)
+      ..drawPath(_rayPath, _sunRays)
+      ..restore();
+    canvas.drawCircle(_sunCenter, _sunRadius, _sunDisc);
+  }
+
+  // ---- moon
+  Paint? _moonGlow;
+  late Paint _moonDisc, _crater;
+  late Offset _moonCenter;
+  late double _moonRadius;
+
+  void _buildMoon() {
+    _moonRadius = size.shortestSide * .075;
+    _moonCenter = Offset(size.width * .78, size.height * .28);
+    _moonGlow = Paint()..shader = ui.Gradient.radial(_moonCenter, _moonRadius * 4.5, [const Color(0x55DDE7FF), const Color(0x22C8D6F5), const Color(0x00C8D6F5)], [0, .4, 1]);
+    _moonDisc = Paint()..shader = ui.Gradient.radial(_moonCenter.translate(-_moonRadius * .35, -_moonRadius * .35), _moonRadius * 1.5, [Colors.white, const Color(0xFFF0EFDC), const Color(0xFFD3D3C1)], [0, .55, 1]);
+    _crater = Paint()..color = const Color(0x40A9AA9C);
+  }
+
+  void _paintMoon(Canvas canvas, double t) {
+    _moonGlow!.color = Color.fromRGBO(0, 0, 0, .85 + .15 * math.sin(t * .4));
+    canvas.drawCircle(_moonCenter, _moonRadius * 4.5, _moonGlow!);
+    canvas.drawCircle(_moonCenter, _moonRadius, _moonDisc);
+    canvas.drawCircle(_moonCenter.translate(_moonRadius * .3, _moonRadius * .15), _moonRadius * .18, _crater);
+    canvas.drawCircle(_moonCenter.translate(-_moonRadius * .22, _moonRadius * .32), _moonRadius * .11, _crater);
+    canvas.drawCircle(_moonCenter.translate(-_moonRadius * .05, -_moonRadius * .35), _moonRadius * .08, _crater);
+  }
+
+  // ---- clouds: soft puffs (radial gradients, no blur filters), two parallax layers
+  List<_Cloud>? _farClouds, _nearClouds;
+
+  List<_Cloud> _buildClouds({required int count, required bool near}) {
+    final w = size.width, h = size.height;
+    final base = scene.cloudColor;
+    final shade = Color.lerp(base, Colors.black, .22)!;
+    return [
+      for (var i = 0; i < count; i++)
+        () {
+          final width = w * (near ? _between((.42, .62)) : _between((.24, .36)));
+          final puffs = <(Offset, double, Paint)>[];
+          void puff(double dx, double dy, double r, Color c) => puffs.add((Offset(dx, dy), r, Paint()..shader = ui.Gradient.radial(Offset(dx, dy), r, [c.withValues(alpha: .95), c.withValues(alpha: .8), c.withValues(alpha: 0)], [0, .55, 1])));
+          // shaded underside first, bright crown on top
+          for (var k = 0; k < 4; k++) {
+            puff(-width * .38 + k * width * .25, width * .08, width * _between((.15, .2)), shade);
+          }
+          for (var k = 0; k < 5; k++) {
+            final arc = math.sin(k / 4 * math.pi);
+            puff(-width * .36 + k * width * .18, -arc * width * .11 + _between((-.02, .02)) * width, width * (.14 + .1 * arc + _between((0, .03))), base);
+          }
+          return _Cloud(
+            x: _rnd.nextDouble() * (w + width * 2),
+            y: h * (near ? _between((.12, .55)) : _between((.05, .45))),
+            width: width,
+            speed: (near ? _between((9, 15)) : _between((3.5, 7))) * (w / 390),
+            alpha: near ? _between((.8, .95)) : _between((.45, .7)),
+            phase: _rnd.nextDouble() * math.pi * 2,
+            puffs: puffs,
+          );
+        }(),
+    ];
+  }
+
+  void _paintClouds(Canvas canvas, List<_Cloud> clouds, double t) {
+    final span = size.width;
+    for (final c in clouds) {
+      final x = (c.x + t * c.speed) % (span + c.width * 2) - c.width;
+      // slow brightness breathing so the sky never looks frozen
+      final alpha = c.alpha * (.88 + .12 * math.sin(t * .18 + c.phase));
+      canvas
+        ..save()
+        ..translate(x, c.y);
+      for (final (center, r, paint) in c.puffs) {
+        paint.color = Color.fromRGBO(0, 0, 0, alpha);
+        canvas.drawCircle(center, r, paint);
+      }
+      canvas.restore();
+    }
+  }
+
+  // ---- rain: each layer is one drawRawPoints(lines) call over a reused buffer
+  List<_Particles>? _rainLayers;
+  static const _slant = .17;
+
+  _Particles _buildRain({required int count, required (double, double) len, required (double, double) speed, required double width, required double alpha}) {
+    final h = size.height;
+    return _Particles(
+      x: Float32List.fromList([for (var i = 0; i < count; i++) _rnd.nextDouble() * (size.width + h * _slant) - h * _slant]),
+      y: Float32List.fromList([for (var i = 0; i < count; i++) _rnd.nextDouble() * h]),
+      len: Float32List.fromList([for (var i = 0; i < count; i++) _between(len)]),
+      speed: Float32List.fromList([for (var i = 0; i < count; i++) _between(speed) * (h / 310)]),
+      buffer: Float32List(count * 4),
+      paint: Paint()
+        ..color = Color.fromRGBO(220, 235, 255, alpha)
+        ..strokeWidth = width
+        ..strokeCap = StrokeCap.round,
+    );
+  }
+
+  void _paintRain(Canvas canvas, _Particles p, double t) {
+    final h = size.height;
+    final b = p.buffer;
+    for (var i = 0; i < p.x.length; i++) {
+      final len = p.len[i];
+      final y = (p.y[i] + t * p.speed[i]) % (h + len) - len;
+      final x = p.x[i] + y * _slant;
+      b[i * 4] = x;
+      b[i * 4 + 1] = y;
+      b[i * 4 + 2] = x + len * _slant;
+      b[i * 4 + 3] = y + len;
+    }
+    canvas.drawRawPoints(ui.PointMode.lines, b, p.paint);
+  }
+
+  // ---- snow: one drawRawPoints(points) call per layer, flakes sway as they fall
+  List<_Particles>? _snowLayers;
+
+  _Particles _buildSnow({required int count, required double radius, required (double, double) speed, required double alpha}) {
+    return _Particles(
+      x: Float32List.fromList([for (var i = 0; i < count; i++) _rnd.nextDouble() * size.width]),
+      y: Float32List.fromList([for (var i = 0; i < count; i++) _rnd.nextDouble() * size.height]),
+      len: Float32List.fromList([for (var i = 0; i < count; i++) _rnd.nextDouble() * math.pi * 2]), // sway phase
+      speed: Float32List.fromList([for (var i = 0; i < count; i++) _between(speed) * (size.height / 310)]),
+      buffer: Float32List(count * 2),
+      paint: Paint()
+        ..color = Color.fromRGBO(255, 255, 255, alpha)
+        ..strokeWidth = radius * 2
+        ..strokeCap = StrokeCap.round,
+    );
+  }
+
+  void _paintSnow(Canvas canvas, _Particles p, double t) {
+    final h = size.height;
+    final sway = size.width * .02;
+    final b = p.buffer;
+    for (var i = 0; i < p.x.length; i++) {
+      b[i * 2] = p.x[i] + math.sin(t * .9 + p.len[i]) * sway;
+      b[i * 2 + 1] = (p.y[i] + t * p.speed[i]) % (h + 8) - 4;
+    }
+    canvas.drawRawPoints(ui.PointMode.points, b, p.paint);
+  }
+
+  // ---- fog: wide soft blobs drifting at two depths
+  List<(Offset, double, Paint, bool)>? _fogBlobs;
+
+  void _buildFog() {
+    final w = size.width, h = size.height;
+    final light = scene.tint.first.computeLuminance() > .25 || scene.id.endsWith('day');
+    final c = light ? const Color(0xFFF2F4F7) : const Color(0xFF9AA6BC);
+    _fogBlobs = [
+      for (var i = 0; i < 8; i++)
+        () {
+          final front = i.isOdd;
+          final r = w * _between((.35, .55));
+          final paint = Paint()..shader = ui.Gradient.radial(Offset.zero, r, [c.withValues(alpha: front ? .42 : .3), c.withValues(alpha: 0)]);
+          return (Offset(i / 8 * w * 2, h * (front ? _between((.62, .95)) : _between((.35, .7)))), r, paint, front);
+        }(),
+    ];
+  }
+
+  void _paintFog(Canvas canvas, double t, {required bool front}) {
+    final w = size.width;
+    for (final (pos, r, paint, isFront) in _fogBlobs!) {
+      if (isFront != front) continue;
+      paint.color = Color.fromRGBO(0, 0, 0, scene.fog * (.75 + .25 * math.sin(t * .2 + pos.dx)));
+      final x = (pos.dx + t * (front ? 9 : 4) * (w / 390)) % (w * 2) - w * .5;
+      canvas
+        ..save()
+        ..translate(x, pos.dy)
+        ..scale(1, .35) // flatten into a drifting band
+        ..drawCircle(Offset.zero, r, paint)
+        ..restore();
+    }
+  }
+
+  // ---- lightning: one strike per 7s window at a seeded random moment, double flash, whole sky lit
+  int _boltWindow = -1;
+  Path? _bolt;
+  double _strikeAt = 0;
+  final Paint _flash = Paint();
+  final Paint _boltCore = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.2
+    ..strokeJoin = StrokeJoin.round
+    ..strokeCap = StrokeCap.round;
+  final Paint _boltGlow = Paint()
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 7
+    ..strokeJoin = StrokeJoin.round
+    ..strokeCap = StrokeCap.round;
+
+  void _paintLightning(Canvas canvas, double t) {
+    const window = 7.0;
+    final k = (t / window).floor();
+    if (k != _boltWindow) {
+      // new bolt only once per window, so paths aren't built every frame
+      _boltWindow = k;
+      final r = math.Random(k * 7919 + scene.id.hashCode);
+      _strikeAt = k * window + 1 + r.nextDouble() * 4.5;
+      var x = size.width * (.2 + r.nextDouble() * .6), y = -4.0;
+      _bolt = Path()..moveTo(x, y);
+      while (y < size.height * (.45 + r.nextDouble() * .25)) {
+        x += (r.nextDouble() - .5) * size.width * .09;
+        y += size.height * (.04 + r.nextDouble() * .06);
+        _bolt!.lineTo(x, y);
+      }
+    }
+    final s = t - _strikeAt;
+    if (s < 0 || s > .9) return;
+    final intensity = s < .07 ? 1.0 : s < .14 ? .25 : s < .24 ? .8 : math.exp(-(s - .24) * 7) * .8;
+    _flash.color = Color.fromRGBO(225, 232, 255, .32 * intensity);
+    canvas.drawRect(Offset.zero & size, _flash);
+    if (s < .24) {
+      _boltGlow.color = Color.fromRGBO(200, 215, 255, .35 * intensity);
+      _boltCore.color = Color.fromRGBO(255, 255, 255, intensity);
+      canvas
+        ..drawPath(_bolt!, _boltGlow)
+        ..drawPath(_bolt!, _boltCore);
+    }
   }
 }
 
-class _RainDrop {
-  final double x;
-  final double alpha;
-  final double lengthFactor;
-  final double speed;
+class _Cloud {
+  _Cloud({required this.x, required this.y, required this.width, required this.speed, required this.alpha, required this.phase, required this.puffs});
 
-  const _RainDrop(this.x, this.alpha, this.lengthFactor, this.speed);
+  final double x, y, width, speed, alpha, phase;
+  // centre (relative to the cloud), radius, paint with its radial shader
+  final List<(Offset, double, Paint)> puffs;
 }
 
-class _SnowFlake {
-  final double x;
-  final double opacity;
-  final double size;
-  final double speed;
-  final double delay;
+class _Particles {
+  _Particles({required this.x, required this.y, required this.len, required this.speed, required this.buffer, required this.paint});
 
-  const _SnowFlake(this.x, this.opacity, this.size, this.speed, this.delay);
-}
-
-class _CloudData {
-  final double top;
-  final double scale;
-  final double width;
-  final double speed;
-  final double opacity;
-  final double delay;
-
-  const _CloudData({required this.top, required this.scale, required this.width, required this.speed, required this.opacity, required this.delay});
+  final Float32List x, y, len, speed, buffer;
+  final Paint paint;
 }

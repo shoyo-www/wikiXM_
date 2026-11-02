@@ -19,6 +19,7 @@ import '../widgets/cache_image.dart';
 import '../widgets/common_bullet.dart';
 import '../widgets/common_header.dart';
 import '../widgets/common_metric.dart';
+import '../widgets/entrance_animation.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({super.key});
@@ -47,7 +48,7 @@ class _NewsScreenState extends State<NewsScreen> {
       bodyPadding: EdgeInsets.zero,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: GetBuilder(
-        id: ControllerBuilders.communityIntelligence,
+        id: ControllerBuilders.communityLoading,
         init: dashboardController,
         builder: (controller) {
           return controller.isLoading
@@ -58,17 +59,26 @@ class _NewsScreenState extends State<NewsScreen> {
                   collapsedColor: Theme.of(context).highlightColor,
                   hero: buildHeroHeader(isLight),
                   slivers: [
-                    SliverToBoxAdapter(child: firstCard(controller)),
                     SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                      child: EntranceAnimation(
+                        child: GetBuilder<DashboardController>(
+                          id: ControllerBuilders.communityBrief,
+                          builder: firstCard,
+                        ),
+                      ),
+                    ),
+                    // built lazily: sections are only built and laid out as they scroll near the screen
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate(
+                          entranceList([
                             SizedBox(height: Dimensions.h_15),
                             CommonSectionHeader(title: "TODAY'S SNAPSHOT", onActionTap: () {}),
                             SizedBox(height: Dimensions.h_10),
-                            SizedBox(
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.communitySnapshot,
+                              builder: (controller) => SizedBox(
                               height: Dimensions.h_80,
                               child: ListView.builder(
                                 itemCount: controller.communityOverview?.today?.length ?? 0,
@@ -90,9 +100,12 @@ class _NewsScreenState extends State<NewsScreen> {
                                   );
                                 },
                               ),
+                              ),
                             ),
                             SizedBox(height: Dimensions.h_10),
-                            CommonCard(
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.communityTopStory,
+                              builder: (controller) => CommonCard(
                               padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_8),
                               child: Column(
                                 children: [
@@ -192,11 +205,14 @@ class _NewsScreenState extends State<NewsScreen> {
                                   ),
                                 ],
                               ),
+                              ),
                             ),
                             SizedBox(height: Dimensions.h_15),
                             CommonSectionHeader(title: 'YOUR REPRESENTATIVES'),
                             SizedBox(height: Dimensions.h_10),
-                            SizedBox(
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.communityRepresentatives,
+                              builder: (controller) => SizedBox(
                               height: Dimensions.h_140,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
@@ -279,8 +295,11 @@ class _NewsScreenState extends State<NewsScreen> {
                                   );
                                 },
                               ),
+                              ),
                             ),
-                            Container(
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.communityQuestion,
+                              builder: (controller) => Container(
                               margin: EdgeInsets.only(top: Dimensions.h_10),
                               padding: EdgeInsets.only(top: Dimensions.h_5, left: Dimensions.w_10, bottom: Dimensions.h_10),
                               decoration: BoxDecoration(color: AppColor.newsScreenPurpleSoft(context), borderRadius: BorderRadius.circular(6)),
@@ -356,14 +375,23 @@ class _NewsScreenState extends State<NewsScreen> {
                                   ),
                                 ],
                               ),
+                              ),
                             ),
-                            meetings(controller, context),
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.communityMeetings,
+                              builder: (controller) => meetings(controller, context),
+                            ),
                             SizedBox(height: Dimensions.h_15),
                             CommonSectionHeader(title: "EXPLORE BY TOPIC", actionText: 'Swipe to explore'),
                             SizedBox(height: Dimensions.h_8),
                             category(),
                             SizedBox(height: Dimensions.h_15),
-                            if (controller.feedData?.localIntelligence?.items?.isNotEmpty ?? false) ...[
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.communityLocalIntelligence,
+                              builder: (controller) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (controller.feedData?.localIntelligence?.items?.isNotEmpty ?? false) ...[
                               CommonSectionHeader(title: "MORE LOCAL INTELLIGENCE", actionText: 'View All'),
                               CommonCard(
                                 margin: EdgeInsets.only(top: Dimensions.h_10),
@@ -455,10 +483,18 @@ class _NewsScreenState extends State<NewsScreen> {
                                 ),
                               ),
                               SizedBox(height: Dimensions.h_15),
-                            ],
-                            CommonSectionHeader(title: 'AROUND YOUR REGION', actionText: 'Swipe to explore'),
-                            SizedBox(height: Dimensions.h_8),
-                            Builder(
+                                  ],
+                                ],
+                              ),
+                            ),
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.communityRegion,
+                              builder: (controller) => Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CommonSectionHeader(title: 'AROUND YOUR REGION', actionText: 'Swipe to explore'),
+                                  SizedBox(height: Dimensions.h_8),
+                                  Builder(
                               builder: (c) {
                                 final levelList = controller.feedData?.levelIntelligence?.levels ?? [];
                                 final levelsWithItems = levelList.where((level) => (level.items ?? []).isNotEmpty).toList();
@@ -516,6 +552,9 @@ class _NewsScreenState extends State<NewsScreen> {
                                         ),
                                 );
                               },
+                                  ),
+                                ],
+                              ),
                             ),
                             SizedBox(height: Dimensions.h_15),
                             CommonSectionHeader(title: 'COMMUNITY LIFE', actionText: 'View All'),
@@ -561,7 +600,10 @@ class _NewsScreenState extends State<NewsScreen> {
                                 },
                               ),
                             ),
-                            sponsor(controller, isLight),
+                            GetBuilder<DashboardController>(
+                              id: ControllerBuilders.communitySponsor,
+                              builder: (controller) => sponsor(controller, isLight),
+                            ),
                             SizedBox(height: Dimensions.h_10),
                             CommonCard(
                               child: Row(
@@ -609,7 +651,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                 ],
                               ),
                             ),
-                          ],
+                          ]),
                         ),
                       ),
                     ),
@@ -973,7 +1015,7 @@ class _NewsScreenState extends State<NewsScreen> {
 
   Widget buildHeroHeader(bool isLight) {
     return GetBuilder(
-      id: ControllerBuilders.homeController,
+      id: ControllerBuilders.communityHero,
       init: dashboardController,
       builder: (c) {
         return Stack(

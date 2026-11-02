@@ -34,7 +34,6 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
   Widget build(BuildContext context) {
     bool isLight = Theme.of(context).brightness == Brightness.light;
     final blue = AppColor.blue(context);
-    final green = AppColor.green(context);
     final blueSoft = AppColor.createGroupBlueSoft(context);
     return AppScaffold(
       top: false,

@@ -143,9 +143,10 @@ class CurrentWeather {
     temperature: json["temperature"] == null ? null : Temperature.fromJson(json["temperature"]),
     feelsLike: json["feels_like"] == null ? null : FeelsLike.fromJson(json["feels_like"]),
     condition: json["condition"] == null ? null : Condition.fromJson(json["condition"]),
-    humidityPercent: json["humidity_percent"],
+    // the API sends numbers as int or double depending on the value (feels-like is calculated, e.g. 67.4)
+    humidityPercent: (json["humidity_percent"] as num?)?.round(),
     wind: json["wind"] == null ? null : Wind.fromJson(json["wind"]),
-    precipitationProbabilityPercent: json["precipitation_probability_percent"],
+    precipitationProbabilityPercent: (json["precipitation_probability_percent"] as num?)?.round(),
   );
 
 }
@@ -196,7 +197,7 @@ class FeelsLike {
   });
 
   factory FeelsLike.fromJson(Map<String, dynamic> json) => FeelsLike(
-    value: json["value"],
+    value: (json["value"] as num?)?.round(),
     unit: json["unit"],
     calculated: json["calculated"],
   );
@@ -232,7 +233,7 @@ class Temperature {
   });
 
   factory Temperature.fromJson(Map<String, dynamic> json) => Temperature(
-    value: json["value"],
+    value: (json["value"] as num?)?.round(),
     unit: json["unit"],
   );
 
@@ -254,8 +255,8 @@ class Wind {
   });
 
   factory Wind.fromJson(Map<String, dynamic> json) => Wind(
-    minimum: json["minimum"],
-    maximum: json["maximum"],
+    minimum: (json["minimum"] as num?)?.round(),
+    maximum: (json["maximum"] as num?)?.round(),
     unit: json["unit"],
     raw: json["raw"],
     direction: json["direction"],

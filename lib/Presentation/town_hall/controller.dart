@@ -18,13 +18,13 @@ class TownHallController extends GetxController {
 
   Future<void> getData() async {
     isLoading = true;
-    update([ControllerBuilders.townHallController]);
+    update([ControllerBuilders.townHallLoading]);
     var data = await townHallRepositoryImpl.getData();
     data.fold(
       (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.townHallController]);
+          update([ControllerBuilders.townHallLoading]);
         }
       },
       (r) {
@@ -32,10 +32,24 @@ class TownHallController extends GetxController {
         if (status == true) {
           townHallData = r.data;
           isLoading = false;
-          update([ControllerBuilders.townHallController]);
+          update([
+            ControllerBuilders.townHallLoading,
+            ControllerBuilders.townHallHero,
+            ControllerBuilders.townHallBrief,
+            ControllerBuilders.townHallImpact,
+            ControllerBuilders.townHallBills,
+            ControllerBuilders.townHallMeeting,
+            ControllerBuilders.townHallPriorities,
+            ControllerBuilders.townHallRepresentatives,
+            ControllerBuilders.townHallEngagement,
+            ControllerBuilders.townHallProjects,
+            ControllerBuilders.townHallTransparency,
+            ControllerBuilders.townHallSentiment,
+            ControllerBuilders.townHallPoll,
+          ]);
         } else {
           isLoading = false;
-          update([ControllerBuilders.townHallController]);
+          update([ControllerBuilders.townHallLoading]);
         }
       },
     );

@@ -17,6 +17,7 @@ import '../widgets/animated_Image.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/common_bullet.dart';
 import '../widgets/drawer/src/slider_drawer.dart';
+import '../widgets/drawer_menu_item.dart';
 
 class GarageScreen extends StatefulWidget {
   const GarageScreen({super.key});
@@ -125,7 +126,7 @@ class _GarageScreenState extends State<GarageScreen> {
         bodyPadding: EdgeInsets.zero,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: GetBuilder(
-          id: ControllerBuilders.myGarageController,
+          id: ControllerBuilders.garageLoading,
           init: garageController,
           builder: (controller) {
             return controller.isLoading
@@ -146,23 +147,23 @@ class _GarageScreenState extends State<GarageScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              aiBrief(),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageBrief, builder: (_) => aiBrief()),
                               SizedBox(height: Dimensions.h_15),
-                              cash(isLight),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageCash, builder: (_) => cash(isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              garageValue(isLight),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageValue, builder: (_) => garageValue(isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              aiSellingBrief(isLight),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageSellingBrief, builder: (_) => aiSellingBrief(isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              sellerProfile(isLight),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageSellerProfile, builder: (_) => sellerProfile(isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              bestMovesToday(isLight),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageBestMoves, builder: (_) => bestMovesToday(isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              myInventory(isLight),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageInventory, builder: (_) => myInventory(isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              myListings(isLight),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageListings, builder: (_) => myListings(isLight)),
                               SizedBox(height: Dimensions.h_15),
-                              topSellers(isLight),
+                              GetBuilder<GarageController>(id: ControllerBuilders.garageTopSellers, builder: (_) => topSellers(isLight)),
                               SizedBox(height: Dimensions.h_15),
                               CommonCard(
                                 child: Row(
@@ -218,72 +219,6 @@ class _GarageScreenState extends State<GarageScreen> {
                     ],
                   );
           },
-        ),
-      ),
-    );
-  }
-
-  Widget menuItem(BuildContext context, {required String title, required IconData icon, bool isSelected = false, VoidCallback? onTap, bool? isLight, String? badge, bool isBadgeRed = false}) {
-    final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        margin: EdgeInsets.only(bottom: Dimensions.h_2, right: Dimensions.w_20),
-        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_7, vertical: Dimensions.h_4),
-        decoration: BoxDecoration(
-          color: isSelected ? (isLight == true ? const Color(0xFFEDF3FB) : const Color(0xFF14223A)) : Colors.transparent,
-          borderRadius: BorderRadius.circular(Dimensions.h_6),
-          border: isSelected ? Border.all(color: theme.primaryColorDark.withValues(alpha: 0.50), width: 0.5) : null,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: Dimensions.h_22,
-              height: Dimensions.h_22,
-              decoration: BoxDecoration(
-                color: isSelected ? (isLight == true ? const Color(0xFFEDF3FB) : const Color(0xFF14223A)) : Colors.transparent,
-                shape: BoxShape.circle,
-                border: Border.all(color: isSelected ? theme.primaryColorDark.withValues(alpha: 0.50) : theme.primaryColor.withValues(alpha: 0.30), width: 0.5),
-              ),
-              child: Icon(
-                icon,
-                color: isSelected
-                    ? isLight == true
-                          ? AppColor.darkBlue
-                          : const Color(0xFF4b8bff)
-                    : theme.primaryColor,
-                size: Dimensions.h_12,
-              ),
-            ),
-            SizedBox(width: Dimensions.w_7),
-            Expanded(
-              child: Text(
-                title.toUpperCase(),
-                style: TextStyle(
-                  color: isSelected
-                      ? isLight == true
-                            ? AppColor.darkBlue
-                            : const Color(0xFF4b8bff)
-                      : theme.primaryColor,
-                  fontSize: FontSize.sp_10,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w700,
-                  height: 1,
-                ),
-              ),
-            ),
-            if (badge != null)
-              Container(
-                constraints: BoxConstraints(minWidth: Dimensions.h_15, minHeight: Dimensions.h_15),
-                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_3),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(color: isBadgeRed ? const Color(0xFFE51B3E) : const Color(0xFF2775C9), shape: BoxShape.circle),
-                child: Text(
-                  badge,
-                  style: TextStyle(color: Colors.white, fontSize: FontSize.sp_8, fontWeight: FontWeight.w900),
-                ),
-              ),
-          ],
         ),
       ),
     );
@@ -2438,7 +2373,9 @@ class _GarageScreenState extends State<GarageScreen> {
   }
 
   Widget buildHeroHeader(bool isLight, GarageController controller) {
-    return Stack(
+    return GetBuilder<GarageController>(
+      id: ControllerBuilders.garageHero,
+      builder: (controller) => Stack(
       clipBehavior: Clip.none,
       children: [
         AnimatedWeatherImage(height: Dimensions.h_330, image: "https://staging.wikixm.com/web/assets/images/garage/my-garage/garage-v1-hero.webp"),
@@ -2524,6 +2461,7 @@ class _GarageScreenState extends State<GarageScreen> {
           ),
         ),
       ],
+      ),
     );
   }
 

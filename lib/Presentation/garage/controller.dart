@@ -96,13 +96,13 @@ class GarageController extends GetxController {
 
   void getData() async {
     isLoading = true;
-    update([ControllerBuilders.myGarageController]);
+    update([ControllerBuilders.garageLoading]);
     await Future.wait([
     getMyGarage(),
     getMyGarageAI()
     ]);
     isLoading = false;
-    update([ControllerBuilders.myGarageController]);
+    update([ControllerBuilders.garageLoading]);
   }
 
   void initializeFilterDefaults() {
@@ -519,13 +519,13 @@ class GarageController extends GetxController {
 
   Future<void> getMyGarage() async {
     isLoading = true;
-    update([ControllerBuilders.myGarageController]);
+    update([ControllerBuilders.garageLoading]);
     var data = await garageRepositoryImpl.myGarage();
     data.fold(
           (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.myGarageController]);
+          update([ControllerBuilders.garageLoading]);
         }
       },
           (r) {
@@ -533,10 +533,32 @@ class GarageController extends GetxController {
         if (status == true) {
           dashboardData = r.data;
           isLoading = false;
-          update([ControllerBuilders.myGarageController]);
+          update([
+            ControllerBuilders.garageHero,
+            ControllerBuilders.garageBrief,
+            ControllerBuilders.garageCash,
+            ControllerBuilders.garageValue,
+            ControllerBuilders.garageSellingBrief,
+            ControllerBuilders.garageSellerProfile,
+            ControllerBuilders.garageBestMoves,
+            ControllerBuilders.garageInventory,
+            ControllerBuilders.garageListings,
+            ControllerBuilders.garageTopSellers,
+          ]);
         } else {
           isLoading = false;
-          update([ControllerBuilders.myGarageController]);
+          update([
+            ControllerBuilders.garageHero,
+            ControllerBuilders.garageBrief,
+            ControllerBuilders.garageCash,
+            ControllerBuilders.garageValue,
+            ControllerBuilders.garageSellingBrief,
+            ControllerBuilders.garageSellerProfile,
+            ControllerBuilders.garageBestMoves,
+            ControllerBuilders.garageInventory,
+            ControllerBuilders.garageListings,
+            ControllerBuilders.garageTopSellers,
+          ]);
         }
       },
     );
@@ -544,13 +566,13 @@ class GarageController extends GetxController {
 
   Future<void> getMyGarageAI() async {
     isLoading = true;
-    update([ControllerBuilders.myGarageController]);
+    update([ControllerBuilders.garageLoading]);
     var data = await garageRepositoryImpl.myGarageAI();
     data.fold(
           (l) {
         if (l is ServerFailure) {
           isLoading = false;
-          update([ControllerBuilders.myGarageController]);
+          update([ControllerBuilders.garageLoading]);
         }
       },
           (r) {
@@ -558,10 +580,10 @@ class GarageController extends GetxController {
         if (status == true) {
           aiGarageData = r.data;
           isLoading = false;
-          update([ControllerBuilders.myGarageController]);
+          update([ControllerBuilders.garageBrief, ControllerBuilders.garageSellingBrief]);
         } else {
           isLoading = false;
-          update([ControllerBuilders.myGarageController]);
+          update([ControllerBuilders.garageBrief, ControllerBuilders.garageSellingBrief]);
         }
       },
     );

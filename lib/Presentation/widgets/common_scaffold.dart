@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/fontsize.dart';
 import '../dashboard/controller.dart';
+import 'after_route_transition.dart';
 
 class AppScaffold extends StatelessWidget {
   const AppScaffold({super.key, required this.body, this.appBar, this.top, this.bottom, this.backgroundColor, this.bodyPadding, this.isNavbar, this.drawer, this.bottomNavigationBar});
@@ -97,7 +98,10 @@ class AppScaffold extends StatelessWidget {
                                   }),
                                 ),
                               )
-                            : CNTabBar(
+                            // native view: creating it mid-transition stalls the animation, so it appears once the page has settled
+                            : AfterRouteTransition(
+                                placeholder: SizedBox(height: Dimensions.h_60),
+                                child: CNTabBar(
                                 height: Dimensions.h_60,
                                 items: const [
                                   CNTabBarItem(label: 'Home', icon: CNSymbol('house.fill')),
@@ -115,6 +119,7 @@ class AppScaffold extends StatelessWidget {
                                 rightCount: 0,
                                 shrinkCentered: true,
                                 onTap: controller.changeTabIndex,
+                              ),
                               ),
                       ),
                     ),
