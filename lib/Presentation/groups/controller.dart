@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:wikixm/data/datasource/Repository_impl/group_repository_impl.dart';
 import 'package:wikixm/data/datasource/remote/models/request/group_join.dart';
 import 'package:wikixm/data/datasource/remote/models/response/group_home.dart';
@@ -18,6 +19,8 @@ import '../../data/datasource/remote/models/response/my_group_activities.dart';
 import '../../data/datasource/remote/models/response/my_group_list.dart';
 import '../../data/datasource/remote/models/response/my_group_summary.dart';
 import '../../data/datasource/remote/models/response/activity_profile.dart';
+import '../../data/datasource/remote/models/response/public_profile.dart' as pp;
+import '../../data/datasource/remote/models/response/public_profile_feed.dart';
 import '../../data/datasource/remote/models/response/search_group.dart' as discover;
 import '../../data/datasource/remote/models/response/search_group_overview.dart' as discover_overview;
 import '../../data/datasource/remote/services/apis.dart';
@@ -51,7 +54,6 @@ class GroupController extends GetxController {
   String? interestSort;
   Map<String, Set<String>> interestFilters = {};
   String selectedCover = 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-crew.webp';
-
 
   final List<Map<String, dynamic>> quickActions = [
     {'title': 'Plan', 'icon': Icons.calendar_today_outlined, 'type': 'join', 'color': 'outline'},
@@ -233,7 +235,13 @@ class GroupController extends GetxController {
     }
     final now = interestData?.discovery;
     final heroChanged = old?.interestName != now?.interestName || old?.heading != now?.heading || old?.intro != now?.intro || old?.image?.url != now?.image?.url;
-    update([if (heroChanged) ControllerBuilders.interestHero, ControllerBuilders.interestTabs, ControllerBuilders.interestHeader, ControllerBuilders.interestItems, ControllerBuilders.interestFilters]);
+    update([
+      if (heroChanged) ControllerBuilders.interestHero,
+      ControllerBuilders.interestTabs,
+      ControllerBuilders.interestHeader,
+      ControllerBuilders.interestItems,
+      ControllerBuilders.interestFilters,
+    ]);
   }
 
   bool hasGroupDetailTab(String id) => (groupDetailData?.profile?.tabs ?? []).any((t) => t.id == id);
@@ -369,7 +377,13 @@ class GroupController extends GetxController {
         (response) {
           if (response.success == true) {
             joinLeaveData = response.data;
-            _updateFeaturedGroup(groupId, isJoined: response.data?.isJoined ?? !isLeave, membersCount: response.data?.membersCount, membersLabel: response.data?.membersLabel, canJoin: response.data?.canJoin);
+            _updateFeaturedGroup(
+              groupId,
+              isJoined: response.data?.isJoined ?? !isLeave,
+              membersCount: response.data?.membersCount,
+              membersLabel: response.data?.membersLabel,
+              canJoin: response.data?.canJoin,
+            );
           } else {
             rollback();
           }
@@ -818,11 +832,11 @@ class GroupController extends GetxController {
   @override
   void onClose() {
     _discoverDebounce?.cancel();
+    blockNameController.dispose();
     super.onClose();
   }
 
   int get discoverTownId => groupData?.location?.id ?? 46820;
-
 
   void loadDiscover() {
     if (discoverOverview == null) getDiscoverOverview();
@@ -1017,68 +1031,78 @@ class GroupController extends GetxController {
     update([ControllerBuilders.discoverGroupsList]);
   }
 
-  // Public profile. shortcut: mock data, no public profile endpoint yet; swap for an API call when one exists
-  static const _s3 = 'https://wikixm-staging.s3.us-west-2.amazonaws.com/images/groups';
-  static const _covers = 'https://preetis-html.vercel.app/assets/images/groups/create-group';
-  final Map<String, dynamic> publicProfile = {
-    'name': 'John Smith',
-    'avatar': 'https://i.pravatar.cc/300?img=12',
-    'cover': 'https://preetis-html.vercel.app/assets/images/groups/discover-groups/hero.webp',
-    'location': 'Jackson, WY',
-    'bio': 'Outdoor enthusiast who loves skiing, mountain biking, hiking and golf — and the great people behind local adventures in Jackson.',
-    'roles': ['Event Organizer', 'Outdoor Enthusiast', 'Community Member', 'Retired Engineer'],
-    'stats': [
-      {'value': '142', 'label': 'Groups'},
-      {'value': '8.4k', 'label': 'Members'},
-      {'value': '27', 'label': 'Activities'},
-      {'value': '46', 'label': 'Posts'},
-    ],
-    'attendees': ['https://i.pravatar.cc/100?img=47', 'https://i.pravatar.cc/100?img=11', 'https://i.pravatar.cc/100?img=43'],
-  };
-  final List<String> publicProfileTabs = ['Overview', 'Groups', 'Activities', 'Discussions', 'Photos', 'Interests'];
-  final List<Map<String, dynamic>> publicProfileActivities = [
-    {'title': 'Group Ski Day', 'group': 'Jackson Hole Ski Enthusiasts', 'when': 'Sat · 8:00 AM', 'month': 'NOV', 'day': '14', 'going': 24, 'image': '$_s3/hero-trail-ride.webp'},
-    {'title': 'Trail Ride — Phillips Ridge', 'group': 'Teton Mountain Biking', 'when': 'Mon · 9:00 AM', 'month': 'NOV', 'day': '16', 'going': 18, 'image': '$_covers/cover-crew.webp'},
-    {'title': 'Foodie Dinner Meetup', 'group': 'Jackson Foodies', 'when': 'Thu · 7:00 PM', 'month': 'NOV', 'day': '19', 'going': 31, 'image': '$_covers/cover-town-mapleton.webp'},
-  ];
-  final List<Map<String, dynamic>> publicProfileGroups = [
-    {'name': 'Jackson Hole Ski Enthusiasts', 'members': '1,248', 'image': '$_covers/cover-town-highland.webp'},
-    {'name': 'Teton Mountain Biking', 'members': '756', 'image': '$_covers/cover-crew.webp'},
-    {'name': 'Jackson Golf Group', 'members': '892', 'image': '$_covers/cover-town-ridgewood.webp'},
-    {'name': 'Jackson Foodies', 'members': '518', 'image': '$_covers/cover-town-mapleton.webp'},
-  ];
-  final Map<String, dynamic> publicProfileRecent = {
-    'image': '$_s3/hero-trail-ride.webp',
-    'meta': 'Oct 28, 2026 · Jackson Hole Ski Enthusiasts',
-    'title': 'Group Ski Day at Jackson Hole',
-    'caption': 'Great day on the mountain with the crew. Perfect conditions and a great group!',
-    'likes': 12,
-    'comments': 4,
-    'more': 8,
-  };
-  final List<Map<String, dynamic>> publicProfileInterests = [
-    {'title': 'Skiing', 'color': 0xFF2563EB},
-    {'title': 'Mountain biking', 'color': 0xFF1E6B55},
-    {'title': 'Hiking', 'color': 0xFF16A34A},
-    {'title': 'Golf', 'color': 0xFFDC2626},
-    {'title': 'Travel', 'color': 0xFF2563EB},
-    {'title': 'Food & dining', 'color': 0xFFB4501F},
-    {'title': 'Photography', 'color': 0xFF7C3AED},
-    {'title': 'Community service', 'color': 0xFF1E6B55},
-  ];
-  final List<String> publicProfilePhotos = ['$_covers/cover-town-highland.webp', '$_covers/cover-crew.webp', '$_covers/cover-town-cedar-grove.webp'];
-  final int publicProfileMorePhotos = 48;
+  // Public profile (PublicProfile). shortcut: always member 877, like activityProfile; pass the member's id once the page is opened from a profile link
+  static const publicProfileId = 877;
+  pp.ProfileData? publicProfile;
+  ProfileFeedData? publicProfileFeed;
+  bool publicProfileLoading = false;
 
-  int publicProfileTab = 0;
+  Future<void> getPublicProfile([int id = publicProfileId]) async {
+    if (publicProfileLoading) return;
+    publicProfileLoading = true;
+    // a revisit keeps showing the cached profile while it refreshes, so only the first load needs the shimmer
+    if (publicProfile == null) update([ControllerBuilders.publicProfile]);
+    final profileCall = groupRepositoryImpl.publicProfile(id);
+    final feedCall = groupRepositoryImpl.publicProfileFeed(id);
+    (await profileCall).fold((l) => debugPrint('getPublicProfile failed: $l'), (r) {
+      if (r.success == true) {
+        publicProfile = r.data;
+        publicProfileTabItems.clear();
+        _publicProfileTabPage.clear();
+        _publicProfileTabMore.clear();
+        final defaultTab = r.data?.ui?.defaultTab;
+        publicProfileTab = defaultTab == null || _hiddenProfileTabs.contains(defaultTab) ? 'overview' : defaultTab;
+      }
+    });
+    (await feedCall).fold((l) => debugPrint('getPublicProfileFeed failed: $l'), (r) {
+      if (r.success == true) publicProfileFeed = r.data;
+    });
+    publicProfileLoading = false;
+    update([ControllerBuilders.publicProfile]);
+  }
+
+  // the API also sends Interests and Community Involvement tabs; the app doesn't show those
+  static const _hiddenProfileTabs = {'interests', 'involvement'};
+  List<pp.Action> get publicProfileTabs => [
+    for (final t in publicProfile?.ui?.tabs ?? <pp.Action>[])
+      if (t.hide != true && !_hiddenProfileTabs.contains(t.id)) t,
+  ];
+  pp.Action? get publicProfileFollowAction => publicProfile?.ui?.actions?.firstWhereOrNull((a) => a.id == 'follow');
+
+  // selected tab id; 'overview' shows the profile sections, any other tab lists its /items pages
+  String publicProfileTab = 'overview';
+  final Map<String, List<Object>> publicProfileTabItems = {};
+  final Map<String, int> _publicProfileTabPage = {};
+  final Set<String> _publicProfileTabMore = {};
+  bool publicProfileTabLoading = false;
+
+  bool get publicProfileTabHasMore => _publicProfileTabMore.contains(publicProfileTab);
   bool isFollowingProfile = false;
-  bool likedProfileRecent = false;
+  // shortcut: like/join/follow on the public profile are local only; no endpoint for them yet
   final Set<String> likedProfileActivities = {};
   final Set<String> joinedProfileActivities = {};
 
-  int get publicProfileLikes => (publicProfileRecent['likes'] as int) + (likedProfileRecent ? 1 : 0);
+  void selectPublicProfileTab(String id) {
+    publicProfileTab = id;
+    update([ControllerBuilders.publicProfile]);
+    if (id != 'overview' && !publicProfileTabItems.containsKey(id)) loadPublicProfileTabItems();
+  }
 
-  void selectPublicProfileTab(int index) {
-    publicProfileTab = index;
+  /// Next page of the selected tab's items (the first page when it hasn't loaded yet).
+  Future<void> loadPublicProfileTabItems() async {
+    final tab = publicProfileTab;
+    if (publicProfileTabLoading) return;
+    publicProfileTabLoading = true;
+    update([ControllerBuilders.publicProfile]);
+    final page = (_publicProfileTabPage[tab] ?? 0) + 1;
+    final data = await groupRepositoryImpl.publicProfileItems(publicProfile?.id ?? publicProfileId, tab, page);
+    data.fold((l) => debugPrint('loadPublicProfileTabItems failed: $l'), (r) {
+      if (r.success != true || r.data == null) return;
+      publicProfileTabItems.update(tab, (items) => [...items, ...r.data!.items], ifAbsent: () => r.data!.items);
+      _publicProfileTabPage[tab] = page;
+      r.data!.hasMore ? _publicProfileTabMore.add(tab) : _publicProfileTabMore.remove(tab);
+    });
+    publicProfileTabLoading = false;
     update([ControllerBuilders.publicProfile]);
   }
 
@@ -1087,18 +1111,203 @@ class GroupController extends GetxController {
     update([ControllerBuilders.publicProfile]);
   }
 
-  void toggleLikeProfileRecent() {
-    likedProfileRecent = !likedProfileRecent;
+  void toggleLikeProfileActivity(String id) {
+    likedProfileActivities.contains(id) ? likedProfileActivities.remove(id) : likedProfileActivities.add(id);
     update([ControllerBuilders.publicProfile]);
   }
 
-  void toggleLikeProfileActivity(String title) {
-    likedProfileActivities.contains(title) ? likedProfileActivities.remove(title) : likedProfileActivities.add(title);
+  void toggleJoinProfileActivity(String id) {
+    joinedProfileActivities.contains(id) ? joinedProfileActivities.remove(id) : joinedProfileActivities.add(id);
     update([ControllerBuilders.publicProfile]);
   }
 
-  void toggleJoinProfileActivity(String title) {
-    joinedProfileActivities.contains(title) ? joinedProfileActivities.remove(title) : joinedProfileActivities.add(title);
-    update([ControllerBuilders.publicProfile]);
+  // Group settings. shortcut: mock data kept in memory, no settings endpoint yet; persist through the API when one exists
+  final List<Map<String, dynamic>> settingsGroups = [
+    {'name': 'All groups', 'icon': Icons.tune_rounded, 'color': 0xFF075DC9},
+    {'name': 'Ski Enthusiasts', 'icon': Icons.landscape_outlined, 'color': 0xFF2563EB},
+    {'name': 'Golf Group', 'icon': Icons.flag_outlined, 'color': 0xFF1E6B55},
+    {'name': 'Pine Valley MTB', 'icon': Icons.pedal_bike_rounded, 'color': 0xFFB4501F, 'admin': true},
+  ];
+  static const _defaultReach = {'Event reminders': true, 'New discussions': true, 'Weekly digest': false};
+  final List<Map<String, String>> settingsReach = [
+    {'title': 'Event reminders', 'subtitle': 'The day before and an hour before'},
+    {'title': 'New discussions', 'subtitle': 'When someone starts a thread'},
+    {'title': 'Weekly digest', 'subtitle': 'One email every Sunday morning'},
+  ];
+  // each row opens GroupSettingsPage on its 'page'
+  final List<Map<String, dynamic>> settingsRows = [
+    {'title': 'Notifications', 'value': '', 'icon': CupertinoIcons.bell, 'page': 'notifications'},
+    {'title': 'Privacy and visibility', 'value': '', 'icon': CupertinoIcons.eye, 'page': 'privacy'},
+    {'title': 'Activity interests', 'value': '', 'icon': CupertinoIcons.calendar, 'page': 'interests'},
+    {'title': 'Content', 'value': '', 'icon': CupertinoIcons.doc_text, 'page': 'content'},
+    {'title': 'Recommendations', 'value': '', 'icon': CupertinoIcons.sparkles, 'page': 'recommendations'},
+    {'title': 'Blocked members', 'value': '', 'icon': Icons.block_rounded, 'page': 'blocked'},
+  ];
+  int settingsGroupIndex = 0;
+  // per-group overrides; a group without an entry uses the All groups defaults
+  final Map<int, Map<String, bool>> settingsReachByGroup = {0: Map.of(_defaultReach)};
+
+  Map<String, bool> get currentReach => settingsReachByGroup[settingsGroupIndex] ?? settingsReachByGroup[0]!;
+
+  void selectSettingsGroup(int index) {
+    settingsGroupIndex = index;
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  void toggleSettingsReach(String title) {
+    final reach = settingsReachByGroup.putIfAbsent(settingsGroupIndex, () => Map.of(currentReach));
+    reach[title] = !(reach[title] ?? false);
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  void restoreDefaultSettings() {
+    settingsReachByGroup
+      ..clear()
+      ..[0] = Map.of(_defaultReach);
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  // Settings sub-pages (GroupSettingsPage): title, subtitle and the prefs each one's restore button resets
+  final Map<String, Map<String, dynamic>> settingsPages = {
+    'interests': {
+      'title': 'Activity interests',
+      'subtitle': 'Tell us what you love doing so we can show you more of it.',
+      'keys': ['interests', 'skill'],
+    },
+    'content': {
+      'title': 'Content',
+      'subtitle': 'Shape the posts, photos and conversations in your feed.',
+      'keys': ['feed', 'order', 'hideSensitive'],
+    },
+    'notifications': {
+      'title': 'Notifications',
+      'subtitle': 'Keep the updates that matter. Turn down the rest.',
+      'keys': ['notify'],
+    },
+    'privacy': {
+      'title': 'Privacy and visibility',
+      'subtitle': 'Choose what other members can see.',
+      'keys': ['profile', 'joins', 'online', 'memberLists'],
+    },
+    'blocked': {
+      'title': 'Blocked members',
+      'subtitle': "People you block can't message you. Organizers can still review anything that's reported.",
+      'keys': ['blocked'],
+    },
+    'recommendations': {
+      'title': 'Recommendations',
+      'subtitle': 'Decide what we suggest and what we use to suggest it.',
+      'keys': ['suggest', 'learnHistory'],
+    },
+  };
+  static const _settingsDefaults = <String, dynamic>{
+    'interests': ['Skiing', 'Snowboarding', 'Golf', 'Mountain biking'],
+    'skill': 3,
+    'feed': ['Discussions', 'Activity posts', 'Photos and videos', 'Event announcements', 'Files and documents'],
+    'order': 'Newest',
+    'hideSensitive': true,
+    'notify': ['New group posts', 'Announcements', 'Activity reminders', 'Activity invitations', 'Direct messages'],
+    'profile': 'Members',
+    'joins': 'Members',
+    'online': 'Members',
+    'memberLists': true,
+    'blocked': ['Avery Brooks', 'Casey Morgan'],
+    'suggest': ['Activities', 'Groups', 'People'],
+    'learnHistory': true,
+  };
+  final Map<String, dynamic> settingsPrefs = {for (final e in _settingsDefaults.entries) e.key: e.value is List ? List<String>.of(e.value.cast<String>()) : e.value};
+
+  final List<String> interestOptions = ['Skiing', 'Snowboarding', 'Hiking', 'Golf', 'Mountain biking', 'Social events', 'Training and coaching', 'Volunteering'];
+  final List<String> skillLevels = ['All levels', 'Beginner', 'Intermediate', 'Advanced'];
+  final List<String> skillDescriptions = [
+    'Show me outings for every skill level',
+    'New to it, or still learning the basics',
+    'Comfortable at a steady pace on most terrain',
+    'Long days, steep terrain and faster groups',
+  ];
+  final List<String> feedOptions = ['Discussions', 'Activity posts', 'Photos and videos', 'Event announcements', 'Files and documents', 'Gear for sale'];
+  final List<String> orderOptions = ['Newest', 'Most active', 'Most liked'];
+  final Map<String, List<Map<String, String>>> notifySections = {
+    'From your groups': [
+      {'title': 'New group posts', 'subtitle': 'New conversations in your groups'},
+      {'title': 'Announcements', 'subtitle': 'Important updates from organizers'},
+      {'title': 'Activity reminders', 'subtitle': 'Before an activity you joined starts'},
+      {'title': 'Activity invitations', 'subtitle': 'Activities you may enjoy'},
+    ],
+    'Just for you': [
+      {'title': 'Direct messages', 'subtitle': 'When someone messages you'},
+      {'title': 'Weekly digest', 'subtitle': 'A roundup of your groups each week'},
+    ],
+  };
+  final List<Map<String, String>> privacyQuestions = [
+    {'key': 'profile', 'title': 'Who can see your profile', 'subtitle': 'Your bio, interests and photos'},
+    {'key': 'joins', 'title': 'Who can see what you join', 'subtitle': 'Activities you’re going to or went to'},
+    {'key': 'online', 'title': 'Who can see you’re online', 'subtitle': 'The green dot on your photo'},
+  ];
+  final List<String> privacyOptions = ['Everyone', 'Members', 'Only me'];
+  final List<Map<String, String>> suggestOptions = [
+    {'title': 'Activities', 'subtitle': 'Outings that match your interests'},
+    {'title': 'Groups', 'subtitle': 'Groups you may want to join'},
+    {'title': 'People', 'subtitle': 'Members who share your interests'},
+    {'title': 'Something new', 'subtitle': 'Activities outside your usual interests'},
+  ];
+  final TextEditingController blockNameController = TextEditingController();
+  final Map<String, String> blockedDates = {'Avery Brooks': 'Sep 12', 'Casey Morgan': 'Oct 3'};
+
+  List<String> settingsList(String key) => settingsPrefs[key] as List<String>;
+
+  int get notifyOnCount => settingsList('notify').length;
+
+  int get notifyTotal => notifySections.values.fold(0, (sum, items) => sum + items.length);
+
+  String settingsRowValue(Map<String, dynamic> row) => switch (row['page']) {
+    'notifications' => '$notifyOnCount of $notifyTotal on',
+    'privacy' => settingsPrefs['profile'] == 'Members' ? 'Members only' : settingsPrefs['profile'],
+    'interests' => '${settingsList('interests').length} chosen',
+    'recommendations' => settingsList('suggest').isEmpty ? 'Off' : 'On',
+    'blocked' => settingsList('blocked').isEmpty ? 'None' : '${settingsList('blocked').length}',
+    'content' => settingsList('feed').length == feedOptions.length ? 'Everything' : '${settingsList('feed').length} of ${feedOptions.length}',
+    _ => row['value'],
+  };
+
+  void openSettingsPage(String page) => Get.toNamed(AppRoutes.groupSettingsPage, arguments: page);
+
+  void setSettingsPref(String key, dynamic value) {
+    settingsPrefs[key] = value;
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  void toggleSettingsItem(String key, String item) {
+    final list = settingsList(key);
+    list.contains(item) ? list.remove(item) : list.add(item);
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  void restoreSettingsPage(String page) {
+    for (final key in settingsPages[page]!['keys'] as List<String>) {
+      final value = _settingsDefaults[key];
+      settingsPrefs[key] = value is List ? List<String>.of(value.cast<String>()) : value;
+    }
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  /// shortcut: prefs already apply as they change and only live in memory; call the settings API here once one exists
+  void saveSettingsPage() {
+    Get.back();
+    Get.snackbar('Saved', 'Your settings have been saved.', snackPosition: SnackPosition.BOTTOM);
+  }
+
+  void blockMember() {
+    final name = blockNameController.text.trim();
+    if (name.isEmpty || settingsList('blocked').contains(name)) return;
+    settingsList('blocked').add(name);
+    blockedDates[name] = DateFormat('MMM d').format(DateTime.now());
+    blockNameController.clear();
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  void unblockMember(String name) {
+    settingsList('blocked').remove(name);
+    update([ControllerBuilders.groupSettings]);
   }
 }

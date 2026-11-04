@@ -49,6 +49,8 @@ post_install do |installer|
 
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '18.0'
+      # Xcode 27's Swift compiler silently fails on the Intel simulator slice; Apple Silicon only needs arm64.
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'x86_64'
     end
   end
 end

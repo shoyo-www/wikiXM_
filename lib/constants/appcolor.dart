@@ -58,6 +58,8 @@ class AppColor {
   static const sportsActiveCard = Color(0xFFfffaf0);
   static const sportsActiveColor = Color(0xFF84610a);
   static const townHallGreen = Color(0xff0d6b3f);
+  static const profileHeroDark = Color(0xFF020B15);
+  static const profileHeroYellow = Color(0xFFFFE47A);
   static const townHallGreenDark = Color(0xFF62D99B);
   static const garageRedSoft = Color(0xFFFFF0F1);
   static const garageSurface = Color(0xFFFFFFFF);

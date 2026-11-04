@@ -258,7 +258,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
                                             children: [
                                               Text(
                                                 'Food & Dinning',
-                                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500),
                                               ),
                                               SizedBox(width: Dimensions.w_8),
                                               Container(
@@ -269,7 +269,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
                                               SizedBox(width: Dimensions.w_8),
                                               Text(
                                                 '3m read',
-                                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500),
                                               ),
                                             ],
                                           ),
@@ -296,21 +296,21 @@ class _BusinessScreenState extends State<BusinessScreen> {
                               SizedBox(width: Dimensions.w_5),
                               Text(
                                 '248',
-                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500),
                               ),
                               SizedBox(width: Dimensions.w_20),
                               Icon(CupertinoIcons.chat_bubble, color: Colors.black87, size: Dimensions.h_12),
                               SizedBox(width: Dimensions.w_5),
                               Text(
                                 '42',
-                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_9, fontWeight: FontWeight.w500),
                               ),
                               SizedBox(width: Dimensions.w_20),
                               Icon(CupertinoIcons.eye_fill, color: Colors.black87, size: Dimensions.h_12),
                               SizedBox(width: Dimensions.w_5),
                               Text(
                                 '1.2k',
-                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                                style: TextStyle(color: Colors.black, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
                               ),
                               const Spacer(),
                               Container(

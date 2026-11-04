@@ -83,8 +83,6 @@ class _GroupsDrawerState extends State<GroupsDrawer> {
                   menuItem(context, title: 'My Groups', icon: CupertinoIcons.person_2, isSelected: here == AppRoutes.myGroup, isLight: isLight, onTap: () => _go(AppRoutes.myGroup, myGroupsTab: 0)),
                   menuItem(context, title: 'Discover Groups', icon: CupertinoIcons.search, isSelected: here == AppRoutes.searchGroups, isLight: isLight, onTap: () => _go(AppRoutes.searchGroups)),
                   menuItem(context, title: 'Public Profile', icon: CupertinoIcons.person_crop_circle, isSelected: here == AppRoutes.publicProfile, isLight: isLight, onTap: () => _go(AppRoutes.publicProfile)),
-                  // shortcut: Interest Hubs opens Groups Home until it gets a page of its own
-                  menuItem(context, title: 'Interest Hubs', icon: CupertinoIcons.doc_on_clipboard, isLight: isLight, onTap: () => _go(AppRoutes.groups)),
                   menuItem(
                     context,
                     title: 'Create Group',
@@ -92,6 +90,7 @@ class _GroupsDrawerState extends State<GroupsDrawer> {
                     isLight: isLight,
                     onTap: () => _go(AppRoutes.createGroup),
                   ),
+                  menuItem(context, title: 'Group Settings', icon: CupertinoIcons.settings, isSelected: here == AppRoutes.groupSettings, isLight: isLight, onTap: () => _go(AppRoutes.groupSettings)),
                 ],
               ),
             ),

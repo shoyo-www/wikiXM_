@@ -1,11 +1,13 @@
 Today's Task
 Project: WikiXM
 
--Made Search Groups page dynamic.
--Added controller and response modal.
--Added filters drawer and made dynamic.
--Created shimmer effect for the shimmer.
--Created UI for the public profile page.
+-Updated the profile and user details on the profile page.
+-Remove the tabs functionality from the profile page.
+-Created the privacy and visibility screen.
+-Created the activity preference screen.
+-Created the content preference screen.
+-Created the AI recommendation screen
+-Created the blocked users screen
 
 Free Time: None
 Roadblocks: None

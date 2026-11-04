@@ -16,6 +16,9 @@ import '../../../core/error/exceptions.dart';
 import '../remote/models/response/group_home.dart';
 import '../remote/models/response/my_group_summary.dart';
 import '../remote/models/response/activity_profile.dart';
+import '../remote/models/response/public_profile.dart';
+import '../remote/models/response/public_profile_feed.dart';
+import '../remote/models/response/public_profile_items.dart';
 import '../remote/models/response/my_group_list.dart';
 import '../remote/models/response/my_group_attention.dart';
 import '../remote/models/response/my_group_invitations.dart';
@@ -153,6 +156,45 @@ class GroupRepositoryImpl implements GroupRepository {
     try {
       final response = await _restClient.get(url: Apis.activityProfile);
       return Right(activityProfileResponseFromJson(response));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+    catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, PublicProfileResponse>> publicProfile(int id) async {
+    try {
+      final response = await _restClient.get(url: '${Apis.publicProfile}$id');
+      return Right(publicProfileResponseFromJson(response));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+    catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, PublicProfileFeedResponse>> publicProfileFeed(int id) async {
+    try {
+      final response = await _restClient.get(url: '${Apis.publicProfile}$id/feed');
+      return Right(publicProfileFeedResponseFromJson(response));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+    catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, PublicProfileItemsResponse>> publicProfileItems(int id, String type, int page) async {
+    try {
+      final response = await _restClient.get(url: '${Apis.publicProfile}$id/items', params: {'type': type, 'page': page, 'per_page': 12});
+      return Right(publicProfileItemsResponseFromJson(response));
     } on ApiException catch (e) {
       return Left(ServerFailure(e.message));
     }

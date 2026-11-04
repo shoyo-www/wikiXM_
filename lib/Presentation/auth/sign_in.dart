@@ -48,18 +48,18 @@ class SignInScreen extends StatelessWidget {
                             // Image.asset(Images.appLogoGif,height: Dimensions.h_50,width: Dimensions.h_50),
                             Text(
                               'Good evening,',
-                              style: TextStyle(fontFamily: 'Poppins', color: Colors.white, fontSize: FontSize.sp_24, fontWeight: FontWeight.w800),
+                              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_24, fontWeight: FontWeight.w800),
                             ),
                             Text(
                               'Sean! 👋',
-                              style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: FontSize.sp_24, fontWeight: FontWeight.w800),
+                              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_24, fontWeight: FontWeight.w800),
                             ),
                             SizedBox(height: Dimensions.h_3),
                             Row(
                               children: [
                                 Text(
                                   'Dallas missed you.',
-                                  style: TextStyle(color: Colors.white, fontSize: FontSize.sp_14, fontFamily: 'Poppins', fontWeight: FontWeight.w800),
+                                  style: TextStyle(color: Colors.white, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
                                 ),
                                 SizedBox(width: Dimensions.w_4),
                                 Icon(CupertinoIcons.heart_fill, color: Colors.red, size: Dimensions.h_20),
@@ -68,11 +68,11 @@ class SignInScreen extends StatelessWidget {
                             SizedBox(height: Dimensions.h_5),
                             Text(
                               'Stay informed. Join the conversation',
-                              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+                              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
                             ),
                             Text(
                               'Together, we build a stronger Dallas.',
-                              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+                              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
                             ),
                             SizedBox(height: Dimensions.h_3),
                           ],
@@ -183,7 +183,7 @@ class SignInScreen extends StatelessWidget {
                             ),
                             Text(
                               '28m ago',
-                              style: TextStyle(color: Color(0xff00127f), fontSize: FontSize.sp_8, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                              style: TextStyle(color: Color(0xff00127f), fontSize: FontSize.sp_8, fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -204,7 +204,7 @@ class SignInScreen extends StatelessWidget {
                             ),
                             Text(
                               '28m ago',
-                              style: TextStyle(color: Color(0xff00127f), fontSize: FontSize.sp_8, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                              style: TextStyle(color: Color(0xff00127f), fontSize: FontSize.sp_8, fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -225,7 +225,7 @@ class SignInScreen extends StatelessWidget {
                             ),
                             Text(
                               '28m ago',
-                              style: TextStyle(color: Color(0xff00127f), fontSize: FontSize.sp_8, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                              style: TextStyle(color: Color(0xff00127f), fontSize: FontSize.sp_8, fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -395,7 +395,7 @@ class SignInScreen extends StatelessWidget {
                                               children: [
                                                 Text(
                                                   'Join a Town Hall discussion',
-                                                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: FontSize.sp_8),
+                                                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500, fontSize: FontSize.sp_8),
                                                 ),
                                                 SizedBox(height: Dimensions.h_4),
                                                 Text(
@@ -431,7 +431,7 @@ class SignInScreen extends StatelessWidget {
                                               children: [
                                                 Text(
                                                   'Upload a local photo',
-                                                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: FontSize.sp_8),
+                                                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500, fontSize: FontSize.sp_8),
                                                 ),
                                                 SizedBox(height: Dimensions.h_4),
                                                 Text(
@@ -467,7 +467,7 @@ class SignInScreen extends StatelessWidget {
                                               children: [
                                                 Text(
                                                   'Welcome new resident',
-                                                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: FontSize.sp_8),
+                                                  style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500, fontSize: FontSize.sp_8),
                                                 ),
                                                 SizedBox(height: Dimensions.h_4),
                                                 Text(
@@ -810,7 +810,7 @@ class SignInScreen extends StatelessWidget {
                     children: [
                       Text(
                         item.value,
-                        style: TextStyle(color: const Color(0xff001072), fontWeight: FontWeight.w800, fontFamily: 'Poppins', fontSize: FontSize.sp_16),
+                        style: TextStyle(color: const Color(0xff001072), fontWeight: FontWeight.w800, fontSize: FontSize.sp_16),
                       ),
                       Text(
                         item.title,

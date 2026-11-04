@@ -19,6 +19,8 @@ import 'package:wikixm/Presentation/groups/group_profile.dart';
 import 'package:wikixm/Presentation/groups/my_group.dart';
 import 'package:wikixm/Presentation/groups/search_groups.dart';
 import 'package:wikixm/Presentation/groups/public_profile.dart';
+import 'package:wikixm/Presentation/groups/group_settings.dart';
+import 'package:wikixm/Presentation/groups/group_settings_page.dart';
 import 'package:wikixm/Presentation/guide/ask_guide.dart';
 import 'package:wikixm/Presentation/notifications/notifications.dart';
 import 'package:wikixm/Presentation/politics/politics.dart';
@@ -68,6 +70,8 @@ class AppPages {
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.myGroup, page: () => const MyGroupsScreen()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.searchGroups, page: () => const SearchGroups()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.publicProfile, page: () => const PublicProfile()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupSettings, page: () => const GroupSettings()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupSettingsPage, page: () => const GroupSettingsPage()),
   ];
 }
 

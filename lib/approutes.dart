@@ -30,5 +30,7 @@ class AppRoutes {
   static const String myGroup = '/myGroup';
   static const String searchGroups = '/searchGroups';
   static const String publicProfile = '/publicProfile';
+  static const String groupSettings = '/groupSettings';
+  static const String groupSettingsPage = '/groupSettingsPage';
 
 }

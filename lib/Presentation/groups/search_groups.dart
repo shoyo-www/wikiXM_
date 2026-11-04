@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:wikixm/Presentation/groups/controller.dart';
 import 'package:wikixm/Presentation/groups/groups_drawer.dart';
 import 'package:wikixm/Presentation/widgets/common_card.dart';
+import 'package:wikixm/Presentation/widgets/common_dropdown.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/Presentation/widgets/common_shimmer.dart';
 import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
@@ -203,7 +204,12 @@ class _SearchGroupsState extends State<SearchGroups> {
           AppCacheImage(alignment: Alignment(0.5, 0), size: Dimensions.h_330, widthSize: Get.width, imageUrl: overview?.town?.image ?? _heroFallback),
           DecoratedBox(
             decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [const Color(0xFF020B15).withValues(alpha: 0.35), const Color(0xFF020B15).withValues(alpha: 0.5), const Color(0xFF020B15).withValues(alpha: 0.75)], stops: const [0.0, 0.35, 1.0]),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [const Color(0xFF020B15).withValues(alpha: 0.35), const Color(0xFF020B15).withValues(alpha: 0.5), const Color(0xFF020B15).withValues(alpha: 0.75)],
+                stops: const [0.0, 0.35, 1.0],
+              ),
             ),
           ),
           Positioned(
@@ -415,7 +421,6 @@ class _SearchGroupsState extends State<SearchGroups> {
   Widget filtersWidget(GroupController c) {
     final ink = AppColor.ink(context);
     final muted = AppColor.muted(context);
-    final surface = AppColor.surface(context);
     final blue = AppColor.blue(context);
     final border = AppColor.border(context);
     final red = AppColor.red(context);
@@ -464,78 +469,14 @@ class _SearchGroupsState extends State<SearchGroups> {
     }
 
     Widget dropdown({required String? value, required IconData icon, required List<({String value, String label, IconData? icon, Color? color})> options, required ValueChanged<String> onChanged}) {
-      final selected = options.where((o) => o.value == value).firstOrNull;
-      final selectedColor = selected?.color ?? blue;
-      return LayoutBuilder(
-        // no ripple or press highlight anywhere in the field or its menu (the menu captures this theme when it opens)
-        builder: (context, constraints) => Theme(
-          data: Theme.of(context).copyWith(splashFactory: NoSplash.splashFactory, splashColor: Colors.transparent, highlightColor: Colors.transparent, hoverColor: Colors.transparent, focusColor: Colors.transparent),
-          child: PopupMenuButton<String>(
-            onSelected: onChanged,
-            position: PopupMenuPosition.under,
-            offset: Offset(0, Dimensions.h_4),
-            constraints: BoxConstraints.tightFor(width: constraints.maxWidth),
-            color: surface,
-            menuPadding: EdgeInsets.symmetric(vertical: Dimensions.h_4),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(Dimensions.h_10),
-              side: BorderSide(color: border, width: 0.5),
-            ),
-            itemBuilder: (context) => [
-              for (final o in options)
-                PopupMenuItem<String>(
-                  value: o.value,
-                  height: Dimensions.h_30,
-                  padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4),
-                  child: Container(
-                    height: Dimensions.h_28,
-                    padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6),
-                    child: Row(
-                      children: [
-                        if (o.icon != null) ...[Icon(o.icon, size: Dimensions.h_12, color: o.color ?? blue), SizedBox(width: Dimensions.w_6)],
-                        Expanded(
-                          child: Text(
-                            o.label,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: o.value == value ? blue : ink, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-            child: Container(
-              height: Dimensions.h_35,
-              padding: EdgeInsets.fromLTRB(Dimensions.w_5, 0, Dimensions.w_8, 0),
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(Dimensions.h_10),
-                border: Border.all(color: border, width: 0.5),
-              ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: Dimensions.h_25,
-                    height: Dimensions.h_25,
-                    child: Icon(selected?.icon ?? icon, size: Dimensions.h_13, color: selectedColor),
-                  ),
-                  SizedBox(width: Dimensions.w_8),
-                  Expanded(
-                    child: Text(
-                      selected?.label ?? 'Select',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: selected == null ? muted : ink, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  Icon(CupertinoIcons.chevron_down, size: Dimensions.h_10, color: blue),
-                ],
-              ),
-            ),
-          ),
-        ),
+      return CommonDropdown(
+        items: options,
+        value: options.where((o) => o.value == value).firstOrNull,
+        icon: icon,
+        itemLabel: (o) => o.label,
+        itemIcon: (o) => o.icon,
+        itemColor: (o) => o.color,
+        onChanged: (o) => onChanged(o.value),
       );
     }
 
@@ -572,10 +513,20 @@ class _SearchGroupsState extends State<SearchGroups> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   sectionTitle(town == null ? 'Distance' : 'Distance from $town'),
-                  dropdown(value: c.discoverDistance, icon: CupertinoIcons.location_solid, options: [for (final d in filters?.distanceOptions ?? <int>[]) (value: '$d', label: 'Within $d miles', icon: null, color: null)], onChanged: c.setDiscoverDistance),
+                  dropdown(
+                    value: c.discoverDistance,
+                    icon: CupertinoIcons.location_solid,
+                    options: [for (final d in filters?.distanceOptions ?? <int>[]) (value: '$d', label: 'Within $d miles', icon: null, color: null)],
+                    onChanged: c.setDiscoverDistance,
+                  ),
                   SizedBox(height: Dimensions.h_13),
                   sectionTitle('Group category'),
-                  dropdown(value: c.discoverCategory, icon: CupertinoIcons.square_grid_2x2_fill, options: [for (final cat in c.discoverOverview?.categories ?? []) (value: cat.id ?? '', label: cat.name ?? '', icon: categoryIcon(cat.icon), color: categoryColor(cat.color))], onChanged: c.setDiscoverFilterCategory),
+                  dropdown(
+                    value: c.discoverCategory,
+                    icon: CupertinoIcons.square_grid_2x2_fill,
+                    options: [for (final cat in c.discoverOverview?.categories ?? []) (value: cat.id ?? '', label: cat.name ?? '', icon: categoryIcon(cat.icon), color: categoryColor(cat.color))],
+                    onChanged: c.setDiscoverFilterCategory,
+                  ),
                   divider(),
                   sectionTitle('Group type'),
                   SizedBox(height: Dimensions.h_5),
@@ -873,7 +824,14 @@ class _SearchGroupsState extends State<SearchGroups> {
                       onTap: () => c.tapDiscoverAction(g),
                       child: Container(
                         height: Dimensions.h_25,
-                        decoration: BoxDecoration(color: isOwner ? const Color(0xFF087C4B) : joined ? (isMember ? AppColor.greenSoft(context) : AppColor.blueSoft(context)) : const Color(0xFF1D5FEF), borderRadius: BorderRadius.circular(Dimensions.h_10)),
+                        decoration: BoxDecoration(
+                          color: isOwner
+                              ? const Color(0xFF087C4B)
+                              : joined
+                              ? (isMember ? AppColor.greenSoft(context) : AppColor.blueSoft(context))
+                              : const Color(0xFF1D5FEF),
+                          borderRadius: BorderRadius.circular(Dimensions.h_10),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -881,7 +839,10 @@ class _SearchGroupsState extends State<SearchGroups> {
                               c.discoverActionLabel(g),
                               style: TextStyle(color: joined && !isOwner ? doneColor : Colors.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w800),
                             ),
-                            if (!isOwner) ...[SizedBox(width: Dimensions.w_5), Icon(joined ? CupertinoIcons.checkmark_alt : CupertinoIcons.arrow_right, size: Dimensions.h_13, color: joined ? doneColor : Colors.white)],
+                            if (!isOwner) ...[
+                              SizedBox(width: Dimensions.w_5),
+                              Icon(joined ? CupertinoIcons.checkmark_alt : CupertinoIcons.arrow_right, size: Dimensions.h_13, color: joined ? doneColor : Colors.white),
+                            ],
                           ],
                         ),
                       ),

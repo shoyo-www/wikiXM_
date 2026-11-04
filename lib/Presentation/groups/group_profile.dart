@@ -46,7 +46,7 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
               : CommonScrollBlurScaffold(
                   showBack: true,
                   expandedHeight: Dimensions.h_210,
-                  expandedColor: Colors.white,
+                  expandedColor: AppColor.white,
                   collapsedColor: Theme.of(context).highlightColor,
                   hero: GetBuilder<GroupController>(id: ControllerBuilders.groupProfileSections, builder: (c) => buildHeroHeader(isLight, c)),
                   slivers: [
@@ -188,7 +188,7 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
               child: Center(
                 child: Text(
                   activities[i].name ?? '',
-                  style: TextStyle(color: selected ? Colors.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: selected ? AppColor.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -494,7 +494,7 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
     final c = groupController;
     final textColor = Theme.of(context).highlightColor;
     final activities = c.profileActivities;
-    final palette = [AppColor.blue(context), AppColor.orange(context), AppColor.green(context), AppColor.violet(context)];
+    final interestColors = [AppColor.blue(context), AppColor.orange(context), AppColor.green(context), AppColor.violet(context)];
     return sectionCard(
       icon: CupertinoIcons.star_fill,
       title: c.profileTabLabel('interests', 'Activity Interests'),
@@ -508,7 +508,7 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: Dimensions.w_6, mainAxisSpacing: Dimensions.h_6, mainAxisExtent: Dimensions.h_50),
           itemBuilder: (_, i) {
             final activity = activities[i];
-            final color = palette[i % palette.length];
+            final color = interestColors[i % interestColors.length];
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () => c.selectProfileInterest(i),
@@ -792,14 +792,14 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 600),
           child: controller.profileHeroImage == null
-              ? Container(height: Dimensions.h_330, width: Get.width, color: const Color(0xFF020B15))
+              ? Container(height: Dimensions.h_330, width: Get.width, color: AppColor.profileHeroDark)
               : AppCacheImage(key: ValueKey(controller.profileHeroImage), alignment: Alignment(0.5, 0), size: Dimensions.h_330, widthSize: Get.width, imageUrl: controller.profileHeroImage!),
         ),
         Positioned.fill(
           child: Container(
             height: Dimensions.h_330,
             decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent], stops: const [0.0, 0.30, 0.58, 1.0]),
+              gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [AppColor.profileHeroDark.withValues(alpha: 0.85), AppColor.profileHeroDark.withValues(alpha: 0.65), AppColor.profileHeroDark.withValues(alpha: 0.35), AppColor.transparent], stops: const [0.0, 0.30, 0.58, 1.0]),
             ),
           ),
         ),
@@ -814,7 +814,7 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
                 padding: EdgeInsets.only(left: Dimensions.w_8, top: Dimensions.h_80),
                 child: Text(
                   'YOUR ACTIVITY STORY, ${controller.profileFirstName}'.toUpperCase(),
-                  style: TextStyle(color: const Color(0xFFFFE47A), fontSize: FontSize.sp_11, fontWeight: FontWeight.w900),
+                  style: TextStyle(color: AppColor.profileHeroYellow, fontSize: FontSize.sp_11, fontWeight: FontWeight.w900),
                 ),
               ),
               Padding(
@@ -822,10 +822,10 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
                 child: Text(
                   "My Activity Profile",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColor.white,
                     fontSize: FontSize.sp_22,
                     fontWeight: FontWeight.w900,
-                    shadows: [Shadow(color: Colors.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2))],
+                    shadows: [Shadow(color: AppColor.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2))],
                   ),
                 ),
               ),
@@ -834,10 +834,10 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
                 child: Text(
                   'Your skills, your kind of activity, and the people you’d like to meet.',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColor.white,
                     fontSize: FontSize.sp_12,
                     fontWeight: FontWeight.w500,
-                    shadows: [Shadow(color: Colors.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2))],
+                    shadows: [Shadow(color: AppColor.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2))],
                   ),
                 ),
               ),
@@ -861,7 +861,7 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
                 child: Container(
                   margin: EdgeInsets.only(left: Dimensions.w_8, top: Dimensions.h_5, bottom: Dimensions.h_8),
                   padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_8),
-                  decoration: BoxDecoration(color: Color(0xff1d5fef), borderRadius: BorderRadius.circular(Dimensions.h_4)),
+                  decoration: BoxDecoration(color: AppColor.civicBlue, borderRadius: BorderRadius.circular(Dimensions.h_4)),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -870,12 +870,12 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
                       SizedBox(width: Dimensions.w_8),
                       Padding(
                         padding: EdgeInsets.only(top: Dimensions.h_1),
-                        child: Icon(Icons.edit, size: Dimensions.h_12, color: Colors.white),
+                        child: Icon(Icons.edit, size: Dimensions.h_12, color: AppColor.white),
                       ),
                       SizedBox(width: Dimensions.w_5),
                       Text(
                         "Edit Profile",
-                        style: TextStyle(color: Colors.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w900, height: 1.2),
+                        style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w900, height: 1.2),
                       ),
 
                       SizedBox(width: Dimensions.w_5),
@@ -983,7 +983,7 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: iconSize ?? Dimensions.h_18, fontWeight: FontWeight.bold, color: Colors.white),
+        Icon(icon, size: iconSize ?? Dimensions.h_18, fontWeight: FontWeight.bold, color: AppColor.white),
         SizedBox(width: Dimensions.w_6),
         // a third of the header is narrow: long labels ("activities organized") wrap to a second line
         Expanded(
@@ -1003,9 +1003,9 @@ class _GroupUserProfileState extends State<GroupUserProfile> {
                 height: 1.15,
                 color: AppColor.white,
                 shadows: [
-                  Shadow(color: Colors.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2)),
-                  Shadow(color: Colors.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2)),
-                  Shadow(color: Colors.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2)),
+                  Shadow(color: AppColor.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2)),
+                  Shadow(color: AppColor.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2)),
+                  Shadow(color: AppColor.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2)),
                 ],
               ),
             ),

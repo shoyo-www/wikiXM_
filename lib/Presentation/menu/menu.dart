@@ -103,7 +103,7 @@ class _MenuState extends State<Menu> {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: staggered(start: 1, [
+                children: [
                   SizedBox(height: Dimensions.h_8),
                   Padding(
                     padding: EdgeInsets.only(left: Dimensions.w_6),
@@ -316,7 +316,7 @@ class _MenuState extends State<Menu> {
                   SizedBox(height: Dimensions.h_10),
                   MenuText(title: "Logout", color: Colors.redAccent),
                   SizedBox(height: Dimensions.h_70),
-                ]),
+                ],
               ),
             ),
           ),

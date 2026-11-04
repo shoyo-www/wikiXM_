@@ -182,7 +182,7 @@ class _BusinessMicrositeState extends State<BusinessMicrosite> {
                         children: [
                           Text(
                             '2 days ago',
-                            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
                           ),
                           SizedBox(width: Dimensions.w_5),
                           Container(
@@ -193,7 +193,7 @@ class _BusinessMicrositeState extends State<BusinessMicrosite> {
                           SizedBox(width: Dimensions.w_5),
                           Text(
                             '24 Likes',
-                            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
                           ),
                           SizedBox(width: Dimensions.w_5),
                           Container(
@@ -204,7 +204,7 @@ class _BusinessMicrositeState extends State<BusinessMicrosite> {
                           SizedBox(width: Dimensions.w_5),
                           Text(
                             '24 Comments',
-                            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),

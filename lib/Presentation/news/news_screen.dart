@@ -169,7 +169,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                               children: [
                                                 Text(
                                                   controller.feedData?.conversations?.topStory?.publishedLabel ?? '',
-                                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
                                                 ),
                                                 SizedBox(width: Dimensions.w_15),
                                                 Container(
@@ -180,7 +180,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                                 SizedBox(width: Dimensions.w_15),
                                                 Text(
                                                   '${controller.feedData?.conversations?.topStory?.commentsCount} Comment',
-                                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
                                                 ),
                                                 SizedBox(width: Dimensions.w_15),
                                                 Container(
@@ -191,7 +191,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                                 SizedBox(width: Dimensions.w_15),
                                                 Text(
                                                   '${controller.feedData?.conversations?.topStory?.sharesCount} Shares',
-                                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+                                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
                                                 ),
                                                 const Spacer(),
                                                 Icon(CupertinoIcons.bookmark, size: Dimensions.h_13, color: Theme.of(context).highlightColor),

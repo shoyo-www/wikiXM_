@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:wikixm/Presentation/widgets/common_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -112,21 +113,23 @@ class _MarketPlaceState extends State<MarketPlace> {
                                     height: Dimensions.h_20,
                                     child: Icon(CupertinoIcons.search, size: Dimensions.h_15, color: blue),
                                   ),
-                                  suffixIcon: controller.isClose ? SizedBox.shrink():SizedBox(
-                                    width: Dimensions.w_20,
-                                    height: Dimensions.h_20,
-                                    child:  GestureDetector(
-                                      onTap: () {
-                                        controller.searchController.clear();
-                                        controller.getMarketPlace(page: 1);
-                                        controller.isClose = true;
-                                        controller.update([ControllerBuilders.marketPlaceController]);
-                                      },
-                                      child: Center(
-                                        child: Icon(CupertinoIcons.clear_circled_solid, size: Dimensions.h_18, color: Theme.of(context).hintColor),
-                                      ),
-                                    ),
-                                  ),
+                                  suffixIcon: controller.isClose
+                                      ? SizedBox.shrink()
+                                      : SizedBox(
+                                          width: Dimensions.w_20,
+                                          height: Dimensions.h_20,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              controller.searchController.clear();
+                                              controller.getMarketPlace(page: 1);
+                                              controller.isClose = true;
+                                              controller.update([ControllerBuilders.marketPlaceController]);
+                                            },
+                                            child: Center(
+                                              child: Icon(CupertinoIcons.clear_circled_solid, size: Dimensions.h_18, color: Theme.of(context).hintColor),
+                                            ),
+                                          ),
+                                        ),
                                   fillColor: Theme.of(context).cardColor,
                                   hintText: controller.contentData?.search?.placeholder ?? '',
                                   hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: FontSize.sp_11),
@@ -598,43 +601,16 @@ class _MarketPlaceState extends State<MarketPlace> {
           ),
           SizedBox(height: Dimensions.h_13),
           sectionTitle('Distance'),
-          Container(
-            height: Dimensions.h_30,
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-            decoration: BoxDecoration(
-              color: surface,
-              borderRadius: BorderRadius.circular(Dimensions.h_5),
-              border: Border.all(color: border, width: 0.4),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: filterData?.distances?.any((item) => item.value == controller.selectedDistance) == true ? controller.selectedDistance : null,
-                isExpanded: true,
-                icon: Icon(CupertinoIcons.chevron_down, color: ink, size: Dimensions.h_10),
-                dropdownColor: surface,
-                style: TextStyle(color: muted, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-                items: (filterData?.distances ?? []).map<DropdownMenuItem<String>>((distance) {
-                  return DropdownMenuItem<String>(
-                    value: distance.value,
-                    child: Text(
-                      distance.label ?? '',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: muted, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-                    ),
-                  );
-                }).toList(),
-
-                onChanged: (value) {
-                  if (value == null) return;
-
-                  controller.selectedDistance = value;
-
-                  controller.update([ControllerBuilders.filterController]);
-                },
-              ),
-            ),
+          CommonDropdown(
+            items: filterData?.distances ?? [],
+            value: filterData?.distances?.firstWhereOrNull((item) => item.value == controller.selectedDistance),
+            itemLabel: (distance) => distance.label ?? '',
+            hint: 'Select distance',
+            onChanged: (distance) {
+              if (distance.value == null) return;
+              controller.selectedDistance = distance.value!;
+              controller.update([ControllerBuilders.filterController]);
+            },
           ),
           SizedBox(height: Dimensions.h_13),
           sectionTitle('Condition'),
@@ -891,7 +867,13 @@ class _MarketPlaceState extends State<MarketPlace> {
                                 SizedBox(width: Dimensions.w_5),
                                 Text(
                                   formatPrice(item?.previousPrice ?? 0),
-                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, decoration: TextDecoration.lineThrough, decorationColor: Theme.of(context).highlightColor, fontWeight: FontWeight.w500),
+                                  style: TextStyle(
+                                    color: Theme.of(context).highlightColor,
+                                    fontSize: FontSize.sp_10,
+                                    decoration: TextDecoration.lineThrough,
+                                    decorationColor: Theme.of(context).highlightColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ],
                             )

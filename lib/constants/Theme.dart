@@ -7,12 +7,12 @@ class AppTheme {
 
   static final lightTheme = ThemeData.light().copyWith(
     textTheme: ThemeData.light().textTheme.apply(
-      fontFamily: 'Inter',
+      fontFamily: 'PlusJakartaSans',
       bodyColor: AppColor.primaryInk,
       displayColor: AppColor.wikiXMNavy,
     ),
     primaryTextTheme: ThemeData.light().primaryTextTheme.apply(
-      fontFamily: 'Inter',
+      fontFamily: 'PlusJakartaSans',
       bodyColor: AppColor.primaryInk,
       displayColor: AppColor.wikiXMNavy,
     ),
@@ -46,12 +46,12 @@ class AppTheme {
 
   static final darkTheme = ThemeData.dark().copyWith(
     textTheme: ThemeData.dark().textTheme.apply(
-      fontFamily: 'Inter',
+      fontFamily: 'PlusJakartaSans',
       bodyColor: AppColor.white,
       displayColor: AppColor.white,
     ),
     primaryTextTheme: ThemeData.dark().primaryTextTheme.apply(
-      fontFamily: 'Inter',
+      fontFamily: 'PlusJakartaSans',
       bodyColor: AppColor.white,
       displayColor: AppColor.white,
     ),

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:wikixm/Presentation/widgets/common_dropdown.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -99,7 +100,17 @@ class _MarketBriefState extends State<MarketBrief> {
                                     height: Dimensions.h_150,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(Dimensions.h_8),
-                                      gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent], stops: const [0.0, 0.30, 0.58, 1.0]),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                        colors: [
+                                          const Color(0xFF020B15).withValues(alpha: 0.85),
+                                          const Color(0xFF020B15).withValues(alpha: 0.65),
+                                          const Color(0xFF020B15).withValues(alpha: 0.35),
+                                          Colors.transparent,
+                                        ],
+                                        stops: const [0.0, 0.30, 0.58, 1.0],
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -314,7 +325,10 @@ class _MarketBriefState extends State<MarketBrief> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        for (final point in points.take(3)) ...[forecastPoint(text: point, color: color, ink: Theme.of(context).highlightColor), if (point != points.take(3).last) SizedBox(height: Dimensions.h_4)],
+                        for (final point in points.take(3)) ...[
+                          forecastPoint(text: point, color: color, ink: Theme.of(context).highlightColor),
+                          if (point != points.take(3).last) SizedBox(height: Dimensions.h_4),
+                        ],
                       ],
                     ),
                   ),
@@ -395,9 +409,39 @@ class _MarketBriefState extends State<MarketBrief> {
     final sales = garageController.marketBriefData?.sales ?? [];
 
     final garageEvents = [
-      {'image': 'https://preetis-html.vercel.app/assets/images/garage/my-garage-version2/sale-talus.webp', 'month': 'JUN', 'date': '29', 'title': 'Talus Neighborhood Community Sale', 'location': 'Talus Dr, Issaquah, WA', 'dateText': 'Sat., Jun 29', 'time': '8:00 AM – 4:00 PM', 'items': '20+ homes', 'category': 'Multi-family event'},
-      {'image': 'https://preetis-html.vercel.app/assets/images/garage/my-garage-version2/sale-highlands.webp', 'month': 'JUL', 'date': '6', 'title': 'Issaquah Highlands Garage Sale', 'location': 'Highlands Dr, Issaquah, WA', 'dateText': 'Sat., Jul 6', 'time': '8:00 AM – 3:00 PM', 'items': '15+ homes', 'category': 'Household, kids, outdoor'},
-      {'image': 'https://preetis-html.vercel.app/assets/images/garage/my-garage-version2/sale-community.webp', 'month': 'JUL', 'date': '13', 'title': 'Issaquah Community Garage Sale Day', 'location': 'Various Locations', 'dateText': 'Sat., Jul 13', 'time': '8:00 AM – 4:00 PM', 'items': 'City-wide event', 'category': 'Multiple categories'},
+      {
+        'image': 'https://preetis-html.vercel.app/assets/images/garage/my-garage-version2/sale-talus.webp',
+        'month': 'JUN',
+        'date': '29',
+        'title': 'Talus Neighborhood Community Sale',
+        'location': 'Talus Dr, Issaquah, WA',
+        'dateText': 'Sat., Jun 29',
+        'time': '8:00 AM – 4:00 PM',
+        'items': '20+ homes',
+        'category': 'Multi-family event',
+      },
+      {
+        'image': 'https://preetis-html.vercel.app/assets/images/garage/my-garage-version2/sale-highlands.webp',
+        'month': 'JUL',
+        'date': '6',
+        'title': 'Issaquah Highlands Garage Sale',
+        'location': 'Highlands Dr, Issaquah, WA',
+        'dateText': 'Sat., Jul 6',
+        'time': '8:00 AM – 3:00 PM',
+        'items': '15+ homes',
+        'category': 'Household, kids, outdoor',
+      },
+      {
+        'image': 'https://preetis-html.vercel.app/assets/images/garage/my-garage-version2/sale-community.webp',
+        'month': 'JUL',
+        'date': '13',
+        'title': 'Issaquah Community Garage Sale Day',
+        'location': 'Various Locations',
+        'dateText': 'Sat., Jul 13',
+        'time': '8:00 AM – 4:00 PM',
+        'items': 'City-wide event',
+        'category': 'Multiple categories',
+      },
       {
         'image': 'https://preetis-html.vercel.app/assets/images/garage/my-garage-version2/sale-providence.webp',
         'month': 'AUG',
@@ -821,7 +865,17 @@ class _MarketBriefState extends State<MarketBrief> {
     );
   }
 
-  Widget garageEventCard({required Map<String, dynamic> item, required bool isLight, required Color surface, required Color ink, required Color copy, required Color muted, required Color line, required Color blue, required Color blueSoft}) {
+  Widget garageEventCard({
+    required Map<String, dynamic> item,
+    required bool isLight,
+    required Color surface,
+    required Color ink,
+    required Color copy,
+    required Color muted,
+    required Color line,
+    required Color blue,
+    required Color blueSoft,
+  }) {
     return CommonCard(
       padding: EdgeInsets.zero,
       child: Column(
@@ -1018,7 +1072,20 @@ class _MarketBriefState extends State<MarketBrief> {
               final active = item.active?.toString() ?? '0';
               final growth = item.growthPercent != null ? '${item.growthPercent}%' : '—';
               final icon = categoryIcon(title);
-              return inventoryStat(rank: '${index + 1}', title: title, active: '$active active', change: growth, icon: icon, color: blue, softColor: blueSoft, ink: ink, muted: muted, line: line, surface: surface, green: green);
+              return inventoryStat(
+                rank: '${index + 1}',
+                title: title,
+                active: '$active active',
+                change: growth,
+                icon: icon,
+                color: blue,
+                softColor: blueSoft,
+                ink: ink,
+                muted: muted,
+                line: line,
+                surface: surface,
+                green: green,
+              );
             },
           ),
         ),
@@ -1048,7 +1115,20 @@ class _MarketBriefState extends State<MarketBrief> {
     }
   }
 
-  Widget inventoryStat({required String rank, required String title, required String active, required String change, required IconData icon, required Color color, required Color softColor, required Color ink, required Color muted, required Color line, required Color surface, required Color green}) {
+  Widget inventoryStat({
+    required String rank,
+    required String title,
+    required String active,
+    required String change,
+    required IconData icon,
+    required Color color,
+    required Color softColor,
+    required Color ink,
+    required Color muted,
+    required Color line,
+    required Color surface,
+    required Color green,
+  }) {
     return CommonCard(
       margin: EdgeInsets.only(bottom: Dimensions.h_4),
       padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6, vertical: Dimensions.h_5),
@@ -1171,7 +1251,20 @@ class _MarketBriefState extends State<MarketBrief> {
 
               final previousValue = previousPrice != null ? '\$${NumberFormat('#,##0.##').format(previousPrice)}' : 'No data';
 
-              return price(title: title, value: currentValue, previousValue: previousValue, currentProgress: currentProgress, previousProgress: previousProgress, hasCurrentPrice: currentPrice != null, hasPreviousPrice: previousPrice != null, ink: ink, muted: muted, blue: blue, blueSoft: blueSoft, isLight: isLight);
+              return price(
+                title: title,
+                value: currentValue,
+                previousValue: previousValue,
+                currentProgress: currentProgress,
+                previousProgress: previousProgress,
+                hasCurrentPrice: currentPrice != null,
+                hasPreviousPrice: previousPrice != null,
+                ink: ink,
+                muted: muted,
+                blue: blue,
+                blueSoft: blueSoft,
+                isLight: isLight,
+              );
             },
           ),
         ),
@@ -1179,7 +1272,20 @@ class _MarketBriefState extends State<MarketBrief> {
     );
   }
 
-  Widget price({required String title, required String value, required String previousValue, required double currentProgress, required double previousProgress, required bool hasCurrentPrice, required bool hasPreviousPrice, required Color ink, required Color muted, required Color blue, required Color blueSoft, required bool isLight}) {
+  Widget price({
+    required String title,
+    required String value,
+    required String previousValue,
+    required double currentProgress,
+    required double previousProgress,
+    required bool hasCurrentPrice,
+    required bool hasPreviousPrice,
+    required Color ink,
+    required Color muted,
+    required Color blue,
+    required Color blueSoft,
+    required bool isLight,
+  }) {
     return CommonCard(
       margin: EdgeInsets.only(bottom: Dimensions.h_4),
       padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6, vertical: Dimensions.h_8),
@@ -1268,7 +1374,13 @@ class _MarketBriefState extends State<MarketBrief> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AppCacheImage(imageUrl: "https://preetis-html.vercel.app/assets/images/school/version2/ai-guide.webp", size: Dimensions.h_28, widthSize: Dimensions.h_28, isCircle: true, isShadow: false),
+              AppCacheImage(
+                imageUrl: "https://preetis-html.vercel.app/assets/images/school/version2/ai-guide.webp",
+                size: Dimensions.h_28,
+                widthSize: Dimensions.h_28,
+                isCircle: true,
+                isShadow: false,
+              ),
               SizedBox(width: Dimensions.w_10),
               Text(
                 'AI Selling Brief'.toUpperCase(),
@@ -1359,10 +1471,74 @@ class _MarketBriefState extends State<MarketBrief> {
       physics: const NeverScrollableScrollPhysics(),
       childAspectRatio: 2.2,
       children: [
-        marketStatCard(value: activeListings, title: 'Active Listings', change: '', changeText: '5 new this month to date', icon: CupertinoIcons.cart, iconColor: blue, iconBackground: blueSoft, surface: surface, ink: ink, copy: copy, muted: muted, line: line, positiveColor: green, negativeColor: red, isPositive: true),
-        marketStatCard(value: priceDrops, title: 'Price Drops', change: '', changeText: 'Price history is not available', icon: CupertinoIcons.tag, iconColor: red, iconBackground: redSoft, surface: surface, ink: ink, copy: copy, muted: muted, line: line, positiveColor: green, negativeColor: red, isPositive: true),
-        marketStatCard(value: averagePrice, title: 'Avg. Listing Price', change: '', changeText: 'Current active asking prices', icon: CupertinoIcons.money_dollar_circle, iconColor: green, iconBackground: greenSoft, surface: surface, ink: ink, copy: copy, muted: muted, line: line, positiveColor: green, negativeColor: red, isPositive: true),
-        marketStatCard(value: soldWeek, title: 'Items Sold This Week', change: '', changeText: 'Recorded sales since Monday', icon: CupertinoIcons.person_2, iconColor: purple, iconBackground: purpleSoft, surface: surface, ink: ink, copy: copy, muted: muted, line: line, positiveColor: green, negativeColor: red, isPositive: true),
+        marketStatCard(
+          value: activeListings,
+          title: 'Active Listings',
+          change: '',
+          changeText: '5 new this month to date',
+          icon: CupertinoIcons.cart,
+          iconColor: blue,
+          iconBackground: blueSoft,
+          surface: surface,
+          ink: ink,
+          copy: copy,
+          muted: muted,
+          line: line,
+          positiveColor: green,
+          negativeColor: red,
+          isPositive: true,
+        ),
+        marketStatCard(
+          value: priceDrops,
+          title: 'Price Drops',
+          change: '',
+          changeText: 'Price history is not available',
+          icon: CupertinoIcons.tag,
+          iconColor: red,
+          iconBackground: redSoft,
+          surface: surface,
+          ink: ink,
+          copy: copy,
+          muted: muted,
+          line: line,
+          positiveColor: green,
+          negativeColor: red,
+          isPositive: true,
+        ),
+        marketStatCard(
+          value: averagePrice,
+          title: 'Avg. Listing Price',
+          change: '',
+          changeText: 'Current active asking prices',
+          icon: CupertinoIcons.money_dollar_circle,
+          iconColor: green,
+          iconBackground: greenSoft,
+          surface: surface,
+          ink: ink,
+          copy: copy,
+          muted: muted,
+          line: line,
+          positiveColor: green,
+          negativeColor: red,
+          isPositive: true,
+        ),
+        marketStatCard(
+          value: soldWeek,
+          title: 'Items Sold This Week',
+          change: '',
+          changeText: 'Recorded sales since Monday',
+          icon: CupertinoIcons.person_2,
+          iconColor: purple,
+          iconBackground: purpleSoft,
+          surface: surface,
+          ink: ink,
+          copy: copy,
+          muted: muted,
+          line: line,
+          positiveColor: green,
+          negativeColor: red,
+          isPositive: true,
+        ),
       ],
     );
   }
@@ -1457,13 +1633,16 @@ class _MarketBriefState extends State<MarketBrief> {
   Widget garageListing(bool isLight) {
     final surface = AppColor.addItemSurface(context);
     final ink = AppColor.ink(context);
-    final copy = AppColor.copy(context);
     final muted = AppColor.muted(context);
     final line = AppColor.line(context);
     final blue = AppColor.blue(context);
     final green = AppColor.green(context);
     final allPoints = garageController.briefChartsData?.points ?? [];
-    final selectedMonths = garageController.listingActivityRange == 'Last Year' ? 12 : garageController.listingActivityRange == 'Last 6 Months' ? 6 : 3;
+    final selectedMonths = garageController.listingActivityRange == 'Last Year'
+        ? 12
+        : garageController.listingActivityRange == 'Last 6 Months'
+        ? 6
+        : 3;
     final points = allPoints.length > selectedMonths ? allPoints.sublist(allPoints.length - selectedMonths) : List<Point>.from(allPoints);
     final maxCount = points.fold<double>(0, (maxValue, point) {
       final newValue = (point.pointNew ?? 0).toDouble();
@@ -1490,28 +1669,16 @@ class _MarketBriefState extends State<MarketBrief> {
                   style: TextStyle(color: ink, fontSize: FontSize.sp_12, fontWeight: FontWeight.w900),
                 ),
               ),
-              Container(
-                height: Dimensions.h_25,
-                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(Dimensions.h_6)),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: garageController.listingActivityRange,
-                    icon: Icon(CupertinoIcons.chevron_down, color: copy, size: Dimensions.h_10),
-                    dropdownColor: surface,
-                    isDense: true,
-                    style: TextStyle(color: copy, fontSize: FontSize.sp_9, fontWeight: FontWeight.w600),
-                    items: const [
-                      DropdownMenuItem(value: 'Last 3 Months', child: Text('Last 3 Months')),
-                      DropdownMenuItem(value: 'Last 6 Months', child: Text('Last 6 Months')),
-                      DropdownMenuItem(value: 'Last Year', child: Text('Last Year')),
-                    ],
-                    onChanged: (value) {
-                      if (value == null) return;
-                      garageController.listingActivityRange = value;
-                      garageController.update([ControllerBuilders.marketBriefController]);
-                    },
-                  ),
+              SizedBox(
+                width: Dimensions.w_120,
+                child: CommonDropdown<String>(
+                  items: const ['Last 3 Months', 'Last 6 Months', 'Last Year'],
+                  value: garageController.listingActivityRange,
+                  height: Dimensions.h_30,
+                  onChanged: (value) {
+                    garageController.listingActivityRange = value;
+                    garageController.update([ControllerBuilders.marketBriefController]);
+                  },
                 ),
               ),
             ],
@@ -1613,13 +1780,16 @@ class _MarketBriefState extends State<MarketBrief> {
   Widget averageListing(bool isLight) {
     final surface = AppColor.addItemSurface(context);
     final ink = AppColor.ink(context);
-    final copy = AppColor.copy(context);
     final muted = AppColor.muted(context);
     final line = AppColor.line(context);
     final purple = AppColor.purple(context);
     final purpleSoft = AppColor.purpleSoft(context);
     final allPoints = garageController.briefChartsData?.points ?? [];
-    final selectedMonths = garageController.averagePriceRange == 'Last Year' ? 12 : garageController.averagePriceRange == 'Last 6 Months' ? 6 : 3;
+    final selectedMonths = garageController.averagePriceRange == 'Last Year'
+        ? 12
+        : garageController.averagePriceRange == 'Last 6 Months'
+        ? 6
+        : 3;
     final points = allPoints.length > selectedMonths ? allPoints.sublist(allPoints.length - selectedMonths) : List<Point>.from(allPoints);
     final prices = points.map((point) => point.averagePrice).whereType<double>().toList();
     final maxPrice = prices.isEmpty ? 0.0 : prices.reduce((a, b) => a > b ? a : b);
@@ -1656,28 +1826,16 @@ class _MarketBriefState extends State<MarketBrief> {
                   style: TextStyle(color: ink, fontSize: FontSize.sp_12, fontWeight: FontWeight.w900),
                 ),
               ),
-              Container(
-                height: Dimensions.h_25,
-                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(Dimensions.h_6)),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: garageController.averagePriceRange,
-                    icon: Icon(CupertinoIcons.chevron_down, color: copy, size: Dimensions.h_10),
-                    dropdownColor: surface,
-                    isDense: true,
-                    style: TextStyle(color: copy, fontSize: FontSize.sp_9, fontWeight: FontWeight.w600),
-                    items: const [
-                      DropdownMenuItem(value: 'Last 3 Months', child: Text('Last 3 Months')),
-                      DropdownMenuItem(value: 'Last 6 Months', child: Text('Last 6 Months')),
-                      DropdownMenuItem(value: 'Last Year', child: Text('Last Year')),
-                    ],
-                    onChanged: (value) {
-                      if (value == null) return;
-                      garageController.averagePriceRange = value;
-                      garageController.update([ControllerBuilders.marketBriefController]);
-                    },
-                  ),
+              SizedBox(
+                width: Dimensions.w_120,
+                child: CommonDropdown<String>(
+                  items: const ['Last 3 Months', 'Last 6 Months', 'Last Year'],
+                  value: garageController.averagePriceRange,
+                  height: Dimensions.h_30,
+                  onChanged: (value) {
+                    garageController.averagePriceRange = value;
+                    garageController.update([ControllerBuilders.marketBriefController]);
+                  },
                 ),
               ),
             ],
@@ -1759,7 +1917,12 @@ class _MarketBriefState extends State<MarketBrief> {
           child: Container(
             height: Dimensions.h_380,
             decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent], stops: const [0.0, 0.30, 0.58, 1.0]),
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent],
+                stops: const [0.0, 0.30, 0.58, 1.0],
+              ),
             ),
           ),
         ),

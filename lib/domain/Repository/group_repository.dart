@@ -14,6 +14,9 @@ import '../../data/datasource/remote/models/response/my_group_invitations.dart';
 import '../../data/datasource/remote/models/response/my_group_activities.dart';
 import '../../data/datasource/remote/models/response/my_group_settings.dart';
 import '../../data/datasource/remote/models/response/activity_profile.dart';
+import '../../data/datasource/remote/models/response/public_profile.dart';
+import '../../data/datasource/remote/models/response/public_profile_feed.dart';
+import '../../data/datasource/remote/models/response/public_profile_items.dart';
 import '../../data/datasource/remote/models/response/search_group.dart';
 import '../../data/datasource/remote/models/response/search_group_overview.dart';
 
@@ -33,6 +36,12 @@ abstract class GroupRepository {
   Future<Either<Failure, MyGroupSettingsResponse>> getMyGroupSettings();
   Future<Either<Failure, MyGroupSettingsResponse>> saveMyGroupSettings(bool recommendations);
   Future<Either<Failure, ActivityProfileResponse>> activityProfile();
+
+  Future<Either<Failure, PublicProfileResponse>> publicProfile(int id);
+
+  Future<Either<Failure, PublicProfileFeedResponse>> publicProfileFeed(int id);
+
+  Future<Either<Failure, PublicProfileItemsResponse>> publicProfileItems(int id, String type, int page);
   Future<Either<Failure, SearchGroupOverviewResponse>> discoverOverview(int townId);
   Future<Either<Failure, SearchGroupResponse>> discoverGroups(Map<String, dynamic> params);
 

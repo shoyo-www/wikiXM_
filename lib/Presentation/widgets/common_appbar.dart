@@ -122,7 +122,7 @@ class CommonBlurAppBar extends StatelessWidget {
                       decoration: const BoxDecoration(color: Color(0xFFFF3B30), shape: BoxShape.circle),
                       child: Text(
                         '3',
-                        style: TextStyle(color: Colors.white, fontSize: FontSize.sp_8, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+                        style: TextStyle(color: Colors.white, fontSize: FontSize.sp_8, fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),

@@ -178,7 +178,7 @@ class FirstVisit extends StatelessWidget {
                   SizedBox(width: Dimensions.w_5),
                   Text(
                     "Join in minutes. It's free.",
-                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_13, fontFamily: 'Poppins', fontWeight: FontWeight.w700),
+                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_13, fontWeight: FontWeight.w700),
                   ),
                 ],
               ),
@@ -228,7 +228,7 @@ class FirstVisit extends StatelessWidget {
                           ),
                           Text(
                             "Create your free account",
-                            style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9_5, fontFamily: 'Poppins', fontWeight: FontWeight.w500),
+                            style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
@@ -343,7 +343,7 @@ class FirstVisit extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '$step',
-                    style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
+                    style: TextStyle(color: Colors.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
                   ),
                 ),
               ),

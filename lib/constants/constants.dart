@@ -122,6 +122,7 @@ class ControllerBuilders {
   static String discoverGroupsList = 'DiscoverGroupsList';
   static String discoverFilters = 'DiscoverFilters';
   static String publicProfile = 'PublicProfile';
+  static String groupSettings = 'GroupSettings';
   static String groupProfilePage = 'GroupProfilePage';
   static String groupProfileSections = 'GroupProfileSections';
   static String groupProfilePrivacy = 'GroupProfilePrivacy';

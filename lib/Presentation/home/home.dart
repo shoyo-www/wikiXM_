@@ -310,7 +310,7 @@ class _HomeState extends State<Home> {
                                             dashboardController.weatherData?.weather?.temperatureText ?? '72° F',
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(color: Theme.of(context).hoverColor, fontFamily: 'Poppins', fontSize: FontSize.sp_24, fontWeight: FontWeight.w600),
+                                            style: TextStyle(color: Theme.of(context).hoverColor, fontSize: FontSize.sp_24, fontWeight: FontWeight.w600),
                                           ),
                                           Text(
                                             dashboardController.weatherData?.weather?.condition ?? 'Sunny',
@@ -1986,7 +1986,7 @@ class _HomeState extends State<Home> {
                                     "You're only "
                                     "${dashboardController.communityData?.journey?.message?.count ?? ''} "
                                     "activities away from Founder!",
-                                    style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: FontSize.sp_11, fontWeight: FontWeight.w600),
+                                    style: TextStyle(color: Colors.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w600),
                                   );
                                 },
                               ),
@@ -2075,13 +2075,13 @@ Widget homeInfoItem({required String imageUrl, required String title, required S
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: fontSize ?? FontSize.sp_10, fontWeight: FontWeight.w600),
+                  style: TextStyle(color: Colors.white, fontSize: fontSize ?? FontSize.sp_10, fontWeight: FontWeight.w600),
                 ),
                 Text(
                   subtitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
+                  style: TextStyle(color: Colors.white, fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w500),
                 ),
               ],
             ),

@@ -56,6 +56,7 @@ class Apis {
   static const myActivities = '$baseUrl/groups/my-activities';
   static const myGroupSettings = '$baseUrl/groups/account-settings';
   static const activityProfile = '$baseUrl/groups/people/877/profile';
+  static const publicProfile = '$baseUrl/groups/public-profiles/';
   static const discoverOverview = '$baseUrl/groups/discover/overview';
   static const groupList = '$baseUrl/groups/list';
 }

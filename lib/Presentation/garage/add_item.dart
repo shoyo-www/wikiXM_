@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:wikixm/Presentation/widgets/common_dropdown.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -341,7 +342,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                   Expanded(
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
-                                      child: LinearProgressIndicator(value: controller.imageProgress, minHeight: Dimensions.h_4, backgroundColor: const Color(0xFFDCE7F2), valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2878FF))),
+                                      child: LinearProgressIndicator(
+                                        value: controller.imageProgress,
+                                        minHeight: Dimensions.h_4,
+                                        backgroundColor: const Color(0xFFDCE7F2),
+                                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2878FF)),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(width: Dimensions.w_7),
@@ -375,7 +381,14 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Widget fifthStep(BuildContext context, bool isLight, GarageController controller) {
     return Column(
       children: [
-        commonStepHeader(crossAxisAlignment: CrossAxisAlignment.start, context: context, step: '5', isOptional: true, title: 'Featured Listing ', subtitle: "Get more views and sell faster. Your listing will appear in the Featured column on the homepage."),
+        commonStepHeader(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          context: context,
+          step: '5',
+          isOptional: true,
+          title: 'Featured Listing ',
+          subtitle: "Get more views and sell faster. Your listing will appear in the Featured column on the homepage.",
+        ),
         SizedBox(height: Dimensions.h_10),
         CommonCard(
           margin: EdgeInsets.zero,
@@ -686,7 +699,13 @@ class _AddItemScreenState extends State<AddItemScreen> {
   Widget thirdStep(BuildContext context, bool isLight) {
     return Column(
       children: [
-        commonStepHeader(crossAxisAlignment: CrossAxisAlignment.start, context: context, step: '3', title: 'Choose how you want to sell', subtitle: 'Get the right price for your goals. Based on similar items in Issaquah.'),
+        commonStepHeader(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          context: context,
+          step: '3',
+          title: 'Choose how you want to sell',
+          subtitle: 'Get the right price for your goals. Based on similar items in Issaquah.',
+        ),
         SizedBox(height: Dimensions.h_5),
         CommonCard(margin: EdgeInsets.zero, child: sellingOptions(isLight)),
         SizedBox(height: Dimensions.h_20),
@@ -766,7 +785,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           ? AppCacheImage(imageUrl: garageController.images.first.url!, widthSize: Get.width, size: Dimensions.h_140, fit: BoxFit.cover)
                           : Image.file(File(garageController.images.first.file.path), width: Get.width, height: Dimensions.h_140, fit: BoxFit.cover),
                     )
-                  : AppCacheImage(imageUrl: 'https://preetis-html.vercel.app/assets/images/garage/garage-item/mountain-bike.webp', widthSize: Get.width, size: Dimensions.h_140, radius: Dimensions.h_7, fit: BoxFit.cover, isShimmer: true, alignment: const Alignment(1, -0.5), isShadow: false),
+                  : AppCacheImage(
+                      imageUrl: 'https://preetis-html.vercel.app/assets/images/garage/garage-item/mountain-bike.webp',
+                      widthSize: Get.width,
+                      size: Dimensions.h_140,
+                      radius: Dimensions.h_7,
+                      fit: BoxFit.cover,
+                      isShimmer: true,
+                      alignment: const Alignment(1, -0.5),
+                      isShadow: false,
+                    ),
               SizedBox(height: Dimensions.h_10),
               itemDetails(isLight),
               SizedBox(height: Dimensions.h_10),
@@ -841,9 +869,36 @@ class _AddItemScreenState extends State<AddItemScreen> {
     final blueSoft = AppColor.blueSoft(context);
 
     final options = [
-      {'title': 'Sell Fast', 'price': '\$400', 'time': 'Estimated 2–4 days', 'description': 'Great if you want to sell quickly.', 'icon': CupertinoIcons.bolt_fill, 'color': blue, 'softColor': blueSoft, 'recommended': false},
-      {'title': 'Balanced', 'price': '\$450', 'time': 'Estimated 5–9 days', 'description': 'Best balance of price and speed.', 'icon': CupertinoIcons.checkmark_circle_fill, 'color': blue, 'softColor': blueSoft, 'recommended': true},
-      {'title': 'Maximize Price', 'price': '\$525', 'time': 'Estimated 12–20 days', 'description': 'Get the highest price.', 'icon': CupertinoIcons.money_dollar_circle_fill, 'color': blue, 'softColor': blueSoft, 'recommended': false},
+      {
+        'title': 'Sell Fast',
+        'price': '\$400',
+        'time': 'Estimated 2–4 days',
+        'description': 'Great if you want to sell quickly.',
+        'icon': CupertinoIcons.bolt_fill,
+        'color': blue,
+        'softColor': blueSoft,
+        'recommended': false,
+      },
+      {
+        'title': 'Balanced',
+        'price': '\$450',
+        'time': 'Estimated 5–9 days',
+        'description': 'Best balance of price and speed.',
+        'icon': CupertinoIcons.checkmark_circle_fill,
+        'color': blue,
+        'softColor': blueSoft,
+        'recommended': true,
+      },
+      {
+        'title': 'Maximize Price',
+        'price': '\$525',
+        'time': 'Estimated 12–20 days',
+        'description': 'Get the highest price.',
+        'icon': CupertinoIcons.money_dollar_circle_fill,
+        'color': blue,
+        'softColor': blueSoft,
+        'recommended': false,
+      },
     ];
 
     return GetBuilder(
@@ -875,12 +930,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         decoration: BoxDecoration(
                           color: isSelected ? Color.lerp(softColor, surface, 0.25) : Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(Dimensions.h_6),
-                          border: Border.all(
-                            color: isSelected
-                                ? blue
-                                : AppColor.border(context),
-                            width: isSelected ? 0.9 : 0.4,
-                          ),
+                          border: Border.all(color: isSelected ? blue : AppColor.border(context), width: isSelected ? 0.9 : 0.4),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -1154,7 +1204,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
     );
   }
 
-  Widget commonStepHeader({required BuildContext context, required String step, required String title, String? subtitle, Widget? child, CrossAxisAlignment? crossAxisAlignment, bool isOptional = false}) {
+  Widget commonStepHeader({
+    required BuildContext context,
+    required String step,
+    required String title,
+    String? subtitle,
+    Widget? child,
+    CrossAxisAlignment? crossAxisAlignment,
+    bool isOptional = false,
+  }) {
     return Row(
       crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
       children: [
@@ -1285,27 +1343,10 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         child: _bottomSheetField(
                           context: context,
                           label: 'Category',
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              dropdownColor: Theme.of(context).cardColor,
-                              value: selectedCategory,
-                              isExpanded: true,
-                              icon: Icon(CupertinoIcons.chevron_down, size: Dimensions.h_12, color: Theme.of(context).highlightColor),
-                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
-                              items: const [
-                                DropdownMenuItem(value: 'Bikes', child: Text('Bikes')),
-                                DropdownMenuItem(value: 'Cars', child: Text('Cars')),
-                                DropdownMenuItem(value: 'Electronics', child: Text('Electronics')),
-                                DropdownMenuItem(value: 'Furniture', child: Text('Furniture')),
-                              ],
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    selectedCategory = value;
-                                  });
-                                }
-                              },
-                            ),
+                          child: CommonDropdown<String>(
+                            items: const ['Bikes', 'Cars', 'Electronics', 'Furniture'],
+                            value: selectedCategory,
+                            onChanged: (value) => setState(() => selectedCategory = value),
                           ),
                         ),
                       ),
@@ -1314,28 +1355,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                         child: _bottomSheetField(
                           context: context,
                           label: 'Condition',
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              dropdownColor: Theme.of(context).cardColor,
-                              value: selectedCondition,
-                              isExpanded: true,
-                              icon: Icon(CupertinoIcons.chevron_down, size: Dimensions.h_12, color: Theme.of(context).highlightColor),
-                              style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
-                              items: const [
-                                DropdownMenuItem(value: 'Like New', child: Text('Like New')),
-                                DropdownMenuItem(value: 'Good', child: Text('Good')),
-                                DropdownMenuItem(value: 'Fair', child: Text('Fair')),
-                                DropdownMenuItem(value: 'Used', child: Text('Used')),
-                              ],
-                              onChanged: (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    selectedCondition = value;
-                                  });
-                                }
-                              },
-                            ),
-                          ),
+                          child: CommonDropdown<String>(items: const ['Like New', 'Good', 'Fair', 'Used'], value: selectedCondition, onChanged: (value) => setState(() => selectedCondition = value)),
                         ),
                       ),
                     ],
@@ -1360,7 +1380,14 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     height: Dimensions.h_35,
                     child: ElevatedButton(
                       onPressed: () {
-                        final data = {'title': titleController.text.trim(), 'category': selectedCategory, 'condition': selectedCondition, 'year': yearController.text.trim(), 'brand': brandController.text.trim(), 'model': modelController.text.trim()};
+                        final data = {
+                          'title': titleController.text.trim(),
+                          'category': selectedCategory,
+                          'condition': selectedCondition,
+                          'year': yearController.text.trim(),
+                          'brand': brandController.text.trim(),
+                          'model': modelController.text.trim(),
+                        };
 
                         Get.back(result: data);
                       },
@@ -1395,16 +1422,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
           style: TextStyle(color: Theme.of(context).primaryColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w500),
         ),
         SizedBox(height: Dimensions.h_5),
-        Container(
-          height: Dimensions.h_35,
-          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(Dimensions.h_7),
-            border: Border.all(color: const Color(0xFF2878FF), width: 0.5),
-          ),
-          child: child,
-        ),
+        child,
       ],
     );
   }
@@ -1443,7 +1461,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   void showDescriptionBottomSheet(BuildContext context) {
     final descriptionController = TextEditingController(
-      text: garageController.description.isNotEmpty ? garageController.description : 'Excellent condition Trek Fuel EX 8 mountain bike. Well maintained and barely used. Full suspension, 29” wheels, size Large.\nUpgraded pedals and bottle cage included. No major scratches. Ready to ride!',
+      text: garageController.description.isNotEmpty
+          ? garageController.description
+          : 'Excellent condition Trek Fuel EX 8 mountain bike. Well maintained and barely used. Full suspension, 29” wheels, size Large.\nUpgraded pedals and bottle cage included. No major scratches. Ready to ride!',
     );
 
     Get.bottomSheet(
@@ -1648,7 +1668,20 @@ class _AddItemScreenState extends State<AddItemScreen> {
   }
 
   void showChangeLocationBottomSheet(BuildContext context) {
-    final towns = ['Issaquah, WA', 'Seattle, WA', 'Bellevue, WA', 'Redmond, WA', 'Kirkland, WA', 'Sammamish, WA', 'Mercer Island, WA', 'Renton, WA', 'Newcastle, WA', 'Bothell, WA', 'Woodinville, WA', 'North Bend, WA'];
+    final towns = [
+      'Issaquah, WA',
+      'Seattle, WA',
+      'Bellevue, WA',
+      'Redmond, WA',
+      'Kirkland, WA',
+      'Sammamish, WA',
+      'Mercer Island, WA',
+      'Renton, WA',
+      'Newcastle, WA',
+      'Bothell, WA',
+      'Woodinville, WA',
+      'North Bend, WA',
+    ];
 
     Get.bottomSheet(
       Container(
@@ -1710,7 +1743,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
                               if (isSelected) ...[Icon(CupertinoIcons.checkmark, color: const Color(0xFF075DC9), size: Dimensions.h_11), SizedBox(width: Dimensions.w_4)],
                               Text(
                                 town,
-                                style: TextStyle(color: isSelected ? const Color(0xFF075DC9) : Theme.of(context).primaryColor, fontSize: FontSize.sp_11, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500),
+                                style: TextStyle(
+                                  color: isSelected ? const Color(0xFF075DC9) : Theme.of(context).primaryColor,
+                                  fontSize: FontSize.sp_11,
+                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                ),
                               ),
                             ],
                           ),
