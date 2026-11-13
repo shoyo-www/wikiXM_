@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get_navigation/src/routes/custom_transition.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
+import 'package:wikixm/Presentation/alerts/alert_detail.dart';
+import 'package:wikixm/Presentation/alerts/alerts_home.dart';
 import 'package:wikixm/Presentation/auth/sign_in.dart';
 import 'package:wikixm/Presentation/business/microsite.dart';
 import 'package:wikixm/Presentation/command_center/command_center.dart';
@@ -13,6 +15,7 @@ import 'package:wikixm/Presentation/garage/market_brief.dart';
 import 'package:wikixm/Presentation/garage/market_place.dart';
 import 'package:wikixm/Presentation/groups/activity_detail.dart';
 import 'package:wikixm/Presentation/groups/create_group.dart';
+import 'package:wikixm/Presentation/groups/group_created.dart';
 import 'package:wikixm/Presentation/groups/detail_page.dart';
 import 'package:wikixm/Presentation/groups/group_detail.dart';
 import 'package:wikixm/Presentation/groups/group_profile.dart';
@@ -64,14 +67,18 @@ class AppPages {
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groups, page: () => const GroupsScreen()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupDetail, page: () => const GroupDetail()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.createGroup, page: () => const CreateGroupScreen()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupCreated, page: () => const GroupCreatedScreen()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.activityDetail, page: () => const ActivityDetail()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.detailPage, page: () => const DetailPage()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupUserProfile, page: () => const GroupUserProfile()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.myGroup, page: () => const MyGroupsScreen()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.searchGroups, page: () => const SearchGroups()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.activitiesCalendar, page: () => const SearchGroups(activities: true)),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.publicProfile, page: () => const PublicProfile()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupSettings, page: () => const GroupSettings()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupSettingsPage, page: () => const GroupSettingsPage()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.alerts, page: () => const AlertsHome()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.alertDetail, page: () => const AlertDetail()),
   ];
 }
 

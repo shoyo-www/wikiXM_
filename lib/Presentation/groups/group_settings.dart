@@ -6,6 +6,7 @@ import 'package:wikixm/Presentation/widgets/common_blur_scaffold.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
+import '../widgets/common_shimmer.dart';
 import '../widgets/entrance_animation.dart';
 
 class GroupSettings extends StatelessWidget with SettingsWidgets {
@@ -18,6 +19,7 @@ class GroupSettings extends StatelessWidget with SettingsWidgets {
     return GetBuilder<GroupController>(
       init: controller,
       id: ControllerBuilders.groupSettings,
+      initState: (_) => controller.getGroupSettings(),
       builder: (c) => CommonBlurScaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         collapsedColor: AppColor.ink(context),
@@ -29,26 +31,24 @@ class GroupSettings extends StatelessWidget with SettingsWidgets {
             children: staggered([
               SizedBox(height: MediaQuery.of(context).padding.top + Dimensions.h_30),
               Text(
-                'Group settings',
+               'Group settings & preferences',
                 style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_26, fontWeight: FontWeight.w800, letterSpacing: -1),
               ),
               SizedBox(height: Dimensions.h_6),
               Text(
-                'Set defaults for every group, or tune one group on its own.',
+                c.settingsOverview?.help ?? 'Set defaults for every group, or tune one group on its own.',
                 style: TextStyle(color: AppColor.muted(context), fontSize: FontSize.sp_12, height: 1.4),
               ),
               // SizedBox(height: Dimensions.h_15),
               // buildGroupPicker(context, c),
               // SizedBox(height: Dimensions.h_15),
               // buildBanner(context, c),
-              SizedBox(height: Dimensions.h_20),
-              sectionTitle(context, 'What reaches you'),
-              buildReach(context, c),
+              // SizedBox(height: Dimensions.h_20),
+              // sectionTitle(context, 'What reaches you'),
+              // buildReach(context, c),
               SizedBox(height: Dimensions.h_15),
-              sectionTitle(context, 'All settings'),
+              sectionTitle(context, 'Your global preferences'),
               buildAllSettings(context, c),
-              SizedBox(height: Dimensions.h_5),
-              restoreButton(context, c.restoreDefaultSettings),
               SizedBox(height: MediaQuery.of(context).padding.bottom + Dimensions.h_10),
             ]),
           ),
@@ -156,10 +156,28 @@ class GroupSettings extends StatelessWidget with SettingsWidgets {
   }
 
   Widget buildAllSettings(BuildContext context, GroupController c) {
+    // same shape as a settings row: icon, title, value
+    if (c.groupSettingsLoading) {
+      return card(context, [
+        for (var i = 0; i < 6; i++)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: Dimensions.h_8),
+            child: Row(
+              children: [
+                ShimmerBox(Dimensions.h_25, Dimensions.h_25, radius: Dimensions.h_8),
+                SizedBox(width: Dimensions.w_10),
+                ShimmerBox(Dimensions.w_120, Dimensions.h_12),
+                const Spacer(),
+                ShimmerBox(Dimensions.w_60, Dimensions.h_10),
+              ],
+            ),
+          ),
+      ]);
+    }
     return card(context, [
       for (final row in c.settingsRows)
         InkWell(
-          onTap: row['page'] == null ? null : () => c.openSettingsPage(row['page']),
+          onTap: () => c.openSettingsPage(row.id),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: Dimensions.h_8),
             child: Row(
@@ -168,12 +186,12 @@ class GroupSettings extends StatelessWidget with SettingsWidgets {
                   width: Dimensions.h_25,
                   height: Dimensions.h_25,
                   decoration: BoxDecoration(color: AppColor.blueSoft(context), borderRadius: BorderRadius.circular(Dimensions.h_8)),
-                  child: Icon(row['icon'], color: AppColor.ink(context), size: Dimensions.h_13),
+                  child: Icon(c.settingsIcon(row.icon), color: AppColor.ink(context), size: Dimensions.h_13),
                 ),
                 SizedBox(width: Dimensions.w_10),
                 Expanded(
                   child: Text(
-                    row['title'],
+                    row.label ?? '',
                     style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
                   ),
                 ),

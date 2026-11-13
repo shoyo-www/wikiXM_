@@ -1,37 +1,47 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'package:wikixm/Presentation/groups/controller.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:wikixm/Presentation/groups/create_group_controller.dart';
 import 'package:wikixm/Presentation/widgets/common_card.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import '../../constants/extensions.dart';
 import '../../constants/fontsize.dart';
+import '../../data/datasource/remote/models/response/create_group.dart';
 import '../widgets/cache_image.dart';
 import '../widgets/common_sliver_scaffold.dart';
+import '../widgets/common_dropdown.dart';
+import '../widgets/common_shimmer.dart';
+import '../widgets/common_text_field.dart';
 
-class CreateGroupScreen extends StatefulWidget {
+IconData groupOptionIcon(String? name) => switch (name) {
+  'users' => CupertinoIcons.person_2,
+  'user' => CupertinoIcons.person,
+  'chart-bars' => Icons.bar_chart,
+  'lock' => CupertinoIcons.lock,
+  'globe' => Icons.public,
+  'eye-off' => Icons.visibility_off_outlined,
+  'calendar' => Icons.calendar_today_outlined,
+  'chat' => CupertinoIcons.chat_bubble_2,
+  'camera' => CupertinoIcons.camera,
+  _ => Icons.circle_outlined,
+};
+
+class CreateGroupScreen extends StatelessWidget {
   const CreateGroupScreen({super.key});
 
-  @override
-  State<CreateGroupScreen> createState() => _CreateGroupScreenState();
-}
-
-class _CreateGroupScreenState extends State<CreateGroupScreen> {
-  final GroupController groupController = Get.put(GroupController());
-  final List<String> interests = ['Mountain Biking', 'Trail Riding', 'Enduro', 'Cross Country (XC)', 'Downhill', 'Trail Maintenance', 'Outdoor Adventure', 'Local Trails', 'Fitness', 'Gear & Equipment', 'Beginner Friendly', 'Other...'];
-  final Set<String> selectedInterests = {'Mountain Biking', 'Trail Riding', 'Enduro', 'Cross Country (XC)', 'Local Trails', 'Beginner Friendly'};
-  final audienceOptions = [
-    (title: 'Everyone (all skill levels welcome)', description: 'Open to beginners through expert riders.', icon: CupertinoIcons.person_2),
-    (title: 'Specific skill level', description: 'Focus on a particular skill level or experience.', icon: Icons.bar_chart),
-    (title: 'Specific type of riders', description: 'For example, women riders, younger riders, or e-bike riders.', icon: CupertinoIcons.person),
-    (title: 'Invite only (by description)', description: 'Describe who you would like to invite into the group.', icon: CupertinoIcons.lock),
-  ];
-  String audience = 'Everyone (all skill levels welcome)';
+  static const steps = ['Group Details', 'Location & Coverage', 'Description & Media', 'Privacy & Membership', 'Discussion Settings', 'Rules & Guidelines', 'Review & Launch'];
 
   @override
   Widget build(BuildContext context) {
+    final createGroupController = Get.isRegistered<CreateGroupController>() ? Get.find<CreateGroupController>() : Get.put(CreateGroupController());
     bool isLight = Theme.of(context).brightness == Brightness.light;
     final blue = AppColor.blue(context);
     final blueSoft = AppColor.createGroupBlueSoft(context);
@@ -41,23 +51,15 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       bodyPadding: EdgeInsets.zero,
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(left: Dimensions.w_15, right: Dimensions.w_15, bottom: Dimensions.h_20, top: Dimensions.h_5),
-        child: GetBuilder<GroupController>(
-          id: ControllerBuilders.groupController,
+        child: GetBuilder<CreateGroupController>(
+          id: ControllerBuilders.createGroupController,
           builder: (controller) {
-            final isLastStep = controller.currentStep >= 5;
-            final nextButtonText = controller.currentStep > 5 ? "Create Group" :'Next Step';
-
+            final isLastStep = controller.currentStep == CreateGroupController.totalSteps - 1;
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onTap: () {
-                    if (controller.currentStep > 0) {
-                      controller.previousStep();
-                    } else {
-                      Get.back();
-                    }
-                  },
+                  onTap: controller.previousStep,
                   child: Container(
                     decoration: BoxDecoration(
                       color: blueSoft,
@@ -76,48 +78,30 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       ],
                     ),
                   ),
-                ) ,
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          border: Border.all(color: Theme.of(context).highlightColor, width: 0.2),
-                          borderRadius: BorderRadius.circular(Dimensions.h_4),
+                ),
+                // always laid out so the bar does not shift when options arrive; inactive until then
+                GestureDetector(
+                  onTap: controller.isSubmitting || controller.options == null ? null : controller.nextStep,
+                  child: Container(
+                    decoration: BoxDecoration(color: controller.options == null ? blue.withValues(alpha: 0.4) : blue, borderRadius: BorderRadius.circular(Dimensions.h_4)),
+                    padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_8),
+                    child: Row(
+                      children: [
+                        Text(
+                          isLastStep ? 'Create Group' : 'Next Step',
+                          style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_8),
-                        child: Text(
-                          'Save Draft',
-                          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
-                        ),
-                      ),
+                        SizedBox(width: Dimensions.w_5),
+                        controller.isSubmitting
+                            ? SizedBox(
+                                width: Dimensions.h_12,
+                                height: Dimensions.h_12,
+                                child: CircularProgressIndicator(strokeWidth: 1.5, color: AppColor.white),
+                              )
+                            : Icon(isLastStep ? CupertinoIcons.check_mark : CupertinoIcons.arrow_right, size: Dimensions.h_12, color: AppColor.white),
+                      ],
                     ),
-                    SizedBox(width: Dimensions.w_10),
-                    GestureDetector(
-                      onTap: () {
-                        if (isLastStep) {
-                        } else {
-                          controller.nextStep();
-                        }
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(color: blue, borderRadius: BorderRadius.circular(Dimensions.h_4)),
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_8),
-                        child: Row(
-                          children: [
-                            Text(
-                              nextButtonText,
-                              style: TextStyle(color: Colors.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
-                            ),
-                            SizedBox(width: Dimensions.w_5),
-                            Icon(isLastStep ? CupertinoIcons.check_mark : CupertinoIcons.arrow_right, size: Dimensions.h_12, color: Colors.white),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             );
@@ -125,21 +109,20 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
         ),
       ),
       body: CommonScrollBlurScaffold(
+        controller: createGroupController.scrollController,
         showBack: true,
-        expandedHeight: Dimensions.h_160,
-        expandedColor: Colors.white,
+        expandedHeight: Dimensions.h_170,
+        expandedColor: AppColor.white,
         collapsedColor: Theme.of(context).highlightColor,
-        hero: buildHeroHeader(isLight),
+        hero: buildHeroHeader(context, isLight, createGroupController.firstName),
         slivers: [
           SliverToBoxAdapter(
-            child: GetBuilder<GroupController>(
-              id: ControllerBuilders.createGroupController,
+            child: GetBuilder<CreateGroupController>(
+              id: ControllerBuilders.createGroupProgress,
               builder: (controller) {
-                const steps = ['Group Details', 'Location & Coverage', 'Description & Media', 'Privacy & Membership', 'Discussion Settings', 'Rules & Guidelines', 'Review & Launch'];
-
-                final step = controller.currentStep.clamp(0, steps.length - 1);
+                final step = controller.currentStep;
                 final completedStep = step + 1;
-                final percentage = (completedStep / steps.length * 100).round();
+                final stepProgress = controller.stepProgress;
 
                 return CommonCard(
                   margin: EdgeInsets.only(top: Dimensions.h_5, left: Dimensions.w_10, right: Dimensions.w_10),
@@ -159,7 +142,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             decoration: BoxDecoration(color: blueSoft, borderRadius: BorderRadius.circular(Dimensions.h_4)),
                             padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_2),
                             child: Text(
-                              '${completedStep.toString().padLeft(2, '0')} / 07',
+                              '${completedStep.toString().padLeft(2, '0')} / ${steps.length.toString().padLeft(2, '0')}',
                               style: TextStyle(color: blue, fontSize: FontSize.sp_12, fontWeight: FontWeight.w900),
                             ),
                           ),
@@ -168,11 +151,20 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       SizedBox(height: Dimensions.h_10),
                       Row(
                         children: List.generate(steps.length, (index) {
+                          // each segment fills with how much of that page is filled in
                           return Expanded(
                             child: Container(
                               height: Dimensions.h_5,
                               margin: EdgeInsets.only(right: index == steps.length - 1 ? 0 : Dimensions.w_5),
-                              decoration: BoxDecoration(color: index < completedStep ? blue : const Color(0xFFDCE4EF), borderRadius: BorderRadius.circular(20)),
+                              clipBehavior: Clip.antiAlias,
+                              alignment: Alignment.centerLeft,
+                              decoration: BoxDecoration(color: AppColor.border(context), borderRadius: BorderRadius.circular(20)),
+                              child: AnimatedFractionallySizedBox(
+                                duration: const Duration(milliseconds: 250),
+                                widthFactor: stepProgress[index],
+                                heightFactor: 1,
+                                child: Container(color: blue),
+                              ),
                             ),
                           );
                         }),
@@ -192,7 +184,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                             ],
                           ),
                           Text(
-                            '$percentage% Complete',
+                            '${controller.progressPercent}% Complete',
                             style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
                           ),
                         ],
@@ -204,13 +196,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             ),
           ),
           SliverToBoxAdapter(
-            child: GetBuilder(
-              init: groupController,
-              id: ControllerBuilders.createGroupController,
-              builder: (controller) {
-                return buildSteps(context, blueSoft, blue);
-              },
-            ),
+            child: GetBuilder<CreateGroupController>(id: ControllerBuilders.createGroupController, builder: (controller) => buildSteps(context, blueSoft, blue, controller)),
           ),
           SliverToBoxAdapter(child: SizedBox(height: Dimensions.h_20)),
         ],
@@ -218,531 +204,268 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     );
   }
 
-  Widget buildSteps(BuildContext context, Color blueSoft, Color blue) {
-    switch (groupController.currentStep) {
-      case 0:
-        return buildGroupDetails(context, blueSoft, blue);
-
-      case 1:
-        return buildLocationCoverage(context, blueSoft, blue, groupController);
-
-      case 2:
-        return buildDescription(context, blueSoft, blue, groupController);
-
-      case 3:
-        return buildPrivacy(context, blueSoft, blue, groupController);
-
-      case 4:
-        return buildDiscussion(context, blueSoft, blue, groupController);
-
-      case 5:
-        return buildRules(context, blueSoft, blue, groupController);
-
-      case 6:
-        return buildLaunch(context, blueSoft, blue, groupController);
-
-      default:
-        return buildGroupDetails(context, blueSoft, blue);
+  Widget buildSteps(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    if (controller.isLoading) return buildDetailsShimmer(context);
+    if (controller.options == null) {
+      return _card(
+        children: [
+          _hint(context, controller.loadError ?? 'Could not load group options.'),
+          SizedBox(height: Dimensions.h_10),
+          _textButton('Try again', blue, controller.loadOptions),
+        ],
+      );
     }
+    return switch (controller.currentStep) {
+      1 => buildLocationCoverage(context, blueSoft, blue, controller),
+      2 => buildDescription(context, blueSoft, blue, controller),
+      3 => buildPrivacy(context, blueSoft, blue, controller),
+      4 => buildDiscussion(context, blueSoft, blue, controller),
+      5 => buildRules(context, blueSoft, blue, controller),
+      6 => buildLaunch(context, blueSoft, blue, controller),
+      _ => buildGroupDetails(context, blueSoft, blue, controller),
+    };
   }
 
-  Widget buildGroupDetails(BuildContext context, Color blueSoft, Color blue) {
-    return CommonCard(
-      margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
+  /// Same shape as step 1 (title, name, category, purpose, audience) so content swaps in without a jump.
+  Widget buildDetailsShimmer(BuildContext context) {
+    Widget field(double labelWidth, double height) => Padding(
+      padding: EdgeInsets.only(bottom: Dimensions.h_15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "1. Group Details",
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700),
-          ),
+          ShimmerBox(labelWidth, Dimensions.h_12),
+          SizedBox(height: Dimensions.h_6),
+          ShimmerBox(double.infinity, height, radius: Dimensions.h_4),
+        ],
+      ),
+    );
+    return _card(
+      children: [
+        ShimmerBox(Dimensions.w_150, Dimensions.h_18),
+        SizedBox(height: Dimensions.h_6),
+        ShimmerBox(Dimensions.w_120, Dimensions.h_10),
+        SizedBox(height: Dimensions.h_15),
+        field(Dimensions.w_90, Dimensions.h_35),
+        field(Dimensions.w_60, Dimensions.h_35),
+        field(Dimensions.w_90, Dimensions.h_90),
+        ShimmerBox(Dimensions.w_120, Dimensions.h_12),
+        SizedBox(height: Dimensions.h_8),
+        for (var i = 0; i < 4; i++)
           Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
-            child: Text(
-              "Tell us about your group.",
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-            ),
+            padding: EdgeInsets.only(bottom: Dimensions.h_6),
+            child: ShimmerBox(double.infinity, Dimensions.h_45, radius: 10),
           ),
-          SizedBox(height: Dimensions.h_10),
-          Text(
-            "Group Name*",
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
+      ],
+    );
+  }
+
+  Widget buildGroupDetails(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    final form = controller.form!;
+    return _card(
+      children: [
+        _stepTitle(context, '1. Group Details', 'Tell us about your group.'),
+        _label(context, 'Group Name*'),
+        CommonTextField(
+          controller: controller.nameController,
+          hint: 'Enter your group name',
+          errorText: controller.errorOf('name'),
+          onChanged: (_) => controller.clearError('name'),
+          maxLength: CreateGroupController.maxNameLength,
+          fontSize: FontSize.sp_12,
+          textCapitalization: TextCapitalization.words,
+        ),
+        _hint(context, 'Choose a clear, descriptive name that people will recognize.'),
+        SizedBox(height: Dimensions.h_15),
+        Row(
+          children: [
+            Expanded(child: _label(context, 'Category*')),
+            _aiButton(context, blue, controller, 'suggest_group_details', 'Suggest', controller.suggestCategory),
+          ],
+        ),
+        CommonDropdown<GroupCategory>(
+          items: controller.categories,
+          value: controller.categories.firstWhereOrNull((c) => c.id == controller.categoryId),
+          itemLabel: (c) => c.name ?? '',
+          hint: 'Select a category',
+          height: kMinInteractiveDimension, // CommonTextField's single-line height
+          radius: Dimensions.h_4,
+          textFieldStyle: true,
+          onChanged: (c) => controller.selectCategory(c.id),
+        ),
+        if (controller.subcategories.isNotEmpty) ...[
+          SizedBox(height: Dimensions.h_12),
+          _label(context, 'Subcategory*'),
+          CommonDropdown<GroupCategory>(
+            items: controller.subcategories,
+            value: controller.subcategories.firstWhereOrNull((c) => c.id == controller.subcategoryId),
+            itemLabel: (c) => c.name ?? '',
+            hint: 'Select a subcategory',
+            height: kMinInteractiveDimension,
+            radius: Dimensions.h_4,
+            textFieldStyle: true,
+            onChanged: (c) => controller.selectSubcategory(c.id),
           ),
-          SizedBox(height: Dimensions.h_5),
-          SizedBox(
-            height: Dimensions.h_33,
-            child: TextFormField(
-              controller: TextEditingController(),
-              textCapitalization: TextCapitalization.words,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter a group name';
-                }
-                return null;
-              },
-              decoration: _inputDecoration(hint: 'Enter your group name'),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              "Choose a clear, descriptive name that people will recognize.",
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Text(
-            "Category*",
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          SizedBox(
-            height: Dimensions.h_33,
-            child: TextFormField(
-              controller: TextEditingController(),
-              textCapitalization: TextCapitalization.words,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter a group name';
-                }
-                return null;
-              },
-              decoration: _inputDecoration(hint: 'Enter your group name'),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              "Choose a clear, descriptive name that people will recognize.",
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_15),
+        ],
+        if (controller.subcategoryInterests.isNotEmpty) ...[
+          SizedBox(height: Dimensions.h_12),
           Row(
             children: [
-              Text(
-                "Related Interests",
-                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-              ),
+              _label(context, 'Related Interests*'),
               SizedBox(width: Dimensions.w_3),
               Text(
-                "(select all that apply)",
+                '(select all that apply)',
                 style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400),
               ),
             ],
           ),
-          SizedBox(height: Dimensions.h_10),
-          Wrap(
-            spacing: Dimensions.w_6,
-            runSpacing: Dimensions.h_6,
-            children: interests.map((interest) {
-              final selected = selectedInterests.contains(interest);
-              return GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  setState(() {
-                    if (selected) {
-                      selectedInterests.remove(interest);
-                    } else {
-                      selectedInterests.add(interest);
-                    }
-                  });
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_6),
-                  decoration: BoxDecoration(
-                    color: selected ? blueSoft : Colors.transparent,
-                    border: Border.all(color: selected ? blue : Theme.of(context).highlightColor, width: selected ? 0.5 : 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(selected ? Icons.check_box : Icons.check_box_outline_blank, size: Dimensions.h_13, color: selected ? blue : Colors.grey),
-                      SizedBox(width: Dimensions.w_3),
-                      Text(
-                        interest,
-                        style: TextStyle(fontSize: FontSize.sp_11, color: selected ? blue : Theme.of(context).highlightColor, fontWeight: selected ? FontWeight.w500 : FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Text(
-            "Group Purpose*",
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          TextFormField(
-            maxLines: 10,
-            minLines: 5,
-            controller: TextEditingController(),
-            textCapitalization: TextCapitalization.words,
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Please enter a group name';
-              }
-              return null;
-            },
-            decoration: _inputDecoration(hint: 'A local mountain biking community for riders of all skill levels. We organize group rides, share trail conditions, discuss gear, help each other improve, and support trail maintenance in the Pine Valley area.'),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              "Explain what your group brings people together to do.",
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Text(
-            "Who is this group for?*",
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          ...audienceOptions.map((option) {
-            final selected = audience == option.title;
-
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => setState(() => audience = option.title),
-              child: Container(
-                height: Dimensions.h_50,
-                margin: EdgeInsets.only(bottom: Dimensions.h_6),
-                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_4),
-                decoration: BoxDecoration(color: selected ? const Color(0xFFEDF4FF) : Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(10)),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: Dimensions.h_2),
-                      child: Icon(selected ? Icons.radio_button_checked : Icons.radio_button_off, color: selected ? blue : Colors.grey, size: Dimensions.h_12),
-                    ),
-                    SizedBox(width: Dimensions.w_5),
-                    Container(
-                      width: Dimensions.h_25,
-                      height: Dimensions.h_25,
-                      decoration: BoxDecoration(color: selected ? Colors.white : Theme.of(context).cardColor, borderRadius: BorderRadius.circular(9)),
-                      child: Icon(option.icon, color: blue, size: Dimensions.h_15),
-                    ),
-                    SizedBox(width: Dimensions.w_10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            option.title,
-                            style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
-                          ),
-                          Text(
-                            option.description,
-                            style: TextStyle(fontSize: FontSize.sp_9_5, height: 1.4, color: Color(0xFF52627A)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }),
+          _wrap([
+            for (final i in controller.subcategoryInterests)
+              _checkChip(context, blueSoft, blue, label: i.name ?? '', selected: controller.interestIds.contains(i.id), onTap: () => controller.toggleInterest(i.id!)),
+          ]),
         ],
-      ),
-    );
-  }
-
-  Widget buildLocationCoverage(BuildContext context, Color blueSoft, Color blue, GroupController controller) {
-    const radiusOptions = [3, 5, 10, 15, 25, 50];
-
-    final effectiveRadius = controller.isCustomRadius ? (int.tryParse(controller.customRadiusController.text) ?? 15) : controller.selectedRadius;
-
-    return CommonCard(
-      margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '2. Location & Coverage',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
-            child: Text(
-              'Choose your primary town and the area where people can discover your group.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-
-          Text(
-            'Primary town *',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_5),
-
-          TextFormField(
-            controller: controller.primaryTownController,
-            textCapitalization: TextCapitalization.words,
-            style: TextStyle(fontSize: FontSize.sp_12, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Please enter your primary town';
-              }
-              return null;
-            },
-            decoration: _inputDecoration(hint: 'Enter your primary town'),
-          ),
-
-          SizedBox(height: Dimensions.h_5),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              'People in your primary town are always included. Nearby towns shown in this preview are sample locations.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400),
-            ),
-          ),
-
-          SizedBox(height: Dimensions.h_15),
-
-          Text(
-            'Coverage radius *',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_10),
-
-          Wrap(
-            spacing: Dimensions.w_6,
-            runSpacing: Dimensions.h_6,
-            children: [
-              ...radiusOptions.map((radius) {
-                final selected = !controller.isCustomRadius && controller.selectedRadius == radius;
-
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    controller.selectedRadius = radius;
-                    controller.isCustomRadius = false;
-                    controller.update([ControllerBuilders.createGroupController]);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_6),
-                    decoration: BoxDecoration(
-                      color: selected ? blueSoft : Colors.transparent,
-                      border: Border.all(color: selected ? blue : Theme.of(context).highlightColor, width: selected ? 0.7 : 0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+        _error(context, controller.errorOf('interests')),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Group Purpose*'),
+        CommonTextField(
+          controller: controller.purposeController,
+          hint: 'What does your group bring people together to do?',
+          errorText: controller.errorOf('purpose'),
+          onChanged: (_) => controller.clearError('purpose'),
+          minLines: 5,
+          maxLines: 10,
+        ),
+        _hint(context, 'Explain what your group brings people together to do.'),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Who is this group for?*'),
+        SizedBox(height: Dimensions.h_5),
+        ...form.audience.map((option) {
+          final selected = controller.audience == option.value;
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => controller.selectAudience(option.value),
+            child: Container(
+              margin: EdgeInsets.only(bottom: Dimensions.h_6),
+              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_6),
+              decoration: BoxDecoration(color: selected ? blueSoft : Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(10)),
+              child: Row(
+                children: [
+                  Icon(selected ? Icons.radio_button_checked : Icons.radio_button_off, color: selected ? blue : AppColor.muted(context), size: Dimensions.h_12),
+                  SizedBox(width: Dimensions.w_5),
+                  Container(
+                    width: Dimensions.h_25,
+                    height: Dimensions.h_25,
+                    decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(9)),
+                    child: Icon(groupOptionIcon(option.icon), color: blue, size: Dimensions.h_15),
+                  ),
+                  SizedBox(width: Dimensions.w_10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(selected ? Icons.radio_button_checked : Icons.radio_button_off, size: Dimensions.h_13, color: selected ? blue : Colors.grey),
-                        SizedBox(width: Dimensions.w_3),
                         Text(
-                          '$radius miles',
-                          style: TextStyle(fontSize: FontSize.sp_11, color: selected ? blue : Theme.of(context).highlightColor, fontWeight: selected ? FontWeight.w600 : FontWeight.w400),
+                          option.label,
+                          style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
                         ),
+                        if (option.description != null)
+                          Text(
+                            option.description!,
+                            style: TextStyle(fontSize: FontSize.sp_9_5, height: 1.4, color: AppColor.muted(context)),
+                          ),
                       ],
                     ),
-                  ),
-                );
-              }),
-
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  controller.isCustomRadius = true;
-                  controller.update([ControllerBuilders.createGroupController]);
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_6),
-                  decoration: BoxDecoration(
-                    color: controller.isCustomRadius ? blueSoft : Colors.transparent,
-                    border: Border.all(color: controller.isCustomRadius ? blue : Theme.of(context).highlightColor, width: controller.isCustomRadius ? 0.7 : 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(controller.isCustomRadius ? Icons.radio_button_checked : Icons.radio_button_off, size: Dimensions.h_13, color: controller.isCustomRadius ? blue : Colors.grey),
-                      SizedBox(width: Dimensions.w_3),
-                      Text(
-                        'Custom',
-                        style: TextStyle(fontSize: FontSize.sp_11, color: controller.isCustomRadius ? blue : Theme.of(context).highlightColor, fontWeight: controller.isCustomRadius ? FontWeight.w600 : FontWeight.w400),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          if (controller.isCustomRadius) ...[
-            SizedBox(height: Dimensions.h_12),
-            Text(
-              'Custom radius, in miles',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-            ),
-            SizedBox(height: Dimensions.h_5),
-            TextFormField(
-              style: TextStyle(fontSize: FontSize.sp_12, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
-              controller: controller.customRadiusController,
-              keyboardType: TextInputType.number,
-              onChanged: (_) => setState(() {}),
-              validator: (value) {
-                if (!controller.isCustomRadius) return null;
-
-                final radius = int.tryParse(value ?? '');
-                if (radius == null || radius < 1 || radius > 100) {
-                  return 'Enter a radius from 1 to 100 miles';
-                }
-                return null;
-              },
-              decoration: _inputDecoration(hint: 'Enter radius (1–100 miles)'),
-            ),
-            SizedBox(height: Dimensions.h_5),
-            Text(
-              'Choose a radius from 1 to 100 miles.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10),
-            ),
-          ],
-          SizedBox(height: Dimensions.h_8),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              'Your group can be discovered in nearby towns within $effectiveRadius miles.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400, height: 1.5),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          CoverageMapWidget(radiusMiles: controller.isCustomRadius ? (int.tryParse(controller.customRadiusController.text) ?? 15) : controller.selectedRadius, townName: controller.primaryTownController.text.trim()),
-          SizedBox(height: Dimensions.h_15),
-          buildTownsIncluded(context, blueSoft, blue),
-        ],
-      ),
-    );
-  }
-
-  Widget buildTownsIncluded(BuildContext context, Color blueSoft, Color blue) {
-    final List<Map<String, dynamic>> townOptions = [
-      {'id': 'pine-valley', 'name': 'Pine Valley', 'distance': 0.0, 'population': 14000},
-      {'id': 'ridgewood', 'name': 'Ridgewood', 'distance': 4.2, 'population': 6000},
-      {'id': 'mapleton', 'name': 'Mapleton', 'distance': 6.8, 'population': 5000},
-      {'id': 'cedar-grove', 'name': 'Cedar Grove', 'distance': 8.1, 'population': 4000},
-      {'id': 'highland', 'name': 'Highland', 'distance': 9.3, 'population': 4000},
-      {'id': 'oak-creek', 'name': 'Oak Creek', 'distance': 11.6, 'population': 3000},
-      {'id': 'timber-ridge', 'name': 'Timber Ridge', 'distance': 12.4, 'population': 3000},
-      {'id': 'aspen-springs', 'name': 'Aspen Springs', 'distance': 14.8, 'population': 3000},
-      {'id': 'meadowbrook', 'name': 'Meadowbrook', 'distance': 17.2, 'population': 2500},
-      {'id': 'willow-bend', 'name': 'Willow Bend', 'distance': 21.6, 'population': 3500},
-      {'id': 'summit-crossing', 'name': 'Summit Crossing', 'distance': 28.4, 'population': 1800},
-      {'id': 'brookside', 'name': 'Brookside', 'distance': 42.8, 'population': 2200},
-    ];
-
-    final int radius = groupController.isCustomRadius ? (int.tryParse(groupController.customRadiusController.text) ?? 15) : groupController.selectedRadius;
-
-    final primaryTown = townOptions.first;
-
-    final visibleTowns = townOptions.where((town) {
-      if (town['id'] == primaryTown['id']) return true;
-
-      final withinRadius = (town['distance'] as num) <= radius;
-
-      if (groupController.showAllNearbyTowns) return true;
-
-      return withinRadius;
-    }).toList();
-
-    final includedCount = groupController.selectedTownIds.length;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Towns included ($includedCount)',
-                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_13, fontWeight: FontWeight.w700),
                   ),
                 ],
               ),
             ),
-            SizedBox(width: Dimensions.w_8),
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                groupController.showAllNearbyTowns = !groupController.showAllNearbyTowns;
-                groupController.update([ControllerBuilders.createGroupController]);
-              },
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: Dimensions.h_3),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    groupController.showAllNearbyTowns ? Icon(Icons.check_box, size: Dimensions.h_15, color: blue) : Icon(Icons.check_box_outline_blank, size: Dimensions.h_15, color: Theme.of(context).highlightColor),
-                    SizedBox(width: Dimensions.w_4),
-                    Text(
-                      'Show all (${townOptions.length})',
-                      style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                ),
-              ),
+          );
+        }),
+        if (controller.audience == 'skill' || controller.audience == 'type') ...[
+          SizedBox(height: Dimensions.h_5),
+          _wrap([
+            for (final o in controller.audience == 'skill' ? form.audienceSkill : form.audienceType)
+              _choiceChip(context, blueSoft, blue, label: o.label, selected: controller.audienceDetail == o.value, onTap: () => controller.selectAudienceDetail(o.value)),
+          ]),
+        ],
+        if (controller.audience == 'invite') ...[
+          SizedBox(height: Dimensions.h_5),
+          CommonTextField(
+            controller: controller.audienceInviteController,
+            hint: 'Describe who you would like to invite',
+            errorText: controller.errorOf('audience_detail'),
+            onChanged: (_) => controller.clearError('audience_detail'),
+            minLines: 5,
+            maxLines: 10,
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget buildLocationCoverage(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    final towns = controller.options!.towns;
+    return _card(
+      children: [
+        _stepTitle(context, '2. Location & Coverage', 'Choose your primary town and the area where people can discover your group.'),
+        _label(context, 'Primary town *'),
+        _wrap([
+          for (final t in towns)
+            _choiceChip(context, blueSoft, blue, label: t.isPrimary == true ? '${t.name} (primary)' : t.name ?? '', selected: controller.cityId == t.id, onTap: () => controller.selectTown(t.id)),
+        ]),
+        _error(context, controller.errorOf('city')),
+        _hint(context, 'You can create a group in your primary town or an active secondary town. It is always included.'),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Coverage radius *'),
+        _wrap([
+          for (final r in controller.options!.radiusOptions)
+            _choiceChip(context, blueSoft, blue, label: r == 0 ? 'Town only' : '$r miles', selected: controller.radius == r, onTap: () => controller.selectRadius(r)),
+        ]),
+        _hint(context, controller.radius == 0 ? 'Your group can be discovered in your primary town only.' : 'Your group can be discovered in nearby towns within ${controller.radius} miles.'),
+        SizedBox(height: Dimensions.h_5),
+        CoverageMapWidget(origin: controller.originTown, radiusMiles: controller.radius, towns: controller.coverageTowns, includedTownIds: controller.includedTownIds),
+        SizedBox(height: Dimensions.h_15),
+        buildTownsIncluded(context, blueSoft, blue, controller),
+      ],
+    );
+  }
+
+  Widget buildTownsIncluded(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              'Towns included (${controller.includedTownIds.length})',
+              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_13, fontWeight: FontWeight.w700),
             ),
+            if (controller.coverageLoading) ...[
+              SizedBox(width: Dimensions.w_8),
+              SizedBox(
+                width: Dimensions.h_12,
+                height: Dimensions.h_12,
+                child: CircularProgressIndicator(strokeWidth: 1.5, color: blue),
+              ),
+            ],
           ],
         ),
         SizedBox(height: Dimensions.h_5),
-
         LayoutBuilder(
           builder: (context, constraints) {
             final spacing = Dimensions.w_4;
             final itemWidth = (constraints.maxWidth - spacing) / 2;
-
             return Wrap(
               spacing: spacing,
               runSpacing: Dimensions.h_8,
-              children: visibleTowns.map((town) {
-                final id = town['id'] as String;
-                final name = town['name'] as String;
-                final distance = (town['distance'] as num).toDouble();
-                final isPrimary = id == primaryTown['id'];
-                final isSelected = groupController.selectedTownIds.contains(id);
-                final withinRadius = distance <= radius;
-                final isDisabled = isPrimary || !withinRadius;
-
-                final status = isPrimary
-                    ? 'Primary town · Always included'
-                    : withinRadius
-                    ? 'Within coverage radius'
-                    : 'Outside the current radius';
-
+              children: controller.coverageTowns.map((town) {
+                final isPrimary = town.id == controller.cityId;
+                final isSelected = controller.includedTownIds.contains(town.id);
+                final distance = town.distanceMiles ?? 0;
                 return SizedBox(
                   width: itemWidth,
                   height: Dimensions.h_45,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(Dimensions.h_6),
-                    onTap: isDisabled
-                        ? null
-                        : () {
-                            if (isSelected) {
-                              groupController.selectedTownIds.remove(id);
-                            } else {
-                              groupController.selectedTownIds.add(id);
-                            }
-
-                            groupController.update([ControllerBuilders.createGroupController]);
-                          },
+                    onTap: isPrimary ? null : () => controller.toggleTown(town.id!),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
                       padding: EdgeInsets.all(Dimensions.w_4),
@@ -755,30 +478,21 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(top: Dimensions.h_2),
-                            child: Icon(
-                              isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
-                              size: Dimensions.h_13,
-                              color: isSelected
-                                  ? blue
-                                  : withinRadius
-                                  ? Theme.of(context).hintColor
-                                  : Theme.of(context).highlightColor,
-                            ),
+                            child: Icon(isSelected ? Icons.check_circle : Icons.radio_button_unchecked, size: Dimensions.h_13, color: isSelected ? blue : Theme.of(context).hintColor),
                           ),
                           SizedBox(width: Dimensions.w_6),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        name,
+                                        town.name ?? '',
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(color: isDisabled && !isPrimary ? Theme.of(context).highlightColor : Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
+                                        style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
                                       ),
                                     ),
                                     SizedBox(width: Dimensions.w_5),
@@ -790,18 +504,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                 ),
                                 SizedBox(height: Dimensions.h_2),
                                 Text(
-                                  status,
+                                  isPrimary ? 'Primary town · Always included' : 'Within coverage radius',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: isPrimary
-                                        ? blue
-                                        : isDisabled
-                                        ? Theme.of(context).highlightColor
-                                        : Theme.of(context).highlightColor,
-                                    fontSize: FontSize.sp_8,
-                                    height: 1.3,
-                                  ),
+                                  style: TextStyle(color: isPrimary ? blue : Theme.of(context).highlightColor, fontSize: FontSize.sp_8, height: 1.3),
                                 ),
                               ],
                             ),
@@ -827,8 +533,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               SizedBox(width: Dimensions.w_6),
               Expanded(
                 child: Text(
-                  'People outside your coverage area can still '
-                  'request to join, subject to your membership settings.',
+                  'People outside your coverage area can still request to join, subject to your membership settings.',
                   style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, height: 1.4),
                 ),
               ),
@@ -839,56 +544,25 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
     );
   }
 
-  Widget buildDescription(BuildContext context, Color blueSoft, Color blue, GroupController controller) {
-    return CommonCard(
-      margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '3. Description & Media',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
-            child: Text(
-              'Give people a clear picture of your group and what makes it special.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-
-          Text(
-            'Group description',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_5),
-
-          TextFormField(
-            minLines: 6,
-            maxLines: 10,
-            controller: TextEditingController(text: 'A local mountain biking community for riders of all skill levels. We plan group rides, share trail updates, exchange gear advice, and help care for the trails around Pine Valley.'),
-            textCapitalization: TextCapitalization.words,
-            style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor, height: 1.1),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Please enter your primary town';
-              }
-              return null;
-            },
-            decoration: _inputDecoration(hint: 'Enter your primary town'),
-          ),
-
-          SizedBox(height: Dimensions.h_5),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              'Required. Tell people what you do together, who can join, and what they can expect.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400, height: 1.1),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          Container(
+  Widget buildDescription(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    final aiBusy = controller.aiAction == 'generate_description' || controller.aiAction == 'improve_description';
+    return _card(
+      children: [
+        _stepTitle(context, '3. Description & Media', 'Give people a clear picture of your group and what makes it special.'),
+        _label(context, 'Group description*'),
+        CommonTextField(
+          controller: controller.descriptionController,
+          hint: 'Tell people what you do together, who can join, and what they can expect.',
+          errorText: controller.errorOf('description'),
+          onChanged: (_) => controller.clearError('description'),
+          maxLength: CreateGroupController.maxDescriptionLength,
+          minLines: 6,
+          maxLines: 10,
+        ),
+        SizedBox(height: Dimensions.h_5),
+        GestureDetector(
+          onTap: aiBusy ? null : controller.suggestDescription,
+          child: Container(
             padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_8),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.h_6), color: Theme.of(context).scaffoldBackgroundColor),
             child: Row(
@@ -905,941 +579,291 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                       ),
                       SizedBox(height: Dimensions.h_2),
                       Text(
-                        'Create a suggestion locally from the group details you have entered.',
-                        style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w400, height: 1.1),
+                        controller.descriptionController.text.trim().isEmpty ? 'Generate a description from your group details.' : 'Improve the description you have written.',
+                        style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, height: 1.1),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: Dimensions.w_2),
-                Text(
-                  'Suggest ',
-                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700, height: 1.1),
-                ),
+                aiBusy
+                    ? SizedBox(
+                        width: Dimensions.h_12,
+                        height: Dimensions.h_12,
+                        child: CircularProgressIndicator(strokeWidth: 1.5, color: blue),
+                      )
+                    : Text(
+                        'Suggest',
+                        style: TextStyle(color: blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
+                      ),
               ],
             ),
           ),
-          SizedBox(height: Dimensions.h_10),
-          Text(
-            'Coverage Photo',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
+        ),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Cover photo*'),
+        _hint(context, 'Choose a clear photo that represents your group. JPG, PNG or WebP, up to 5 MB.'),
+        SizedBox(height: Dimensions.h_5),
+        if (controller.coverPath != null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(Dimensions.h_6),
+            child: Image.file(File(controller.coverPath!), height: Dimensions.h_200, width: double.infinity, fit: BoxFit.cover, cacheWidth: 1080),
           ),
-          SizedBox(height: Dimensions.h_2),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              'Choose a clear photo that represents your group. A cover is included; you can choose another or upload your own.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400, height: 1.1),
+        SizedBox(height: Dimensions.h_8),
+        Row(
+          children: [
+            _outlinedButton(context, controller.coverPath == null ? 'Choose cover' : 'Change cover', controller.pickCover, icon: CupertinoIcons.camera),
+            if (controller.coverPath != null) ...[SizedBox(width: Dimensions.w_10), _textButton('Remove cover', blue, controller.removeCover)],
+          ],
+        ),
+        _error(context, controller.errorOf('cover')),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Group photo'),
+        SizedBox(height: Dimensions.h_5),
+        Row(
+          children: [
+            Container(
+              height: Dimensions.h_60,
+              width: Dimensions.h_60,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(color: blueSoft, borderRadius: BorderRadius.circular(Dimensions.h_6)),
+              child: controller.avatarPath != null ? Image.file(File(controller.avatarPath!), fit: BoxFit.cover, cacheWidth: 240) : Icon(CupertinoIcons.person_2, size: Dimensions.h_28, color: blue),
             ),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          AppCacheImage(imageUrl: controller.selectedCover, isShadow: false, size: Dimensions.h_200, widthSize: Get.width),
-          SizedBox(height: Dimensions.h_10),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(Dimensions.h_4)),
-                  padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_8),
-                  child: Row(
-                    children: [
-                      Icon(CupertinoIcons.camera, size: Dimensions.h_12, color: Theme.of(context).highlightColor),
-                      SizedBox(width: Dimensions.w_5),
-                      Text(
-                        'Change Cover',
-                        style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(width: Dimensions.w_10),
-              GestureDetector(
-                onTap: () {},
-                child: Text(
-                  'Remove Cover',
-                  style: TextStyle(color: blue, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: Dimensions.h_10),
+            SizedBox(width: Dimensions.w_8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _outlinedButton(context, 'Choose file', controller.pickAvatar),
+                if (controller.avatarPath != null) ...[SizedBox(height: Dimensions.h_12), _textButton('Remove photo', blue, controller.removeAvatar)],
+              ],
+            ),
+          ],
+        ),
+        _error(context, controller.errorOf('avatar')),
+        SizedBox(height: Dimensions.h_15),
+        Row(
+          children: [
+            _label(context, 'Gallery photos '),
+            Text(
+              '${controller.galleryPaths.length}/${CreateGroupController.maxGalleryImages}',
+              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9),
+            ),
+          ],
+        ),
+        if (controller.galleryPaths.isNotEmpty) ...[
+          SizedBox(height: Dimensions.h_8),
           SizedBox(
             height: Dimensions.h_120,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
               padding: EdgeInsets.zero,
-              itemCount: controller.coverChoices.length,
-              itemBuilder: (c, i) {
-                final isSelected = controller.selectedCover == controller.coverChoices[i]['url'];
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    controller.selectedCover = controller.coverChoices[i]['url'] ?? '';
-                    controller.update([ControllerBuilders.createGroupController]);
-                  },
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: Dimensions.w_8),
-                        padding: EdgeInsets.only(bottom: Dimensions.h_5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(Dimensions.h_6),
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          border: isSelected ? Border.all(color: blue, width: 0.8) : null,
-                        ),
-                        child: Column(
-                          children: [
-                            AppCacheImage(radius: Dimensions.h_6, imageUrl: controller.coverChoices[i]['url'] ?? '', isShadow: false, size: Dimensions.h_90, widthSize: Dimensions.h_90),
-                            SizedBox(height: Dimensions.h_8),
-                            Text(
-                              controller.coverChoices[i]['name'] ?? '',
-                              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w400),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (isSelected)
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: Dimensions.w_8,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: blue,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(Dimensions.h_8), topRight: Radius.circular(Dimensions.h_8)),
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_2),
-                            child: Center(
-                              child: Text(
-                                'Selected',
-                                style: TextStyle(color: Colors.white, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w900),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          Text(
-            'Group logo or avatar',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_8),
-          Row(
-            children: [
-              Container(
-                height: Dimensions.h_60,
-                width: Dimensions.h_60,
-                decoration: BoxDecoration(color: Color(0xFF007790), borderRadius: BorderRadius.circular(Dimensions.h_6)),
-                child: Icon(Icons.directions_bike, size: Dimensions.h_28, color: Colors.white),
-              ),
-              SizedBox(width: Dimensions.w_8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              itemCount: controller.galleryPaths.length,
+              itemBuilder: (c, i) => Stack(
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        borderRadius: BorderRadius.circular(Dimensions.h_4),
-                        border: Border.all(color: Theme.of(context).highlightColor, width: 0.2),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_4),
-                      child: Text(
-                        'Choose file',
-                        style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-                      ),
-                    ),
+                  Container(
+                    margin: EdgeInsets.only(right: Dimensions.w_8),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.h_6)),
+                    child: Image.file(File(controller.galleryPaths[i]), height: Dimensions.h_120, width: Dimensions.h_140, fit: BoxFit.cover, cacheWidth: 480),
                   ),
-                  SizedBox(height: Dimensions.h_12),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'Use Default Avatar',
-                      style: TextStyle(color: blue, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
+                  Positioned(
+                    top: Dimensions.h_4,
+                    right: Dimensions.w_12,
+                    child: GestureDetector(
+                      onTap: () => controller.removeGalleryImage(i),
+                      child: Container(
+                        padding: EdgeInsets.all(Dimensions.h_6),
+                        decoration: BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor, borderRadius: BorderRadius.circular(Dimensions.h_5)),
+                        child: Icon(CupertinoIcons.clear, size: Dimensions.h_12, color: Theme.of(context).highlightColor),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Row(
-            children: [
-              Text(
-                'Additional photos ',
-                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-              ),
-              Text(
-                'Optional',
-                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w400),
-              ),
-            ],
-          ),
-          SizedBox(height: Dimensions.h_10),
-          SizedBox(
-            height: Dimensions.h_150,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              itemCount: controller.additionalPhotos.length,
-              itemBuilder: (c, i) {
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    controller.selectedCover = controller.additionalPhotos[i]['url'] ?? '';
-                    controller.update([ControllerBuilders.createGroupController]);
-                  },
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: Dimensions.w_8),
-                        padding: EdgeInsets.only(bottom: Dimensions.h_5),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.h_6), color: Theme.of(context).scaffoldBackgroundColor),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppCacheImage(radius: Dimensions.h_6, imageUrl: controller.additionalPhotos[i]['url'] ?? '', isShadow: false, size: Dimensions.h_120, widthSize: Dimensions.h_140),
-                            SizedBox(height: Dimensions.h_8),
-                            Padding(
-                              padding: EdgeInsets.only(left: Dimensions.w_10),
-                              child: Text(
-                                controller.additionalPhotos[i]['name'] ?? '',
-                                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: Dimensions.h_4,
-                        right: Dimensions.w_12,
-                        child: Container(
-                          padding: EdgeInsets.all(Dimensions.h_6),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            border: Border.all(color: Theme.of(context).highlightColor, width: 0.2),
-                            borderRadius: BorderRadius.circular(Dimensions.h_5),
-                          ),
-                          child: Icon(CupertinoIcons.clear, size: Dimensions.h_12, color: Theme.of(context).highlightColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Text(
-            'Add photos to your gallery',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: BorderRadius.circular(Dimensions.h_4),
-                border: Border.all(color: Theme.of(context).highlightColor, width: 0.2),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_15, vertical: Dimensions.h_8),
-              child: Text(
-                'Choose file',
-                style: TextStyle(color: blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-              ),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              'Choose one or more images from your device. You can remove any photo before saving.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w400),
             ),
           ),
         ],
-      ),
+        if (controller.galleryPaths.length < CreateGroupController.maxGalleryImages) ...[SizedBox(height: Dimensions.h_8), _outlinedButton(context, 'Choose files', controller.pickGallery)],
+        _error(context, controller.errorOf('gallery')),
+      ],
     );
   }
 
-  Widget buildPrivacy(BuildContext context, Color blueSoft, Color blue, GroupController controller) {
-    String selectedPrivacy = 'public';
-
-    final List<Map<String, dynamic>> privacyOptions = [
-      {'value': 'public', 'title': 'Public', 'description': 'Anyone can find your group and see basic information. You choose how membership is approved.', 'icon': Icons.public},
-      {'value': 'public-approval', 'title': 'Public · Approval required', 'description': 'Anyone can find your group and request to join. An admin approves membership.', 'icon': Icons.people_outline},
-      {'value': 'private', 'title': 'Private', 'description': 'People can find your group and request to join. Conversations are visible to approved or invited members.', 'icon': Icons.lock_outline},
-      {'value': 'hidden', 'title': 'Hidden · Invite only', 'description': 'Only invited people can find and join. Your group is hidden from search.', 'icon': Icons.visibility_off_outlined},
-    ];
-    final options = [
-      {'value': 'open', 'title': 'Anyone can join immediately'},
-      {'value': 'approval', 'title': 'Require admin approval for all members'},
-      {'value': 'outside', 'title': 'Require approval for people outside the coverage area'},
-      {'value': 'invite', 'title': 'Invite only · No public join option'},
-    ];
-
-    String selectedMembershipApproval = 'open';
-    final Set<String> selectedPermissions = {'posts', 'events', 'photos', 'invites', 'topics', 'comments', 'files', 'messages'};
-
-    final permissions = [
-      {'value': 'posts', 'title': 'Allow members to create posts'},
-      {'value': 'events', 'title': 'Allow members to create events and activities'},
-      {'value': 'photos', 'title': 'Allow members to upload photos'},
-      {'value': 'invites', 'title': 'Allow members to invite others'},
-      {'value': 'topics', 'title': 'Allow members to add discussion topics'},
-      {'value': 'comments', 'title': 'Allow members to comment and reply'},
-      {'value': 'files', 'title': 'Allow members to share files and links'},
-      {'value': 'messages', 'title': 'Allow members to message other members'},
-    ];
-
-    const textColor = Color(0xFF1E293B);
-    const secondaryColor = Color(0xFF64748B);
-    return CommonCard(
-      margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '4. Privacy & Membership',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
-            child: Text(
-              'Choose who can discover your group, how people join, and what members can do.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          Text(
-            'Group Privacy*',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          GridView.builder(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: privacyOptions.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, mainAxisExtent: Dimensions.h_85),
-            itemBuilder: (context, index) {
-              final option = privacyOptions[index];
-              final isSelected = selectedPrivacy == option['value'];
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedPrivacy = option['value'];
-                  });
-                },
-                child: Container(
-                  padding: EdgeInsets.all(Dimensions.h_5),
-                  decoration: BoxDecoration(
-                    color: isSelected ? blueSoft : Colors.white,
-                    borderRadius: BorderRadius.circular(Dimensions.h_8),
-                    border: Border.all(color: isSelected ? blue : Theme.of(context).highlightColor, width: isSelected ? 1 : 0.2),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: Dimensions.h_25,
-                            height: Dimensions.h_25,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(color: isSelected ? blue.withValues(alpha: 0.10) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(8)),
-                            child: Icon(option['icon'] as IconData, size: Dimensions.h_16, color: isSelected ? blue : secondaryColor),
-                          ),
-                          SizedBox(width: Dimensions.w_8),
-                          Expanded(
-                            child: Text(
-                              option['title'] as String,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w800, color: textColor, height: 1.1),
-                            ),
-                          ),
-                          // Icon(
-                          //   isSelected
-                          //       ? Icons.radio_button_checked
-                          //       : Icons.radio_button_unchecked,
-                          //   color: isSelected
-                          //       ? blue
-                          //       : const Color(0xFF94A3B8),
-                          //   size: Dimensions.h_15,
-                          // ),
-                        ],
-                      ),
-                      SizedBox(height: Dimensions.h_8),
-                      Expanded(
-                        child: Text(
-                          option['description'] as String,
-                          style: TextStyle(fontSize: FontSize.sp_9, height: 1.2, color: Theme.of(context).highlightColor),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-          SizedBox(height: Dimensions.h_10),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_8),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.h_6), color: Theme.of(context).scaffoldBackgroundColor),
-            child: Row(
-              children: [
-                Icon(CupertinoIcons.info, size: Dimensions.h_15, color: blue),
-                SizedBox(width: Dimensions.w_8),
-                Expanded(
-                  child: Text(
-                    'Anyone can find your group and see basic information. Invited people only.',
-                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w400, height: 1.1),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Text(
-            'Membership approval',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5, top: Dimensions.h_5),
-            child: Text(
-              'Choose how people become members. Available options follow your group privacy and audience.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400, height: 1.1),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          ...options.map((option) {
-            final isSelected = selectedMembershipApproval == option['value'];
-
+  Widget buildPrivacy(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    final form = controller.form!;
+    final maxQuestions = form.joiningQuestions.max;
+    return _card(
+      children: [
+        _stepTitle(context, '4. Privacy & Membership', 'Choose who can discover your group, how people join, and what members can do.'),
+        _label(context, 'Group Privacy*'),
+        SizedBox(height: Dimensions.h_5),
+        GridView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: form.groupPrivacy.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, mainAxisExtent: Dimensions.h_90),
+          itemBuilder: (context, index) {
+            final option = form.groupPrivacy[index];
+            final isSelected = controller.visibility == option.value;
             return GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedMembershipApproval = option['value']!;
-                });
-              },
+              onTap: () => controller.selectVisibility(option.value),
               child: Container(
-                margin: EdgeInsets.only(bottom: Dimensions.h_8),
-                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5),
-                child: Row(
+                padding: EdgeInsets.all(Dimensions.h_5),
+                decoration: BoxDecoration(
+                  color: isSelected ? blueSoft : Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(Dimensions.h_8),
+                  border: Border.all(color: isSelected ? blue : Theme.of(context).highlightColor, width: isSelected ? 1 : 0.2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked, size: Dimensions.h_16, color: isSelected ? blue : const Color(0xFF94A3B8)),
-                    SizedBox(width: Dimensions.w_8),
+                    Row(
+                      children: [
+                        Icon(groupOptionIcon(option.icon), size: Dimensions.h_16, color: isSelected ? blue : AppColor.muted(context)),
+                        SizedBox(width: Dimensions.w_8),
+                        Expanded(
+                          child: Text(
+                            option.label,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w800, color: Theme.of(context).highlightColor, height: 1.1),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: Dimensions.h_5),
                     Expanded(
                       child: Text(
-                        option['title']!,
-                        style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor, height: 1.3),
+                        option.description ?? '',
+                        overflow: TextOverflow.fade,
+                        style: TextStyle(fontSize: FontSize.sp_9, height: 1.2, color: Theme.of(context).highlightColor),
                       ),
                     ),
                   ],
                 ),
               ),
             );
-          }),
-          SizedBox(height: Dimensions.h_5),
-          Row(
-            children: [
-              Text(
-                'Membership questions',
-                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-              ),
-              SizedBox(width: Dimensions.w_2),
-              Text(
-                '(Optional)',
-                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w400),
-              ),
-            ],
+          },
+        ),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Membership approval'),
+        _hint(context, 'How people become members is determined by your group privacy.'),
+        SizedBox(height: Dimensions.h_5),
+        // read-only: follows the privacy choice above
+        ...form.membershipApproval.map(
+          (o) => Opacity(
+            opacity: controller.membership == o.value ? 1 : 0.45,
+            child: _radioRow(context, blue, label: o.label, selected: controller.membership == o.value, onTap: () {}),
           ),
-          SizedBox(height: Dimensions.h_2),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: Text(
-              'Ask a few questions to understand potential members. Admins can use the answers when reviewing join requests.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400, height: 1.1),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          TextFormField(
-            minLines: 6,
-            maxLines: 10,
-            controller: TextEditingController(),
-            textCapitalization: TextCapitalization.words,
-            style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor, height: 1.1),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Please enter your primary town';
-              }
-              return null;
-            },
-            decoration: _inputDecoration(hint: 'Why would you like to join? What kind of ride do you enjoy?'),
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Text(
-            'Member permissions',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
-            child: Text(
-              'Choose what members can do. Admins keep access to manage the group.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              const spacing = 8.0;
-              final itemWidth = (constraints.maxWidth - spacing) / 2;
-
-              return Wrap(
-                spacing: spacing,
-                runSpacing: 8,
-                children: permissions.map((permission) {
-                  final value = permission['value']!;
-                  final isSelected = selectedPermissions.contains(value);
-
-                  return SizedBox(
-                    width: itemWidth,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            selectedPermissions.remove(value);
-                          } else {
-                            selectedPermissions.add(value);
-                          }
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_6),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(isSelected ? Icons.check_box : Icons.check_box_outline_blank, size: Dimensions.h_16, color: isSelected ? blue : const Color(0xFF94A3B8)),
-                            SizedBox(width: Dimensions.w_6),
-                            Expanded(
-                              child: Text(
-                                permission['title']!,
-                                style: TextStyle(fontSize: FontSize.sp_9_5, height: 1.3, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildDiscussion(BuildContext context, Color blueSoft, Color blue, GroupController controller) {
-    final Set<String> selectedTopics = {'rides', 'trails', 'gear', 'skills', 'photos', 'general'};
-
-    final topics = [
-      {'value': 'rides', 'title': 'Group Rides'},
-      {'value': 'trails', 'title': 'Trail Updates'},
-      {'value': 'gear', 'title': 'Gear & Tech'},
-      {'value': 'skills', 'title': 'Skills & Advice'},
-      {'value': 'photos', 'title': 'Ride Photos'},
-      {'value': 'general', 'title': 'General Conversation'},
-    ];
-
-    bool photoSharing = true;
-    bool allowComments = true;
-    return CommonCard(
-      margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '5. Discussion Settings',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
-            child: Text(
-              'Give your community a few useful places to start talking.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          Text(
-            'Discussion Topics',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          Wrap(
-            spacing: Dimensions.w_8,
-            runSpacing: Dimensions.h_8,
-            children: topics.map((topic) {
-              final value = topic['value']!;
-              final isSelected = selectedTopics.contains(value);
-
-              return GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      selectedTopics.remove(value);
-                    } else {
-                      selectedTopics.add(value);
-                    }
-                  });
-                },
-                child: Container(
-                  margin: EdgeInsets.only(left: Dimensions.w_5),
-                  padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_7),
-                  decoration: BoxDecoration(
-                    color: isSelected ? blueSoft : Colors.transparent,
-                    borderRadius: BorderRadius.circular(Dimensions.h_4),
-                    border: Border.all(color: isSelected ? blue : Theme.of(context).highlightColor, width: isSelected ? 0.5 : 0.2),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.check_box, size: Dimensions.h_12, color: blue),
-                      SizedBox(width: Dimensions.w_4),
-                      Text(
-                        topic['title']!,
-                        style: TextStyle(fontSize: FontSize.sp_10, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500, color: isSelected ? blue : Theme.of(context).highlightColor),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Text(
-            'Post Moderation',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_8),
-          SizedBox(
-            height: Dimensions.h_33,
-            child: TextFormField(
-              controller: TextEditingController(text: 'Members Can post directly'),
-              textCapitalization: TextCapitalization.words,
-              style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor, height: 1.1),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter your primary town';
-                }
-                return null;
-              },
-              decoration: _inputDecoration(hint: 'Why would you like to join? What kind of ride do you enjoy?'),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5, top: Dimensions.h_8),
-            child: Text(
-              'Choose how much review your group’s conversations need.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400, height: 1.1),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_15),
-          Text(
-            'Sharing Options',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {},
-            child: Container(
-              margin: EdgeInsets.only(left: Dimensions.w_5),
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
-              decoration: BoxDecoration(
-                color: photoSharing == true ? blueSoft : Colors.transparent,
-                borderRadius: BorderRadius.circular(Dimensions.h_4),
-                border: Border.all(color: photoSharing == true ? blue : Theme.of(context).highlightColor, width: photoSharing == true ? 0.5 : 0.2),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.check_box, size: Dimensions.h_16, color: blue),
-                  SizedBox(width: Dimensions.w_8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Allow Photo Sharing',
-                        style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, color: Theme.of(context).highlightColor),
-                      ),
-                      Text(
-                        'Members can add photos to their group posts.',
-                        style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_8),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {},
-            child: Container(
-              margin: EdgeInsets.only(left: Dimensions.w_5),
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
-              decoration: BoxDecoration(
-                color: allowComments == true ? blueSoft : Colors.transparent,
-                borderRadius: BorderRadius.circular(Dimensions.h_4),
-                border: Border.all(color: allowComments == true ? blue : Theme.of(context).highlightColor, width: allowComments == true ? 0.5 : 0.2),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.check_box, size: Dimensions.h_16, color: blue),
-                  SizedBox(width: Dimensions.w_8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Allow Comments',
-                        style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, color: Theme.of(context).highlightColor),
-                      ),
-                      Text(
-                        'Keep the conversation going beneath each post.',
-                        style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildRules(BuildContext context, Color blueSoft, Color blue, GroupController controller) {
-    bool photoSharing = true;
-    bool allowComments = true;
-    return CommonCard(
-      margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '6. Rules & Guidelines',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
-            child: Text(
-              'Set a friendly, clear standard for your riding community.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_10),
-          Text(
-            'Starter Rules',
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(height: Dimensions.h_5),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {},
-            child: Container(
-              margin: EdgeInsets.only(left: Dimensions.w_5),
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
-              decoration: BoxDecoration(
-                color: photoSharing == true ? blueSoft : Colors.transparent,
-                borderRadius: BorderRadius.circular(Dimensions.h_4),
-                border: Border.all(color: photoSharing == true ? blue : Theme.of(context).highlightColor, width: photoSharing == true ? 0.5 : 0.2),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.check_box, size: Dimensions.h_16, color: blue),
-                  SizedBox(width: Dimensions.w_8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Allow Photo Sharing',
-                        style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, color: Theme.of(context).highlightColor),
-                      ),
-                      Text(
-                        'Members can add photos to their group posts.',
-                        style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_8),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {},
-            child: Container(
-              margin: EdgeInsets.only(left: Dimensions.w_5),
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
-              decoration: BoxDecoration(
-                color: allowComments == true ? blueSoft : Colors.transparent,
-                borderRadius: BorderRadius.circular(Dimensions.h_4),
-                border: Border.all(color: allowComments == true ? blue : Theme.of(context).highlightColor, width: allowComments == true ? 0.5 : 0.2),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.check_box, size: Dimensions.h_16, color: blue),
-                  SizedBox(width: Dimensions.w_8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Allow Comments',
-                        style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, color: Theme.of(context).highlightColor),
-                      ),
-                      Text(
-                        'Keep the conversation going beneath each post.',
-                        style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_8),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {},
-            child: Container(
-              margin: EdgeInsets.only(left: Dimensions.w_5),
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
-              decoration: BoxDecoration(
-                color: photoSharing == true ? blueSoft : Colors.transparent,
-                borderRadius: BorderRadius.circular(Dimensions.h_4),
-                border: Border.all(color: photoSharing == true ? blue : Theme.of(context).highlightColor, width: photoSharing == true ? 0.5 : 0.2),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.check_box, size: Dimensions.h_16, color: blue),
-                  SizedBox(width: Dimensions.w_8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Allow Photo Sharing',
-                        style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, color: Theme.of(context).highlightColor),
-                      ),
-                      Text(
-                        'Members can add photos to their group posts.',
-                        style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: Dimensions.h_8),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {},
-            child: Container(
-              margin: EdgeInsets.only(left: Dimensions.w_5),
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
-              decoration: BoxDecoration(
-                color: allowComments == true ? blueSoft : Colors.transparent,
-                borderRadius: BorderRadius.circular(Dimensions.h_4),
-                border: Border.all(color: allowComments == true ? blue : Theme.of(context).highlightColor, width: allowComments == true ? 0.5 : 0.2),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.check_box, size: Dimensions.h_16, color: blue),
-                  SizedBox(width: Dimensions.w_8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Allow Comments',
-                        style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, color: Theme.of(context).highlightColor),
-                      ),
-                      Text(
-                        'Keep the conversation going beneath each post.',
-                        style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+        ),
+        if (controller.asksQuestions) ...[
           SizedBox(height: Dimensions.h_15),
           Row(
             children: [
-              Text(
-                'Additional Guidelines ',
-                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
-              ),
-              Text(
-                '(Optional)',
-                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_9, fontWeight: FontWeight.w400),
-              ),
+              Expanded(child: _label(context, 'Membership questions (Optional)')),
+              _aiButton(context, blue, controller, 'generate_joining_questions', 'Suggest', controller.suggestQuestions),
             ],
           ),
-          SizedBox(height: Dimensions.h_8),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5),
-            child: TextFormField(
-              minLines: 7,
-              maxLines: 10,
-              controller: TextEditingController(),
-              textCapitalization: TextCapitalization.words,
-              style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w400, color: Theme.of(context).highlightColor, height: 1.1),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter your primary town';
-                }
-                return null;
-              },
-              decoration: _inputDecoration(hint: ''),
+          _hint(context, 'Ask up to $maxQuestions questions. Admins can use the answers when reviewing join requests.'),
+          for (var i = 0; i < controller.questionControllers.length; i++) ...[
+            SizedBox(height: Dimensions.h_8),
+            CommonTextField(
+              controller: controller.questionControllers[i],
+              hint: i < form.joiningQuestions.placeholders.length ? form.joiningQuestions.placeholders[i] : 'Your question',
+              errorText: controller.errorOf('question_$i'),
+              onChanged: (_) => controller.clearError('question_$i'),
+              maxLength: CreateGroupController.maxQuestionLength,
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_5, top: Dimensions.h_8),
-            child: Text(
-              'For example, your ride check-in routine or how to organize a group outing.',
-              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400, height: 1.1),
+            Row(
+              children: [
+                _checkRow(context, blue, label: 'Required', selected: controller.questionRequired[i], onTap: () => controller.toggleQuestionRequired(i)),
+                const Spacer(),
+                _textButton('Remove', blue, () => controller.removeQuestion(i)),
+              ],
             ),
-          ),
+          ],
+          if (controller.questionControllers.length < maxQuestions) ...[SizedBox(height: Dimensions.h_8), _outlinedButton(context, 'Add question', controller.addQuestion, icon: CupertinoIcons.add)],
         ],
-      ),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Member permissions'),
+        _hint(context, 'Choose what members can do. Admins keep access to manage the group.'),
+        SizedBox(height: Dimensions.h_5),
+        ...form.memberPermissions.map(
+          (p) => _checkRow(context, blue, label: p.label, selected: controller.permissions.contains(p.value), onTap: () => controller.toggleIn(controller.permissions, p.value)),
+        ),
+      ],
     );
   }
 
-  Widget buildLaunch(BuildContext context, Color blueSoft, Color blue, GroupController controller) {
+  Widget buildDiscussion(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    final form = controller.form!;
+    return _card(
+      children: [
+        _stepTitle(context, '5. Discussion Settings', 'Give your community a few useful places to start talking.'),
+        _label(context, 'Discussion Topics'),
+        _wrap([
+          for (final t in form.topics)
+            _checkChip(
+              context,
+              blueSoft,
+              blue,
+              label: t.label,
+              icon: groupOptionIcon(t.icon),
+              selected: controller.topics.contains(t.value),
+              onTap: () => controller.toggleIn(controller.topics, t.value),
+            ),
+        ]),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Post Moderation'),
+        _hint(context, 'Choose how much review your group’s conversations need.'),
+        SizedBox(height: Dimensions.h_5),
+        ...form.moderation.map((m) => _radioRow(context, blue, label: m.label, selected: controller.moderation == m.value, onTap: () => controller.selectModeration(m.value))),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Sharing Options'),
+        SizedBox(height: Dimensions.h_5),
+        ...form.sharingOptions.map(
+          (o) => _optionCard(
+            context,
+            blueSoft,
+            blue,
+            option: o,
+            selected: controller.permissions.contains(o.permission),
+            onTap: () => controller.toggleIn(controller.permissions, o.permission ?? o.value),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildRules(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    final form = controller.form!;
+    final limits = form.additionalGuidelines;
+    return _card(
+      children: [
+        _stepTitle(context, '6. Rules & Guidelines', 'Set a friendly, clear standard for your community.'),
+        _label(context, 'Starter Rules'),
+        SizedBox(height: Dimensions.h_5),
+        ...form.rules.map((r) => _optionCard(context, blueSoft, blue, option: r, selected: controller.rules.contains(r.value), onTap: () => controller.toggleIn(controller.rules, r.value))),
+        SizedBox(height: Dimensions.h_15),
+        _label(context, 'Additional Guidelines (Optional)'),
+        _hint(context, 'Add up to ${limits.max} guidelines of your own.'),
+        for (var i = 0; i < controller.guidelineControllers.length; i++) ...[
+          SizedBox(height: Dimensions.h_8),
+          CommonTextField(controller: controller.guidelineControllers[i], hint: i < limits.placeholders.length ? limits.placeholders[i] : '', maxLength: limits.maxLength, minLines: 2, maxLines: 5),
+          Align(alignment: Alignment.centerRight, child: _textButton('Remove', blue, () => controller.removeGuideline(i))),
+        ],
+        if (controller.guidelineControllers.length < limits.max) ...[SizedBox(height: Dimensions.h_8), _outlinedButton(context, 'Add guideline', controller.addGuideline, icon: CupertinoIcons.add)],
+      ],
+    );
+  }
+
+  Widget buildLaunch(BuildContext context, Color blueSoft, Color blue, CreateGroupController controller) {
+    final form = controller.form!;
     final textColor = Theme.of(context).highlightColor;
-    final secondaryColor = Theme.of(context).textTheme.bodySmall?.color;
+    final questions = controller.asksQuestions ? controller.questionControllers.length : 0;
+    final guidelines = controller.guidelineControllers.where((c) => c.text.trim().isNotEmpty).length;
 
-    Widget reviewSection({required String title, required int step, required List<Map<String, String>> fields, bool showDiscussionActions = false}) {
+    Widget reviewSection({required String title, required int step, required List<(String, String)> fields}) {
       return Padding(
         padding: EdgeInsets.only(bottom: Dimensions.h_18),
         child: Column(
@@ -1853,30 +877,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     style: TextStyle(color: textColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
                   ),
                 ),
-                if (showDiscussionActions) ...[
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'Edit discussions',
-                      style: TextStyle(color: blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  SizedBox(width: Dimensions.w_8),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'Edit rules',
-                      style: TextStyle(color: blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ] else
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'Edit',
-                      style: TextStyle(color: blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
-                    ),
-                  ),
+                _textButton('Edit', blue, () => controller.goToStep(step)),
               ],
             ),
             SizedBox(height: Dimensions.h_4),
@@ -1884,23 +885,23 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               (field) => Container(
                 margin: EdgeInsets.only(left: Dimensions.w_5),
                 decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Theme.of(context).highlightColor, width: 0.15)),
+                  border: Border(bottom: BorderSide(color: textColor, width: 0.15)),
                 ),
-                padding: EdgeInsets.only(bottom: Dimensions.h_8, top: Dimensions.h_8),
+                padding: EdgeInsets.symmetric(vertical: Dimensions.h_8),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
                       width: Dimensions.w_90,
                       child: Text(
-                        field['label']!,
-                        style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w400),
+                        field.$1,
+                        style: TextStyle(color: textColor, fontSize: FontSize.sp_11),
                       ),
                     ),
                     SizedBox(width: Dimensions.w_20),
                     Expanded(
                       child: Text(
-                        field['value']!,
+                        field.$2.isEmpty ? '—' : field.$2,
                         style: TextStyle(color: textColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500, height: 1.4),
                       ),
                     ),
@@ -1913,107 +914,279 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
       );
     }
 
-    return CommonCard(
-      margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '7. Review & Launch',
-            style: TextStyle(color: textColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700),
-          ),
-          SizedBox(height: Dimensions.h_4),
-          Padding(
-            padding: EdgeInsets.only(left: Dimensions.w_8),
-            child: Text(
-              'One last look at the community you’re creating.',
-              style: TextStyle(color: secondaryColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
+    return _card(
+      children: [
+        _stepTitle(context, '7. Review & Launch', 'One last look at the community you’re creating.'),
+        SizedBox(height: Dimensions.h_5),
+        reviewSection(
+          title: 'Group Details',
+          step: 0,
+          fields: [
+            ('Group Name', controller.nameController.text.trim()),
+            ('Category', controller.categorySummary),
+            ('Interests', controller.interestSummary),
+            ('Purpose', controller.purposeController.text.trim()),
+            ('Who It’s For', controller.audienceSummary),
+          ],
+        ),
+        reviewSection(
+          title: 'Location & Coverage',
+          step: 1,
+          fields: [
+            ('Primary Town', '${controller.originTown?.name ?? ''} · ${controller.includedTownIds.length} town${controller.includedTownIds.length == 1 ? '' : 's'}'),
+            ('Coverage Radius', controller.radius == 0 ? 'Town only' : '${controller.radius} miles'),
+          ],
+        ),
+        reviewSection(
+          title: 'Description & Media',
+          step: 2,
+          fields: [
+            ('Description', controller.descriptionController.text.trim()),
+            (
+              'Photos',
+              [
+                controller.coverPath != null ? 'Cover selected' : 'No cover',
+                controller.avatarPath != null ? 'Group photo selected' : 'No group photo',
+                '${controller.galleryPaths.length} gallery photos',
+              ].join(' · '),
             ),
-          ),
-          SizedBox(height: Dimensions.h_15),
+          ],
+        ),
+        reviewSection(
+          title: 'Privacy & Membership',
+          step: 3,
+          fields: [
+            ('Group Visibility', controller.visibilityLabel),
+            ('Who Can Join', controller.membershipLabel),
+            ('Membership Questions', questions == 0 ? 'No questions added' : '$questions question${questions == 1 ? '' : 's'}'),
+            ('Member Permissions', controller.labelsOf(form.memberPermissions, controller.permissions)),
+          ],
+        ),
+        reviewSection(
+          title: 'Conversations',
+          step: 4,
+          fields: [
+            ('Topics', controller.labelsOf(form.topics, controller.topics)),
+            ('Moderation', controller.moderationLabel),
+            ('Sharing', '${controller.allowPhotos ? 'Photos enabled' : 'Photos disabled'} · ${controller.allowComments ? 'Comments enabled' : 'Comments disabled'}'),
+          ],
+        ),
+        reviewSection(
+          title: 'Rules & Guidelines',
+          step: 5,
+          fields: [('Rules', controller.labelsOf(form.rules, controller.rules)), ('Guidelines', guidelines == 0 ? 'None added' : '$guidelines additional')],
+        ),
+      ],
+    );
+  }
 
-          reviewSection(
-            title: 'Group Details',
-            step: 1,
-            fields: [
-              {'label': 'Group Name', 'value': 'Pine Valley Mountain Bike Crew'},
-              {'label': 'Category', 'value': 'Sports & Recreation — Cycling'},
-              {'label': 'Related Interests', 'value': 'Mountain Biking, Trail Riding, Enduro, Cross Country (XC), Downhill, Local Trails, Fitness'},
-              {'label': 'Purpose', 'value': 'A local mountain biking community for riders of all skill levels. We organize group rides, share trail conditions, discuss gear, help each other improve, and support trail maintenance in the Pine Valley area.'},
-              {'label': 'Who It’s For', 'value': 'Everyone · All skill levels welcome'},
-            ],
-          ),
+  Widget _card({required List<Widget> children}) => CommonCard(
+    margin: EdgeInsets.only(top: Dimensions.h_10, left: Dimensions.w_10, right: Dimensions.w_10),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
+  );
 
-          reviewSection(
-            title: 'Location & Coverage',
-            step: 2,
-            fields: [
-              {'label': 'Primary Town', 'value': 'Cedar Grove, CO · 1 town'},
-              {'label': 'Coverage Radius', 'value': '3 miles'},
-            ],
+  Widget _stepTitle(BuildContext context, String title, String subtitle) => Padding(
+    padding: EdgeInsets.only(bottom: Dimensions.h_10),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_18, fontWeight: FontWeight.w700),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: Dimensions.w_8),
+          child: Text(
+            subtitle,
+            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
           ),
+        ),
+      ],
+    ),
+  );
 
-          reviewSection(
-            title: 'Description & Media',
-            step: 3,
-            fields: [
-              {'label': 'Description', 'value': 'A local mountain biking community for riders of all skill levels. We plan group rides, share trail updates, exchange gear advice, and help care for the trails around Pine Valley.'},
-              {'label': 'Photos', 'value': 'Cover selected · Bike avatar · 3 gallery photos'},
-            ],
-          ),
+  Widget _label(BuildContext context, String text) => Padding(
+    padding: EdgeInsets.only(bottom: Dimensions.h_5),
+    child: Text(
+      text,
+      style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
+    ),
+  );
 
-          reviewSection(
-            title: 'Privacy & Membership',
-            step: 4,
-            fields: [
-              {'label': 'Group Visibility', 'value': 'Public'},
-              {'label': 'Who Can Join', 'value': 'Invited people only'},
-              {'label': 'Membership Questions', 'value': 'No questions added'},
-              {'label': 'Member Permissions', 'value': 'Create posts, create events and activities, upload photos, invite others, add discussion topics, comment and reply, share files and links, message other members'},
-            ],
-          ),
+  Widget _hint(BuildContext context, String text) => Padding(
+    padding: EdgeInsets.only(left: Dimensions.w_5, top: Dimensions.h_5),
+    child: Text(
+      text,
+      style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w400, height: 1.3),
+    ),
+  );
 
-          reviewSection(
-            title: 'Conversations & Guidelines',
-            step: 5,
-            showDiscussionActions: true,
-            fields: [
-              {'label': 'Topics', 'value': 'Group Rides, Trail Updates, Gear & Tech, Skills & Advice, Ride Photos, General Conversation'},
-              {'label': 'Moderation', 'value': 'Members can post directly'},
-              {'label': 'Discussion Sharing', 'value': 'Photos enabled · Comments enabled'},
-              {'label': 'Rules', 'value': '4 starter rules'},
-            ],
-          ),
-        ],
+  Widget _wrap(List<Widget> children) => Wrap(spacing: Dimensions.w_6, runSpacing: Dimensions.h_6, children: children);
+
+  Widget _choiceChip(BuildContext context, Color blueSoft, Color blue, {required String label, required bool selected, required VoidCallback onTap}) =>
+      _chip(context, blueSoft, blue, label: label, selected: selected, onTap: onTap, icon: selected ? Icons.radio_button_checked : Icons.radio_button_off);
+
+  Widget _checkChip(BuildContext context, Color blueSoft, Color blue, {required String label, required bool selected, required VoidCallback onTap, IconData? icon}) =>
+      _chip(context, blueSoft, blue, label: label, selected: selected, onTap: onTap, icon: icon ?? (selected ? Icons.check_box : Icons.check_box_outline_blank));
+
+  Widget _chip(BuildContext context, Color blueSoft, Color blue, {required String label, required bool selected, required VoidCallback onTap, required IconData icon}) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_6),
+        decoration: BoxDecoration(
+          color: selected ? blueSoft : Colors.transparent,
+          border: Border.all(color: selected ? blue : Theme.of(context).highlightColor, width: selected ? 0.5 : 0.2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: Dimensions.h_13, color: selected ? blue : AppColor.muted(context)),
+            SizedBox(width: Dimensions.w_3),
+            Text(
+              label,
+              style: TextStyle(fontSize: FontSize.sp_11, color: selected ? blue : Theme.of(context).highlightColor, fontWeight: selected ? FontWeight.w600 : FontWeight.w400),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  InputDecoration _inputDecoration({String? hint}) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(fontSize: FontSize.sp_11, color: Theme.of(context).hintColor),
-      contentPadding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_6),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(Dimensions.h_4),
-        borderSide: BorderSide(color: Theme.of(context).highlightColor, width: 0.1),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(Dimensions.h_4),
-        borderSide: BorderSide(color: Theme.of(context).highlightColor, width: 0.1),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(Dimensions.h_4),
-        borderSide: BorderSide(color: Theme.of(context).highlightColor, width: 0.1),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(Dimensions.h_4),
-        borderSide: const BorderSide(color: Colors.red),
+  Widget _checkRow(BuildContext context, Color blue, {required String label, required bool selected, required VoidCallback onTap}) =>
+      _row(context, blue, label: label, onTap: onTap, icon: selected ? Icons.check_box : Icons.check_box_outline_blank, selected: selected);
+
+  Widget _radioRow(BuildContext context, Color blue, {required String label, required bool selected, required VoidCallback onTap}) =>
+      _row(context, blue, label: label, onTap: onTap, icon: selected ? Icons.radio_button_checked : Icons.radio_button_unchecked, selected: selected);
+
+  Widget _row(BuildContext context, Color blue, {required String label, required VoidCallback onTap, required IconData icon, required bool selected}) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_6),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: Dimensions.h_16, color: selected ? blue : AppColor.muted(context)),
+            SizedBox(width: Dimensions.w_6),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(fontSize: FontSize.sp_11, height: 1.3, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget buildHeroHeader(bool isLight) {
+  Widget _optionCard(BuildContext context, Color blueSoft, Color blue, {required GroupFormOption option, required bool selected, required VoidCallback onTap}) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.only(left: Dimensions.w_5, bottom: Dimensions.h_8),
+        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
+        decoration: BoxDecoration(
+          color: selected ? blueSoft : Colors.transparent,
+          borderRadius: BorderRadius.circular(Dimensions.h_4),
+          border: Border.all(color: selected ? blue : Theme.of(context).highlightColor, width: selected ? 0.5 : 0.2),
+        ),
+        child: Row(
+          children: [
+            Icon(selected ? Icons.check_box : Icons.check_box_outline_blank, size: Dimensions.h_16, color: selected ? blue : AppColor.muted(context)),
+            SizedBox(width: Dimensions.w_8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    option.label,
+                    style: TextStyle(fontSize: FontSize.sp_11, fontWeight: FontWeight.w600, color: Theme.of(context).highlightColor),
+                  ),
+                  if (option.description != null)
+                    Text(
+                      option.description!,
+                      style: TextStyle(fontSize: FontSize.sp_9, color: Theme.of(context).highlightColor),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _aiButton(BuildContext context, Color blue, CreateGroupController controller, String action, String label, VoidCallback onTap) {
+    final busy = controller.aiAction == action;
+    final content = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(CupertinoIcons.sparkles, size: Dimensions.h_13, color: blue),
+        SizedBox(width: Dimensions.w_4),
+        Text(
+          busy ? 'Suggesting…' : label,
+          style: TextStyle(color: blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
+        ),
+      ],
+    );
+    return GestureDetector(
+      onTap: controller.aiAction == null ? onTap : null,
+      // a light sweep across the label reads as "AI is writing"
+      child: busy ? Shimmer.fromColors(baseColor: blue, highlightColor: AppColor.blueSoft(context), period: const Duration(milliseconds: 1100), child: content) : content,
+    );
+  }
+
+  Widget _outlinedButton(BuildContext context, String label, VoidCallback onTap, {IconData? icon}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: BorderRadius.circular(Dimensions.h_4),
+          border: Border.all(color: Theme.of(context).highlightColor, width: 0.2),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_6),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[Icon(icon, size: Dimensions.h_12, color: Theme.of(context).highlightColor), SizedBox(width: Dimensions.w_5)],
+            Text(
+              label,
+              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _textButton(String label, Color blue, VoidCallback onTap) => GestureDetector(
+    onTap: onTap,
+    child: Text(
+      label,
+      style: TextStyle(color: blue, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
+    ),
+  );
+
+  /// Red message under a chip group, matching CommonTextField's error text.
+  Widget _error(BuildContext context, String? message) => message == null
+      ? const SizedBox.shrink()
+      : Padding(
+          padding: EdgeInsets.only(left: Dimensions.w_5, top: Dimensions.h_5),
+          child: Text(
+            message,
+            style: TextStyle(fontSize: FontSize.sp_10, color: AppColor.red(context), fontWeight: FontWeight.w500),
+          ),
+        );
+
+  Widget buildHeroHeader(BuildContext context, bool isLight, String firstName) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -2022,7 +1195,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
           child: Container(
             height: Dimensions.h_250,
             decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent], stops: const [0.0, 0.40, 0.68, 1.0]),
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent],
+                stops: const [0.0, 0.40, 0.68, 1.0],
+              ),
             ),
           ),
         ),
@@ -2036,7 +1214,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               Padding(
                 padding: EdgeInsets.only(left: Dimensions.w_8, top: Dimensions.h_80),
                 child: Text(
-                  'A place for your people, Sean'.toUpperCase(),
+                  (firstName.isEmpty ? 'A place for your people' : 'A place for your people, $firstName').toUpperCase(),
                   style: TextStyle(color: const Color(0xFFFFE47A), fontSize: FontSize.sp_11, fontWeight: FontWeight.w900),
                 ),
               ),
@@ -2108,7 +1286,13 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [context.sports.background.withValues(alpha: 0.0), context.sports.background.withValues(alpha: 0.15), context.sports.background.withValues(alpha: 0.35), context.sports.background.withValues(alpha: 0.78), context.sports.background],
+                colors: [
+                  context.sports.background.withValues(alpha: 0.0),
+                  context.sports.background.withValues(alpha: 0.15),
+                  context.sports.background.withValues(alpha: 0.35),
+                  context.sports.background.withValues(alpha: 0.78),
+                  context.sports.background,
+                ],
                 stops: const [0.08, 0.25, 0.45, 0.75, 1.0],
               ),
             ),
@@ -2120,83 +1304,128 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 }
 
 class CoverageMapWidget extends StatefulWidget {
+  final GroupTown? origin;
   final int radiusMiles;
-  final String townName;
+  final List<GroupTown> towns;
+  final Set<int> includedTownIds;
 
-  const CoverageMapWidget({super.key, required this.radiusMiles, required this.townName});
+  const CoverageMapWidget({super.key, required this.origin, required this.radiusMiles, required this.towns, required this.includedTownIds});
 
   @override
   State<CoverageMapWidget> createState() => _CoverageMapWidgetState();
 }
 
 class _CoverageMapWidgetState extends State<CoverageMapWidget> {
+  static const _metersPerMile = 1609.34;
+  static const _minZoom = 3.0;
+  static const _maxZoom = 18.0;
+
+  final mapController = MapController();
   bool isTerrainView = false;
-  double zoom = 1.0;
+  bool _mapReady = false;
 
-  static const Color blue = Color(0xFF1674DF);
+  LatLng? get center => widget.origin?.latitude == null || widget.origin?.longitude == null ? null : LatLng(widget.origin!.latitude!, widget.origin!.longitude!);
 
-  void zoomIn() {
-    setState(() {
-      zoom = (zoom + 0.2).clamp(1.0, 2.0);
-    });
+  /// Camera that frames the whole coverage circle (or the town alone at radius 0).
+  CameraFit _fit(LatLng c) {
+    final miles = max(widget.radiusMiles, 1);
+    final dLat = miles / 69.0;
+    final dLng = miles / (69.0 * cos(c.latitude * pi / 180));
+    return CameraFit.bounds(bounds: LatLngBounds(LatLng(c.latitude - dLat, c.longitude - dLng), LatLng(c.latitude + dLat, c.longitude + dLng)), padding: EdgeInsets.all(Dimensions.w_20), maxZoom: 14);
   }
 
-  void zoomOut() {
-    setState(() {
-      zoom = (zoom - 0.2).clamp(1.0, 2.0);
-    });
+  @override
+  void didUpdateWidget(covariant CoverageMapWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final c = center;
+    if (_mapReady && c != null && (oldWidget.radiusMiles != widget.radiusMiles || oldWidget.origin?.id != widget.origin?.id)) {
+      mapController.fitCamera(_fit(c));
+    }
+  }
+
+  @override
+  void dispose() {
+    mapController.dispose();
+    super.dispose();
+  }
+
+  void zoomBy(double delta) {
+    final camera = mapController.camera;
+    mapController.move(camera.center, (camera.zoom + delta).clamp(_minZoom, _maxZoom));
   }
 
   void resetMap() {
-    setState(() {
-      zoom = 1.0;
-      isTerrainView = false;
-    });
+    final c = center;
+    if (c != null) mapController.fitCamera(_fit(c));
+    setState(() => isTerrainView = false);
   }
 
   @override
   Widget build(BuildContext context) {
+    final blue = AppColor.blue(context);
+    final c = center;
     return Container(
+      height: Dimensions.h_250,
       decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.h_5)),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: Dimensions.h_250,
-            child: Stack(
+      child: c == null
+          ? Center(
+              child: Text(
+                'Choose a town to preview coverage',
+                style: TextStyle(fontSize: FontSize.sp_10, color: Theme.of(context).hintColor),
+              ),
+            )
+          : Stack(
               children: [
+                // must fill the stack: a plain Stack child gets loose constraints and the map lays out at zero size
                 Positioned.fill(
-                  child: ClipRect(
-                    child: AnimatedScale(
-                      scale: zoom,
-                      duration: const Duration(milliseconds: 250),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          AppCacheImage(imageUrl: isTerrainView ? 'https://preetis-html.vercel.app/assets/images/groups/create-group/coverage-terrain.svg' : 'https://preetis-html.vercel.app/assets/images/groups/create-group/coverage-map.svg', fit: BoxFit.cover),
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              final mapSize = Size(constraints.maxWidth, constraints.maxHeight);
-
-                              return Stack(
-                                children: [
-                                  CustomPaint(
-                                    size: mapSize,
-                                    painter: CoverageRingPainter(radiusMiles: widget.radiusMiles),
+                  child: FlutterMap(
+                    mapController: mapController,
+                    options: MapOptions(
+                      initialCameraFit: _fit(c),
+                      minZoom: _minZoom,
+                      backgroundColor: AppColor.mapBlueSoft(context),
+                      maxZoom: _maxZoom,
+                      onMapReady: () => _mapReady = true,
+                      // no one-finger drag: it would fight the page scroll
+                      interactionOptions: const InteractionOptions(flags: InteractiveFlag.pinchZoom | InteractiveFlag.pinchMove | InteractiveFlag.doubleTapZoom),
+                    ),
+                    children: [
+                      isTerrainView
+                          ? TileLayer(urlTemplate: 'https://tile.opentopomap.org/{z}/{x}/{y}.png', userAgentPackageName: 'com.wikixm.app', maxNativeZoom: 17)
+                          : TileLayer(urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', userAgentPackageName: 'com.wikixm.app'),
+                      if (widget.radiusMiles > 0)
+                        CircleLayer(
+                          circles: [
+                            CircleMarker(point: c, radius: widget.radiusMiles * _metersPerMile, useRadiusInMeter: true, color: blue.withValues(alpha: 0.12), borderColor: blue, borderStrokeWidth: 2),
+                          ],
+                        ),
+                      MarkerLayer(
+                        markers: [
+                          for (final t in widget.towns)
+                            if (t.latitude != null && t.longitude != null && t.id != widget.origin?.id)
+                              Marker(
+                                point: LatLng(t.latitude!, t.longitude!),
+                                width: Dimensions.h_10,
+                                height: Dimensions.h_10,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: widget.includedTownIds.contains(t.id) ? blue : AppColor.muted(context),
+                                    border: Border.all(color: AppColor.white, width: 1.5),
                                   ),
-                                  Positioned(
-                                    left: mapSize.width / 2 - Dimensions.w_10,
-                                    top: mapSize.height / 2 - Dimensions.h_18,
-                                    child: Icon(Icons.location_on, color: blue, size: Dimensions.h_20),
-                                  ),
-                                ],
-                              );
-                            },
+                                ),
+                              ),
+                          Marker(
+                            point: c,
+                            width: Dimensions.h_25,
+                            height: Dimensions.h_25,
+                            alignment: Alignment.topCenter,
+                            child: Icon(Icons.location_on, color: blue, size: Dimensions.h_25),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
                 ),
                 Positioned(
@@ -2212,20 +1441,8 @@ class _CoverageMapWidgetState extends State<CoverageMapWidget> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        _viewButton(
-                          label: 'Map view',
-                          selected: !isTerrainView,
-                          onTap: () {
-                            setState(() => isTerrainView = false);
-                          },
-                        ),
-                        _viewButton(
-                          label: 'Terrain view',
-                          selected: isTerrainView,
-                          onTap: () {
-                            setState(() => isTerrainView = true);
-                          },
-                        ),
+                        _viewButton(label: 'Map view', selected: !isTerrainView, onTap: () => setState(() => isTerrainView = false)),
+                        _viewButton(label: 'Terrain view', selected: isTerrainView, onTap: () => setState(() => isTerrainView = true)),
                       ],
                     ),
                   ),
@@ -2235,9 +1452,9 @@ class _CoverageMapWidgetState extends State<CoverageMapWidget> {
                   top: 12,
                   child: Column(
                     children: [
-                      _mapControl(icon: Icons.add, tooltip: 'Zoom in', onTap: zoomIn, disabled: zoom >= 2.0),
+                      _mapControl(icon: Icons.add, tooltip: 'Zoom in', onTap: () => zoomBy(1)),
                       const SizedBox(height: 6),
-                      _mapControl(icon: Icons.remove, tooltip: 'Zoom out', onTap: zoomOut, disabled: zoom <= 1.0),
+                      _mapControl(icon: Icons.remove, tooltip: 'Zoom out', onTap: () => zoomBy(-1)),
                       const SizedBox(height: 6),
                       _mapControl(icon: Icons.refresh, tooltip: 'Reset map', onTap: resetMap),
                     ],
@@ -2254,20 +1471,18 @@ class _CoverageMapWidgetState extends State<CoverageMapWidget> {
                       boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8)],
                     ),
                     child: Text(
-                      '${widget.radiusMiles} mile radius',
+                      widget.radiusMiles == 0 ? 'Town only' : '${widget.radiusMiles} mile radius',
                       style: TextStyle(fontSize: FontSize.sp_10, fontWeight: FontWeight.w600, color: blue),
                     ),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
   Widget _viewButton({required String label, required bool selected, required VoidCallback onTap}) {
+    final blue = AppColor.blue(context);
     return Material(
       color: selected ? blue : Colors.transparent,
       borderRadius: BorderRadius.circular(Dimensions.h_4),
@@ -2278,67 +1493,25 @@ class _CoverageMapWidgetState extends State<CoverageMapWidget> {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           child: Text(
             label,
-            style: TextStyle(color: selected ? Colors.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
+            style: TextStyle(color: selected ? AppColor.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
           ),
         ),
       ),
     );
   }
 
-  Widget _mapControl({required IconData icon, required String tooltip, required VoidCallback onTap, bool disabled = false}) {
+  Widget _mapControl({required IconData icon, required String tooltip, required VoidCallback onTap}) {
     return Material(
       color: Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(10),
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: disabled ? null : onTap,
+        onTap: onTap,
         child: Tooltip(
           message: tooltip,
-          child: SizedBox(width: 38, height: 38, child: Icon(icon, size: 20, color: disabled ? Theme.of(context).disabledColor : Theme.of(context).iconTheme.color)),
+          child: SizedBox(width: 38, height: 38, child: Icon(icon, size: 20, color: Theme.of(context).iconTheme.color)),
         ),
       ),
     );
-  }
-}
-
-class CoverageRingPainter extends CustomPainter {
-  final int radiusMiles;
-
-  const CoverageRingPainter({required this.radiusMiles});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-
-    const double pixelsPerMile = 3.0;
-
-    final radius = (radiusMiles * pixelsPerMile).clamp(12.0, size.shortestSide / 2 - 8).toDouble();
-
-    final fillPaint = Paint()
-      ..color = const Color(0xFF1674DF).withValues(alpha: 0.12)
-      ..style = PaintingStyle.fill;
-
-    final borderPaint = Paint()
-      ..color = const Color(0xFF1674DF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
-
-    canvas.drawCircle(center, radius, fillPaint);
-
-    const dashLength = 7.0;
-    const gapLength = 4.0;
-    final circumference = 2 * 3.141592653589793 * radius;
-    final segmentCount = (circumference / (dashLength + gapLength)).floor();
-
-    for (var i = 0; i < segmentCount; i++) {
-      final startAngle = i * (dashLength + gapLength) / radius;
-
-      canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle, dashLength / radius, false, borderPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CoverageRingPainter oldDelegate) {
-    return oldDelegate.radiusMiles != radiusMiles;
   }
 }

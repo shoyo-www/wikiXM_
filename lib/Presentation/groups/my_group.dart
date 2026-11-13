@@ -1,4 +1,4 @@
-import 'package:carousel_slider_plus/carousel_slider_plus.dart';
+// import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,7 +28,7 @@ class MyGroupsScreen extends StatefulWidget {
 
 class _MyGroupsScreenState extends State<MyGroupsScreen> {
   final GroupController groupController = Get.put(GroupController());
-  final List<String> tabs = ['My groups', 'My activities','My Profile','Settings'];
+  final List<String> tabs = ['Groups', 'Activities', 'Group Profile'];
 
   @override
   void initState() {
@@ -41,99 +41,103 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
     final bool isLight = Theme.of(context).brightness == Brightness.light;
     return GroupsDrawer(
       builder: (openDrawer) => AppScaffold(
-          top: false,
-          bottom: false,
-          bodyPadding: EdgeInsets.zero,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: GetBuilder(
-            init: groupController,
-            id: ControllerBuilders.myGroups,
-            builder: (controller) {
-              return controller.myGroupsLoading && controller.mySummary == null
-                  ? pageShimmer()
-                  : NotificationListener<ScrollNotification>(
-                      onNotification: (n) {
-                        if (n.metrics.axis == Axis.vertical && controller.myGroupsTab == 0 && n.metrics.pixels >= n.metrics.maxScrollExtent - 300) controller.loadMoreMyGroups();
-                        return false;
-                      },
-                      child: CommonScrollBlurScaffold(
-                        showBack: true,
-                        isDrawer: true,
-                        onTap: openDrawer,
-                        expandedHeight: Dimensions.h_270,
-                        expandedColor: Colors.white,
-                        collapsedColor: Theme.of(context).highlightColor,
-                        hero: buildHeroHeader(isLight, controller),
-                        slivers: [
-                          SliverToBoxAdapter(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: Dimensions.h_5),
-                                  Container(
-                                    height: Dimensions.h_25,
-                                    decoration: BoxDecoration(
-                                      border: Border(bottom: BorderSide(color: AppColor.micrositeGrey(context), width: 0.6)),
-                                    ),
-                                    child: GetBuilder<GroupController>(
-                                      id: ControllerBuilders.myGroupsTabs,
-                                      builder: (controller) => ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: tabs.length,
-                                        physics: const AlwaysScrollableScrollPhysics(),
-                                        itemBuilder: (c, index) {
-                                          final tab = tabs[index];
-                                          final isSelected = controller.myGroupsTab == index;
-                                          return GestureDetector(
-                                            onTap: () => controller.openMyGroupsTab(index),
-                                            child: Container(
-                                              margin: EdgeInsets.only(right: Dimensions.w_8),
-                                              alignment: Alignment.center,
-                                              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
-                                              decoration: BoxDecoration(
-                                                border: Border(bottom: BorderSide(color: isSelected ? AppColor.blue(context) : Colors.transparent, width: 3)),
-                                              ),
-                                              child: Text(
-                                                tab.toUpperCase(),
-                                                style: TextStyle(color: isSelected ? AppColor.blue(context) : Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700, height: 1),
+        top: false,
+        bottom: false,
+        bodyPadding: EdgeInsets.zero,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: GetBuilder(
+          init: groupController,
+          id: ControllerBuilders.myGroups,
+          builder: (controller) {
+            return controller.myGroupsLoading && controller.mySummary == null
+                ? pageShimmer()
+                : NotificationListener<ScrollNotification>(
+                    onNotification: (n) {
+                      if (n.metrics.axis == Axis.vertical && controller.myGroupsTab == 0 && n.metrics.pixels >= n.metrics.maxScrollExtent - 300) controller.loadMoreMyGroups();
+                      return false;
+                    },
+                    child: CommonScrollBlurScaffold(
+                      showBack: true,
+                      isDrawer: true,
+                      onTap: openDrawer,
+                      expandedHeight: Dimensions.h_200,
+                      expandedColor: Colors.white,
+                      collapsedColor: Theme.of(context).highlightColor,
+                      hero: buildHeroHeader(isLight, controller),
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: Dimensions.h_5),
+                                SizedBox(
+                                  height: Dimensions.h_25,
+                                  child: GetBuilder<GroupController>(
+                                    id: ControllerBuilders.myGroupsTabs,
+                                    builder: (controller) => ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: tabs.length,
+                                      physics: const AlwaysScrollableScrollPhysics(),
+                                      itemBuilder: (c, index) {
+                                        final tab = tabs[index];
+                                        final isSelected = controller.myGroupsTab == index;
+                                        return GestureDetector(
+                                          onTap: () => controller.openMyGroupsTab(index),
+                                          child: Container(
+                                            margin: EdgeInsets.only(right: Dimensions.w_6),
+                                            alignment: Alignment.center,
+                                            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_12),
+                                            decoration: BoxDecoration(
+                                              color: isSelected ? AppColor.blue(context) : AppColor.surface(context),
+                                              borderRadius: BorderRadius.circular(99),
+                                              border: Border.all(color: isSelected ? AppColor.blue(context) : AppColor.border(context)),
+                                            ),
+                                            child: Text(
+                                              tab,
+                                              style: TextStyle(
+                                                color: isSelected ? AppColor.white : Theme.of(context).highlightColor,
+                                                fontSize: FontSize.sp_11,
+                                                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                                height: 1,
                                               ),
                                             ),
-                                          );
-                                        },
-                                      ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
-                                  GetBuilder<GroupController>(
-                                    id: ControllerBuilders.myGroupsTabs,
-                                    builder: (controller) => Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        if (controller.myGroupsTab == 0) GetBuilder<GroupController>(id: ControllerBuilders.myGroupsList, builder: (_) => buildManagedGroups()),
-                                        if (controller.myGroupsTab == 3)
-                                          GetBuilder<GroupController>(
-                                            id: ControllerBuilders.myGroupsSettings,
-                                            builder: (controller) => Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(height: Dimensions.h_10),
-                                                EntranceAnimation(
-                                                  child: Text(
+                                ),
+                                GetBuilder<GroupController>(
+                                  id: ControllerBuilders.myGroupsTabs,
+                                  builder: (controller) => Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      if (controller.myGroupsTab == 0) GetBuilder<GroupController>(id: ControllerBuilders.myGroupsList, builder: (_) => buildManagedGroups()),
+                                      if (controller.myGroupsTab == 3)
+                                        GetBuilder<GroupController>(
+                                          id: ControllerBuilders.myGroupsSettings,
+                                          builder: (controller) => Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(height: Dimensions.h_10),
+                                              EntranceAnimation(
+                                                child: Text(
                                                   'Account settings',
                                                   style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
-                                                  ),
                                                 ),
-                                                EntranceAnimation(
-                                                  child: Text(
-                                                    'Choose what appears on your My Groups dashboard.',
-                                                    style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w400),
-                                                  ),
+                                              ),
+                                              EntranceAnimation(
+                                                child: Text(
+                                                  'Choose what appears on your My Groups dashboard.',
+                                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w400),
                                                 ),
-                                                SizedBox(height: Dimensions.h_10),
-                                                EntranceAnimation(
-                                                  index: 1,
-                                                  child: CommonCard(
+                                              ),
+                                              SizedBox(height: Dimensions.h_10),
+                                              EntranceAnimation(
+                                                index: 1,
+                                                child: CommonCard(
                                                   child: Column(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
@@ -158,7 +162,11 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                                                           SizedBox(width: Dimensions.w_20),
                                                           GestureDetector(
                                                             onTap: controller.groupRecommendations == null ? null : controller.toggleRecommendations,
-                                                            child: Icon(controller.groupRecommendations == true ? Icons.check_box : Icons.check_box_outline_blank, color: AppColor.blue(context), size: Dimensions.h_20),
+                                                            child: Icon(
+                                                              controller.groupRecommendations == true ? Icons.check_box : Icons.check_box_outline_blank,
+                                                              color: AppColor.blue(context),
+                                                              size: Dimensions.h_20,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -181,52 +189,60 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                                                     ],
                                                   ),
                                                 ),
-                                                ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                        if (controller.myGroupsTab == 1)
-                                          GetBuilder<GroupController>(
-                                            id: ControllerBuilders.myGroupsActivities,
-                                            builder: (controller) => Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(height: Dimensions.h_10),
-                                                EntranceAnimation(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        'My upcoming activities (${controller.myActivities?.length ?? 0})',
-                                                        style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
-                                                      ),
-                                                      Text(
-                                                        'A little time together',
-                                                        style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w400),
-                                                      ),
-                                                    ],
-                                                  ),
+                                        ),
+                                      if (controller.myGroupsTab == 1)
+                                        GetBuilder<GroupController>(
+                                          id: ControllerBuilders.myGroupsActivities,
+                                          builder: (controller) => Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(height: Dimensions.h_10),
+                                              EntranceAnimation(
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'My upcoming activities (${controller.myActivities?.length ?? 0})',
+                                                      style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
+                                                    ),
+                                                    Text(
+                                                      'A little time together',
+                                                      style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w400),
+                                                    ),
+                                                  ],
                                                 ),
-                                                SizedBox(height: Dimensions.h_10),
-                                                if (controller.myActivitiesLoading && controller.myActivities == null)
-                                                  activityGridShimmer()
-                                                else if ((controller.myActivities ?? []).isEmpty)
-                                                  EntranceAnimation(index: 1, child: emptyState(Icons.calendar_today_outlined, 'No upcoming activities', 'Activities you organize or join will appear here.'))
-                                                else
-                                                  GridView.builder(
-                                                    shrinkWrap: true,
-                                                    physics: const NeverScrollableScrollPhysics(),
-                                                    padding: EdgeInsets.zero,
-                                                    itemCount: controller.myActivities!.length,
-                                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: Dimensions.w_6, mainAxisSpacing: Dimensions.h_6, mainAxisExtent: Dimensions.h_230),
-                                                    itemBuilder: (context, index) {
-                                                      final a = controller.myActivities![index];
-                                                      final textColor = Theme.of(context).highlightColor;
-                                                      final start = DateTime.tryParse(a.startsAt ?? '')?.toLocal();
-                                                      return EntranceAnimation(
-                                                        key: ValueKey('activity${a.activityId}'),
-                                                        index: 1 + index,
-                                                        child: GestureDetector(
+                                              ),
+                                              SizedBox(height: Dimensions.h_10),
+                                              if (controller.myActivitiesLoading && controller.myActivities == null)
+                                                activityGridShimmer()
+                                              else if ((controller.myActivities ?? []).isEmpty)
+                                                EntranceAnimation(
+                                                  index: 1,
+                                                  child: emptyState(Icons.calendar_today_outlined, 'No upcoming activities', 'Activities you organize or join will appear here.'),
+                                                )
+                                              else
+                                                GridView.builder(
+                                                  shrinkWrap: true,
+                                                  physics: const NeverScrollableScrollPhysics(),
+                                                  padding: EdgeInsets.zero,
+                                                  itemCount: controller.myActivities!.length,
+                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 2,
+                                                    crossAxisSpacing: Dimensions.w_6,
+                                                    mainAxisSpacing: Dimensions.h_6,
+                                                    mainAxisExtent: Dimensions.h_230,
+                                                  ),
+                                                  itemBuilder: (context, index) {
+                                                    final a = controller.myActivities![index];
+                                                    final textColor = Theme.of(context).highlightColor;
+                                                    final start = DateTime.tryParse(a.startsAt ?? '')?.toLocal();
+                                                    return EntranceAnimation(
+                                                      key: ValueKey('activity${a.activityId}'),
+                                                      index: 1 + index,
+                                                      child: GestureDetector(
                                                         behavior: HitTestBehavior.opaque,
                                                         onTap: () => controller.openMyActivity(a),
                                                         child: CommonCard(
@@ -313,27 +329,27 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                                                             ],
                                                           ),
                                                         ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                              ],
-                                            ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                            ],
                                           ),
-                                      ],
-                                    ),
+                                        ),
+                                    ],
                                   ),
-                                  SizedBox(height: Dimensions.h_30),
-                                ],
-                              ),
+                                ),
+                                SizedBox(height: Dimensions.h_30),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    );
-            },
-          ),
+                        ),
+                      ],
+                    ),
+                  );
+          },
         ),
+      ),
     );
   }
 
@@ -506,11 +522,18 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
             child: Icon(icon, size: Dimensions.h_20, color: AppColor.blue(context)),
           ),
           SizedBox(height: Dimensions.h_10),
-          Text(title, style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w700)),
+          Text(
+            title,
+            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w700),
+          ),
           SizedBox(height: Dimensions.h_10),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: Dimensions.w_15),
-            child: Text(body, textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).hintColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500)),
+            child: Text(
+              body,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Theme.of(context).hintColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w500),
+            ),
           ),
           if (button != null) ...[
             SizedBox(height: Dimensions.h_20),
@@ -520,7 +543,10 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: Dimensions.w_15, vertical: Dimensions.h_8),
                 decoration: BoxDecoration(color: const Color(0xff1d5fef), borderRadius: BorderRadius.circular(99)),
-                child: Text(button, style: TextStyle(color: Colors.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700, height: 1.2)),
+                child: Text(
+                  button,
+                  style: TextStyle(color: Colors.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700, height: 1.2),
+                ),
               ),
             ),
           ],
@@ -541,84 +567,89 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
         SizedBox(height: Dimensions.h_10),
         EntranceAnimation(
           child: Text(
-          'My group stats',
-          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
+            'My group stats',
+            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
           ),
         ),
         SizedBox(height: Dimensions.h_10),
         EntranceAnimation(
           child: CommonCard(
-          padding: EdgeInsets.symmetric(vertical: Dimensions.h_12),
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                for (final (i, s) in [('${stats?.totalGroups ?? 0}', 'Total groups'), ('${stats?.managedGroups ?? 0}', 'My Groups'), ('${stats?.memberGroups ?? 0}', 'Joined'), ('$invites', 'Invites')].indexed) ...[
-                  if (i > 0) VerticalDivider(width: 0.5, thickness: 0.4, color: Theme.of(context).highlightColor),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        Text(
-                          s.$1,
-                          style: TextStyle(color: AppColor.blue(context), fontSize: FontSize.sp_20, fontWeight: FontWeight.w900),
-                        ),
-                        SizedBox(height: Dimensions.h_4),
-                        Text(
-                          s.$2,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10),
-                        ),
-                      ],
+            padding: EdgeInsets.symmetric(vertical: Dimensions.h_12),
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  for (final (i, s) in [
+                    ('${stats?.totalGroups ?? 0}', 'Total groups'),
+                    ('${stats?.managedGroups ?? 0}', 'My Groups'),
+                    ('${stats?.memberGroups ?? 0}', 'Joined'),
+                    ('$invites', 'Invites'),
+                  ].indexed) ...[
+                    if (i > 0) VerticalDivider(width: 0.5, thickness: 0.4, color: Theme.of(context).highlightColor),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            s.$1,
+                            style: TextStyle(color: AppColor.blue(context), fontSize: FontSize.sp_20, fontWeight: FontWeight.w900),
+                          ),
+                          SizedBox(height: Dimensions.h_4),
+                          Text(
+                            s.$2,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
           ),
         ),
         SizedBox(height: Dimensions.h_10),
         EntranceAnimation(
           index: 1,
           child: Row(
-          children: [
-            for (final (i, s) in segments.indexed) ...[
-              if (i > 0) SizedBox(width: Dimensions.w_4),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => c.changeMyGroupTab(i),
-                  child: CommonCard(
-                    color: c.myGroupTab == i ? AppColor.blue(context) : null,
-                    isBorder: c.myGroupTab != i,
-                    radius: Dimensions.h_6,
-                    padding: EdgeInsets.symmetric(vertical: Dimensions.h_8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            s.$1,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: c.myGroupTab == i ? Colors.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
+            children: [
+              for (final (i, s) in segments.indexed) ...[
+                if (i > 0) SizedBox(width: Dimensions.w_4),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => c.changeMyGroupTab(i),
+                    child: CommonCard(
+                      color: c.myGroupTab == i ? AppColor.blue(context) : null,
+                      isBorder: c.myGroupTab != i,
+                      radius: Dimensions.h_6,
+                      padding: EdgeInsets.symmetric(vertical: Dimensions.h_8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              s.$1,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: c.myGroupTab == i ? Colors.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: Dimensions.w_4),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_1),
-                          decoration: BoxDecoration(color: c.myGroupTab == i ? Colors.white : AppColor.micrositeGrey(context).withValues(alpha: 0.2), borderRadius: BorderRadius.circular(99)),
-                          child: Text(
-                            '${s.$2}',
-                            style: TextStyle(color: c.myGroupTab == i ? AppColor.blue(context) : Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w800),
+                          SizedBox(width: Dimensions.w_4),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: Dimensions.w_4, vertical: Dimensions.h_1),
+                            decoration: BoxDecoration(color: c.myGroupTab == i ? Colors.white : AppColor.micrositeGrey(context).withValues(alpha: 0.2), borderRadius: BorderRadius.circular(99)),
+                            child: Text(
+                              '${s.$2}',
+                              style: TextStyle(color: c.myGroupTab == i ? AppColor.blue(context) : Theme.of(context).highlightColor, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w800),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ],
-          ],
           ),
         ),
         SizedBox(height: Dimensions.h_10),
@@ -631,16 +662,18 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
         ),
         SizedBox(height: Dimensions.h_10),
         if (c.myGroupTab == 2) ...[
-          if (c.myInvitations == null)
-            ...[groupCardShimmer(), groupCardShimmer()]
-          else if (c.myInvitations!.isEmpty)
+          if (c.myInvitations == null) ...[
+            groupCardShimmer(),
+            groupCardShimmer(),
+          ] else if (c.myInvitations!.isEmpty)
             emptyState(CupertinoIcons.envelope, 'No pending invitations', 'New invitations will appear here.', button: 'Create group')
           else
             for (final (n, i) in c.myInvitations!.indexed) EntranceAnimation(key: ValueKey('invite${i.invitationId}'), index: 3 + n, child: invitationCard(i)),
         ] else ...[
-          if (c.myGroupItems == null)
-            ...[groupCardShimmer(), groupCardShimmer()]
-          else if (c.myGroupItems!.isEmpty)
+          if (c.myGroupItems == null) ...[
+            groupCardShimmer(),
+            groupCardShimmer(),
+          ] else if (c.myGroupItems!.isEmpty)
             emptyState(CupertinoIcons.person_2, 'No groups yet', c.myGroupTab == 0 ? 'Groups you create will appear here.' : 'Groups you join will appear here.', button: 'Create group')
           else
             for (final (n, g) in c.myGroupItems!.indexed) EntranceAnimation(key: ValueKey('group${c.myGroupTab}-${g.id}'), index: 3 + n, child: managedGroupCard(g)),
@@ -668,7 +701,10 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
             borderRadius: BorderRadius.circular(Dimensions.h_6),
           ),
           child: Center(
-            child: Text(text, style: TextStyle(color: filled ? Colors.white : blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1.2)),
+            child: Text(
+              text,
+              style: TextStyle(color: filled ? Colors.white : blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, height: 1.2),
+            ),
           ),
         ),
       ),
@@ -702,9 +738,19 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                           style: TextStyle(color: blue, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                         ),
                         SizedBox(height: Dimensions.h_4),
-                        Text(item.name ?? '', maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: textColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w900)),
+                        Text(
+                          item.name ?? '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: textColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w900),
+                        ),
                         SizedBox(height: Dimensions.h_6),
-                        Text(item.description ?? '', maxLines: 3, overflow: TextOverflow.ellipsis, style: TextStyle(color: textColor, fontSize: FontSize.sp_10, height: 1.3)),
+                        Text(
+                          item.description ?? '',
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: textColor, fontSize: FontSize.sp_10, height: 1.3),
+                        ),
                         SizedBox(height: Dimensions.h_20),
                       ],
                     ),
@@ -725,7 +771,12 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
               onTap: item.groupId == null ? null : () => groupController.openGroup(item.groupId!),
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: Dimensions.h_10),
-                child: Center(child: Text('Group details', style: TextStyle(color: blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800))),
+                child: Center(
+                  child: Text(
+                    'Group details',
+                    style: TextStyle(color: blue, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
+                  ),
+                ),
               ),
             ),
           ],
@@ -779,10 +830,10 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
       ),
     );
 
-    Widget button(String text, {required bool filled, IconData? icon}) => Expanded(
+    Widget button(String text, {required bool filled, IconData? icon, VoidCallback? onTap}) => Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () {},
+        onTap: onTap,
         child: Container(
           padding: EdgeInsets.symmetric(vertical: Dimensions.h_7),
           decoration: BoxDecoration(
@@ -887,19 +938,13 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
             ),
           ),
           SizedBox(height: Dimensions.h_10),
-          Row(
-            children: [
-              stat(g.memberCount ?? 0, 'Members'),
-              stat(g.postCount ?? 0, 'Posts'),
-              stat(g.upcomingActivityCount ?? 0, 'Upcoming plans'),
-            ],
-          ),
+          Row(children: [stat(g.memberCount ?? 0, 'Members'), stat(g.postCount ?? 0, 'Posts'), stat(g.upcomingActivityCount ?? 0, 'Upcoming plans')]),
           SizedBox(height: Dimensions.h_8),
           Row(
             children: [
               button('Manage group', filled: true),
               SizedBox(width: Dimensions.w_5),
-              button('View group', filled: false, icon: CupertinoIcons.arrow_right),
+              button('View group', filled: false, icon: CupertinoIcons.arrow_right, onTap: g.id == null ? null : () => groupController.openGroup(g.id!)),
               if (requests.isNotEmpty) ...[
                 SizedBox(width: Dimensions.w_5),
                 GestureDetector(
@@ -948,7 +993,15 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                 children: [
                   ShimmerBox(Dimensions.w_150, Dimensions.h_13),
                   SizedBox(height: Dimensions.h_8),
-                  Row(children: [ShimmerBox(Dimensions.w_40, Dimensions.h_13), SizedBox(width: Dimensions.w_4), ShimmerBox(Dimensions.w_55, Dimensions.h_13), SizedBox(width: Dimensions.w_4), ShimmerBox(Dimensions.w_50, Dimensions.h_13)]),
+                  Row(
+                    children: [
+                      ShimmerBox(Dimensions.w_40, Dimensions.h_13),
+                      SizedBox(width: Dimensions.w_4),
+                      ShimmerBox(Dimensions.w_55, Dimensions.h_13),
+                      SizedBox(width: Dimensions.w_4),
+                      ShimmerBox(Dimensions.w_50, Dimensions.h_13),
+                    ],
+                  ),
                   SizedBox(height: Dimensions.h_8),
                   ShimmerBox(double.infinity, Dimensions.h_8),
                   SizedBox(height: Dimensions.h_5),
@@ -967,7 +1020,11 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [ShimmerBox(Dimensions.w_35, Dimensions.h_12), SizedBox(height: Dimensions.h_4), ShimmerBox(Dimensions.w_60, Dimensions.h_8)],
+                  children: [
+                    ShimmerBox(Dimensions.w_35, Dimensions.h_12),
+                    SizedBox(height: Dimensions.h_4),
+                    ShimmerBox(Dimensions.w_60, Dimensions.h_8),
+                  ],
                 ),
               ),
           ],
@@ -1101,7 +1158,13 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                       ShimmerIconLine(Dimensions.w_97),
                       ShimmerIconLine(Dimensions.w_80),
                       SizedBox(height: Dimensions.h_20),
-                      Row(children: [ShimmerBox(Dimensions.w_65, Dimensions.h_20, radius: Dimensions.h_5), SizedBox(width: Dimensions.w_5), ShimmerBox(Dimensions.w_40, Dimensions.h_8)]),
+                      Row(
+                        children: [
+                          ShimmerBox(Dimensions.w_65, Dimensions.h_20, radius: Dimensions.h_5),
+                          SizedBox(width: Dimensions.w_5),
+                          ShimmerBox(Dimensions.w_40, Dimensions.h_8),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -1117,7 +1180,7 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
 
   Widget pageShimmer() {
     return CommonShimmer(
-      heroHeight: Dimensions.h_270,
+      heroHeight: Dimensions.h_200,
       hero: [
         ShimmerBox(Dimensions.w_35, Dimensions.h_33, radius: Dimensions.h_10),
         const Spacer(),
@@ -1131,22 +1194,28 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
         SizedBox(height: Dimensions.h_5),
         ShimmerBox(Dimensions.w_150, Dimensions.h_10),
         SizedBox(height: Dimensions.h_12),
-        Row(children: [ShimmerBox(Dimensions.w_120, Dimensions.h_28, radius: 99), SizedBox(width: Dimensions.w_8), ShimmerBox(Dimensions.w_97, Dimensions.h_28, radius: 99)]),
-        const Spacer(),
         Row(
           children: [
-            for (var i = 0; i < 3; i++) ...[
-              if (i > 0) SizedBox(width: Dimensions.w_6),
-              Expanded(child: ShimmerBox(double.infinity, Dimensions.h_60, radius: Dimensions.h_10)),
-            ],
+            ShimmerBox(Dimensions.w_120, Dimensions.h_28, radius: 99),
+            SizedBox(width: Dimensions.w_8),
+            ShimmerBox(Dimensions.w_97, Dimensions.h_28, radius: 99),
           ],
         ),
+        // const Spacer(),
+        // Row(
+        //   children: [
+        //     for (var i = 0; i < 3; i++) ...[
+        //       if (i > 0) SizedBox(width: Dimensions.w_6),
+        //       Expanded(child: ShimmerBox(double.infinity, Dimensions.h_60, radius: Dimensions.h_10)),
+        //     ],
+        //   ],
+        // ),
       ],
       body: [
         SizedBox(height: Dimensions.h_5),
         Row(
           children: [
-            for (final w in [Dimensions.w_80, Dimensions.w_37, Dimensions.w_80, Dimensions.w_35]) ...[ShimmerBox(w, Dimensions.h_12), SizedBox(width: Dimensions.w_15)],
+            for (final w in [Dimensions.w_80, Dimensions.w_90, Dimensions.w_80, Dimensions.w_60]) ...[ShimmerBox(w, Dimensions.h_30, radius: 99), SizedBox(width: Dimensions.w_6)],
           ],
         ),
         SizedBox(height: Dimensions.h_15),
@@ -1156,7 +1225,15 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
           Row(
             children: [
               for (var i = 0; i < 4; i++)
-                Expanded(child: Column(children: [ShimmerBox(Dimensions.w_25, Dimensions.h_20), SizedBox(height: Dimensions.h_4), ShimmerBox(Dimensions.w_55, Dimensions.h_8)])),
+                Expanded(
+                  child: Column(
+                    children: [
+                      ShimmerBox(Dimensions.w_25, Dimensions.h_20),
+                      SizedBox(height: Dimensions.h_4),
+                      ShimmerBox(Dimensions.w_55, Dimensions.h_8),
+                    ],
+                  ),
+                ),
             ],
           ),
           padding: EdgeInsets.symmetric(vertical: Dimensions.h_12),
@@ -1164,10 +1241,7 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
         SizedBox(height: Dimensions.h_10),
         Row(
           children: [
-            for (var i = 0; i < 3; i++) ...[
-              if (i > 0) SizedBox(width: Dimensions.w_4),
-              Expanded(child: ShimmerBox(double.infinity, Dimensions.h_30, radius: Dimensions.h_6)),
-            ],
+            for (var i = 0; i < 3; i++) ...[if (i > 0) SizedBox(width: Dimensions.w_4), Expanded(child: ShimmerBox(double.infinity, Dimensions.h_30, radius: Dimensions.h_6))],
           ],
         ),
         SizedBox(height: Dimensions.h_10),
@@ -1187,14 +1261,25 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
           id: ControllerBuilders.myGroupsHero,
           builder: (c) => AnimatedSwitcher(
             duration: const Duration(milliseconds: 800),
-            child: AppCacheImage(key: ValueKey(c.myGroupsHeroIndex), alignment: Alignment(0.5, 0), size: Dimensions.h_330, widthSize: Get.width, imageUrl: GroupController.myGroupsHeroImages[c.myGroupsHeroIndex]),
+            child: AppCacheImage(
+              key: ValueKey(c.myGroupsHeroIndex),
+              alignment: Alignment(0.5, 0),
+              size: Dimensions.h_330,
+              widthSize: Get.width,
+              imageUrl: GroupController.myGroupsHeroImages[c.myGroupsHeroIndex],
+            ),
           ),
         ),
         Positioned.fill(
           child: Container(
             height: Dimensions.h_330,
             decoration: BoxDecoration(
-              gradient: LinearGradient(begin: Alignment.centerLeft, end: Alignment.centerRight, colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent], stops: const [0.0, 0.30, 0.58, 1.0]),
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [const Color(0xFF020B15).withValues(alpha: 0.85), const Color(0xFF020B15).withValues(alpha: 0.65), const Color(0xFF020B15).withValues(alpha: 0.35), Colors.transparent],
+                stops: const [0.0, 0.30, 0.58, 1.0],
+              ),
             ),
           ),
         ),
@@ -1312,39 +1397,39 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: Dimensions.h_80),
+              SizedBox(height: Dimensions.h_10),
             ],
           ),
         ),
-        Positioned(
-          left: Dimensions.w_8,
-          right: Dimensions.w_8,
-          bottom: Dimensions.h_10,
-          child: CarouselSlider.builder(
-            itemCount: GroupController.myGroupsHeroImages.length,
-            itemBuilder: (context, i, _) => Container(
-              margin: EdgeInsets.symmetric(horizontal: Dimensions.w_1),
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Dimensions.h_6),
-                border: Border.all(color: Colors.white, width: 1),
-                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 18, offset: const Offset(0, 8))],
-              ),
-              child: AppCacheImage(radius: Dimensions.h_6, size: double.infinity, widthSize: Get.width, imageUrl: GroupController.myGroupsHeroImages[i]),
-            ),
-            options: CarouselOptions(
-              height: Dimensions.h_70,
-              viewportFraction: 0.45,
-              enlargeCenterPage: true,
-              enlargeFactor: 0.20,
-              autoPlay: true,
-              autoPlayInterval: const Duration(seconds: 4),
-              autoPlayAnimationDuration: const Duration(milliseconds: 800),
-              autoPlayCurve: Curves.fastOutSlowIn,
-              onPageChanged: (i, _) => controller.changeMyGroupsHero(i),
-            ),
-          ),
-        ),
+        // Positioned(
+        //   left: Dimensions.w_8,
+        //   right: Dimensions.w_8,
+        //   bottom: Dimensions.h_10,
+        //   child: CarouselSlider.builder(
+        //     itemCount: GroupController.myGroupsHeroImages.length,
+        //     itemBuilder: (context, i, _) => Container(
+        //       margin: EdgeInsets.symmetric(horizontal: Dimensions.w_1),
+        //       clipBehavior: Clip.antiAlias,
+        //       decoration: BoxDecoration(
+        //         borderRadius: BorderRadius.circular(Dimensions.h_6),
+        //         border: Border.all(color: Colors.white, width: 1),
+        //         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.45), blurRadius: 18, offset: const Offset(0, 8))],
+        //       ),
+        //       child: AppCacheImage(radius: Dimensions.h_6, size: double.infinity, widthSize: Get.width, imageUrl: GroupController.myGroupsHeroImages[i]),
+        //     ),
+        //     options: CarouselOptions(
+        //       height: Dimensions.h_70,
+        //       viewportFraction: 0.45,
+        //       enlargeCenterPage: true,
+        //       enlargeFactor: 0.20,
+        //       autoPlay: true,
+        //       autoPlayInterval: const Duration(seconds: 4),
+        //       autoPlayAnimationDuration: const Duration(milliseconds: 800),
+        //       autoPlayCurve: Curves.fastOutSlowIn,
+        //       onPageChanged: (i, _) => controller.changeMyGroupsHero(i),
+        //     ),
+        //   ),
+        // ),
         Positioned(
           left: 0,
           right: 0,

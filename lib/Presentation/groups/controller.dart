@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:wikixm/Presentation/groups/create_group_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:wikixm/data/datasource/Repository_impl/group_repository_impl.dart';
 import 'package:wikixm/data/datasource/remote/models/request/group_join.dart';
@@ -15,9 +17,11 @@ import '../../data/datasource/remote/models/response/group_join.dart';
 import '../../data/datasource/remote/models/response/interest_detail.dart';
 import '../../data/datasource/remote/models/response/my_group_attention.dart';
 import '../../data/datasource/remote/models/response/my_group_invitations.dart';
+import '../../data/datasource/remote/models/response/group_activities.dart';
 import '../../data/datasource/remote/models/response/my_group_activities.dart';
 import '../../data/datasource/remote/models/response/my_group_list.dart';
 import '../../data/datasource/remote/models/response/my_group_summary.dart';
+import '../../data/datasource/remote/models/response/group_settings_response.dart' show Defaults, GroupSettingsResponse, Option, Section, SectionField;
 import '../../data/datasource/remote/models/response/activity_profile.dart';
 import '../../data/datasource/remote/models/response/public_profile.dart' as pp;
 import '../../data/datasource/remote/models/response/public_profile_feed.dart';
@@ -33,7 +37,6 @@ class GroupController extends GetxController {
   GroupSectionData? groupSectionData;
   JoinLeaveData? joinLeaveData;
   final Set<int> processingGroupIds = {};
-  int currentStep = 0;
   InterestData? interestData;
   GroupDetailData? groupDetailData;
   GroupDetailData? groupTabData;
@@ -53,8 +56,6 @@ class GroupController extends GetxController {
   String interestCategory = 'all';
   String? interestSort;
   Map<String, Set<String>> interestFilters = {};
-  String selectedCover = 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-crew.webp';
-
   final List<Map<String, dynamic>> quickActions = [
     {'title': 'Plan', 'icon': Icons.calendar_today_outlined, 'type': 'join', 'color': 'outline'},
     {'title': 'Invite a friend', 'icon': CupertinoIcons.person_2, 'type': 'interest', 'color': 'outline'},
@@ -62,57 +63,12 @@ class GroupController extends GetxController {
     {'title': 'Your preference', 'icon': CupertinoIcons.settings, 'type': 'organizer', 'color': 'outline'},
   ];
 
-  final List<Map<String, String>> coverChoices = [
-    {'file': 'cover-crew.webp', 'name': 'Biking crew', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-crew.webp'},
-    {'file': 'cover-town-ridgewood.webp', 'name': 'Ridgewood', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-town-ridgewood.webp'},
-    {'file': 'cover-town-mapleton.webp', 'name': 'Mapleton', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-town-mapleton.webp'},
-    {'file': 'cover-town-cedar-grove.webp', 'name': 'Cedar Grove', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-town-cedar-grove.webp'},
-    {'file': 'cover-town-highland.webp', 'name': 'Highland', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-town-highland.webp'},
-    {'file': 'cover-town-oak-creek.webp', 'name': 'Oak Creek', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-town-oak-creek.webp'},
-  ];
-
-  final List<Map<String, String>> additionalPhotos = [
-    {'file': 'cover-town-ridgewood.webp', 'name': 'Ridgewood', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-town-ridgewood.webp'},
-    {'file': 'cover-town-mapleton.webp', 'name': 'Mapleton', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-town-mapleton.webp'},
-    {'file': 'cover-town-cedar-grove.webp', 'name': 'Cedar Grove', 'url': 'https://preetis-html.vercel.app/assets/images/groups/create-group/cover-town-cedar-grove.webp'},
-  ];
-  bool showAllNearbyTowns = false;
-
-  Set<String> selectedTownIds = {'pine-valley', 'ridgewood', 'mapleton', 'cedar-grove', 'highland', 'oak-creek', 'timber-ridge', 'aspen-springs'};
-
   @override
   void onInit() {
     getData();
+    CreateGroupController.prefetchOptions();
     super.onInit();
   }
-
-  void nextStep() {
-    if (currentStep < 6) {
-      currentStep++;
-      update([ControllerBuilders.createGroupController]);
-    }
-  }
-
-  void previousStep() {
-    if (currentStep > 0) {
-      currentStep--;
-      update([ControllerBuilders.createGroupController]);
-    }
-  }
-
-  void goToStep(int step) {
-    if (step >= 0 && step <= 6) {
-      currentStep = step;
-      update([ControllerBuilders.createGroupController]);
-    }
-  }
-
-  final TextEditingController primaryTownController = TextEditingController(text: 'Issaquah');
-
-  final TextEditingController customRadiusController = TextEditingController(text: '15');
-
-  int selectedRadius = 15;
-  bool isCustomRadius = false;
 
   int groupIdOf(dynamic item) {
     final fromId = int.tryParse(item?.id?.toString() ?? '');
@@ -184,7 +140,7 @@ class GroupController extends GetxController {
     result.fold(
       (l) {
         debugPrint('toggleInterestGroup failed: $l');
-        Get.snackbar('Error', isLeave ? 'Could not leave group' : 'Could not join group');
+        Fluttertoast.showToast(msg: isLeave ? 'Could not leave group' : 'Could not join group', gravity: ToastGravity.BOTTOM);
       },
       (r) {
         if (r.success == true) interestJoined[groupId] = r.data?.isJoined ?? !isLeave;
@@ -372,7 +328,7 @@ class GroupController extends GetxController {
         (failure) {
           debugPrint('joinGroup failed: $failure');
           rollback();
-          Get.snackbar('Error', isLeave ? 'Could not leave group' : 'Could not join group');
+          Fluttertoast.showToast(msg: isLeave ? 'Could not leave group' : 'Could not join group', gravity: ToastGravity.BOTTOM);
         },
         (response) {
           if (response.success == true) {
@@ -450,11 +406,10 @@ class GroupController extends GetxController {
   // the loaded list is fresher than the summary, which can lag behind new invites or a just-answered one
   int get myInvitesCount => myInvitations?.length ?? mySummary?.stats?.pendingInvitations ?? 0;
 
-  /// My Groups tab row: tab 2 ("My Profile") opens the profile page instead of switching tabs.
+  /// My Groups tab row: tab 2 ("My Profile") opens the public profile page instead of switching tabs.
   void openMyGroupsTab(int index) {
     if (index != 2) return selectMyGroupsTab(index);
-    if (myActivities?.firstOrNull == null) return;
-    openGroupProfile();
+    Get.toNamed(AppRoutes.publicProfile);
   }
 
   // Navigation: Groups pages open each other through these, never with Get.toNamed in the UI.
@@ -470,8 +425,8 @@ class GroupController extends GetxController {
 
   void openMyActivity(MyActivityItem activity) => openActivity(activity.activityId, cityId: activity.cityId);
 
-  // Groups home activities belong to the city the page is showing
-  void openGroupsHomeActivity(ActivitiesItem? activity) => openActivity(activity?.activityId, cityId: groupData?.location?.id);
+  // the item's own city: a calendar distance filter can return nearby cities, not just the one the page is showing
+  void openGroupsHomeActivity(ActivitiesItem? activity) => openActivity(activity?.activityId, cityId: activity?.cityId ?? groupData?.location?.id);
 
   void openGroupActivity(Activity activity) => openActivity(activity.activityId, cityId: activity.cityId ?? groupDetailData?.group?.cityId);
 
@@ -808,6 +763,270 @@ class GroupController extends GetxController {
     update([ControllerBuilders.myGroupsList]);
   }
 
+  // View Calendar page, from /groups/sections/activities
+  final TextEditingController activitySearchController = TextEditingController();
+  String activityInterest = 'all';
+  // null until the first page arrives, so the grid shows a shimmer instead of the empty message
+  List<ActivitiesItem>? calendarActivities;
+  // taken from unfiltered page 1 so the hero and chips don't change while filtering; a filtered response only fills them until one arrives
+  GroupActivitiesStatistics? calendarStats;
+  List<GroupActivitiesInterest>? calendarInterests;
+  bool calendarLoadingMore = false;
+  bool calendarLoadFailed = false;
+  // what page 1 was asked with; later pages reuse it so drawer changes wait for Apply
+  Map<String, dynamic> _calendarQuery = {};
+  int _calendarPage = 1;
+  int _calendarLastPage = 1;
+  int _calendarRequest = 0;
+  Timer? _calendarDebounce;
+
+  // filter drawer; the list refetches on Apply
+  static const activityDistanceOptions = [5, 10, 25, 50, 100];
+  static const activityTypeOptions = [(value: 'all', label: 'All'), (value: 'activity', label: 'Activities'), (value: 'people_request', label: 'People needed')];
+  static const activityDateOptions = [(value: 'anytime', label: 'Anytime'), (value: 'today', label: 'Today'), (value: 'weekend', label: 'This weekend'), (value: 'week', label: 'This week'), (value: 'custom', label: 'Custom dates')];
+  static const activitySkillOptions = [(value: 1, label: 'Beginner'), (value: 2, label: 'Intermediate'), (value: 3, label: 'Advanced')];
+  static const activitySortOptions = [(value: 'upcoming', label: 'Upcoming'), (value: 'title', label: 'Title'), (value: 'newest', label: 'Newest')];
+  String? activityDistance;
+  String activityFilterCategory = 'all';
+  String activityType = 'all';
+  String activityDate = 'anytime';
+  DateTime? activityFrom;
+  DateTime? activityUntil;
+  Set<int> activitySkills = {};
+  String activitySort = 'upcoming';
+
+  Map<String, dynamic> get _activityFilterParams => calendarFilterParams(
+    distance: activityDistance,
+    category: activityFilterCategory,
+    type: activityType,
+    date: activityDate,
+    from: activityFrom,
+    until: activityUntil,
+    skills: activitySkills,
+    sort: activitySort,
+  );
+
+  bool get calendarFiltersActive => _activityFilterParams.isNotEmpty;
+  bool get calendarFiltered => activityInterest != 'all' || activitySearchController.text.trim().isNotEmpty || calendarFiltersActive;
+  String get calendarEmptyMessage => calendarLoadFailed ? "Couldn't load activities" : calendarFiltered ? 'No activities match your search' : groupSectionData?.activities?.emptyMessage ?? 'No upcoming activities';
+
+  String _calendarCount(int n) => n == 1 ? '1 activity' : '$n activities';
+
+  // null until the first page arrives, so the chips show a shimmer
+  List<({String? id, String? name, String? icon, String? color, String count})>? get calendarInterestChips => calendarInterests == null
+      ? (calendarLoadFailed ? const [] : null)
+      : [
+          (id: 'all', name: 'All', icon: 'people-fill', color: 'blue', count: _calendarCount(calendarStats?.activities ?? 0)),
+          for (final i in calendarInterests!) (id: i.id, name: i.name, icon: i.icon, color: null, count: _calendarCount(i.activityCount ?? 0)),
+        ];
+
+  // null until the overview arrives, so the chips show a shimmer
+  List<({String? id, String? name, String? icon, String? color, String count})>? get discoverCategoryChips => discoverOverview?.categories == null
+      ? (discoverLoadFailed ? const [] : null)
+      : [for (final cat in discoverOverview!.categories!) (id: cat.id, name: cat.name, icon: cat.icon, color: cat.color, count: '${cat.groupCount ?? 0} groups')];
+
+  String calendarDetail(ActivitiesItem a, String id) => a.details?.firstWhereOrNull((d) => d.id == id)?.text ?? '';
+
+  void openDiscoverGroups() => Get.toNamed(AppRoutes.searchGroups);
+
+  // Discover page tab: groups or activities; the route only picks the starting tab
+  bool discoverActivities = false;
+
+  // every visit starts both tabs clean (no search, default filters) and loads them together so switching is instant
+  void initDiscoverPage(bool activities) {
+    discoverActivities = activities;
+    _discoverDebounce?.cancel();
+    discoverSearchController.clear();
+    _resetDiscoverFilterDefaults();
+    discoverItems = null;
+    discoverLoadFailed = false;
+    _calendarDebounce?.cancel();
+    activitySearchController.clear();
+    activityInterest = 'all';
+    _resetActivityFilters();
+    calendarActivities = null;
+    calendarStats = null;
+    calendarInterests = null;
+    calendarLoadFailed = false;
+    loadDiscover();
+    getCalendarActivities();
+  }
+
+  // each tab keeps its own list, search and filters
+  void selectDiscoverTab(bool activities) {
+    if (activities == discoverActivities) return;
+    discoverActivities = activities;
+    update([ControllerBuilders.discoverGroups, ControllerBuilders.discoverGroupsList, ControllerBuilders.discoverFilters]);
+  }
+
+  void openActivitiesCalendar() => Get.toNamed(AppRoutes.activitiesCalendar);
+
+  void loadActivitiesCalendar() {
+    if (discoverOverview == null) getDiscoverOverview();
+    getCalendarActivities();
+  }
+
+  Future<void> getCalendarActivities({int page = 1}) async {
+    final requestId = ++_calendarRequest;
+    final unfiltered = page == 1 && !calendarFiltered;
+    // page 1 replaces the list, and an older page 2 returning later won't redraw, so clear its placeholders now
+    calendarLoadingMore = page > 1;
+    if (page > 1) update([ControllerBuilders.discoverGroupsList]);
+    if (page == 1) {
+      final q = activitySearchController.text.trim();
+      _calendarQuery = {
+        'city_id': discoverTownId,
+        if (q.isNotEmpty) 'search': q,
+        if (activityInterest != 'all') 'interest': activityInterest,
+        ..._activityFilterParams,
+      };
+    }
+    final data = await groupRepositoryImpl.groupActivities({..._calendarQuery, 'page': page});
+    if (page > 1) calendarLoadingMore = false;
+    if (requestId != _calendarRequest) return;
+    data.fold((l) => debugPrint('getCalendarActivities failed: $l'), (r) {
+      if (r.success == true) {
+        final items = r.data?.items ?? [];
+        calendarActivities = page == 1 ? items : [...?calendarActivities, ...items];
+        calendarStats = unfiltered ? r.data?.statistics : calendarStats ?? r.data?.statistics;
+        calendarInterests = unfiltered ? r.data?.interests : calendarInterests ?? r.data?.interests;
+        _calendarPage = r.data?.pagination?.currentPage ?? page;
+        _calendarLastPage = r.data?.pagination?.lastPage ?? page;
+      }
+    });
+    if (page == 1) calendarLoadFailed = data.fold((_) => true, (r) => r.success != true);
+    calendarActivities ??= [];
+    update([ControllerBuilders.discoverGroups, ControllerBuilders.discoverGroupsList]);
+  }
+
+  void loadMoreCalendarActivities() {
+    if (calendarLoadingMore || calendarLoadFailed || calendarActivities == null || _calendarPage >= _calendarLastPage) return;
+    getCalendarActivities(page: _calendarPage + 1);
+  }
+
+  void _scheduleCalendarFetch([Duration delay = const Duration(milliseconds: 300)]) {
+    update([ControllerBuilders.discoverGroupsList]);
+    _calendarDebounce?.cancel();
+    _calendarDebounce = Timer(delay, () {
+      // shimmer so old results don't sit under a new interest or search
+      calendarActivities = null;
+      calendarLoadFailed = false;
+      update([ControllerBuilders.discoverGroupsList]);
+      getCalendarActivities();
+    });
+  }
+
+  void selectActivityInterest(String id) {
+    if (id == activityInterest) return;
+    activityInterest = id;
+    _scheduleCalendarFetch();
+  }
+
+  void searchActivities(String _) => _scheduleCalendarFetch(const Duration(milliseconds: 500));
+
+  void clearActivitySearch() {
+    activitySearchController.clear();
+    _scheduleCalendarFetch();
+  }
+
+  void clearActivityFilters() {
+    activitySearchController.clear();
+    activityInterest = 'all';
+    _resetActivityFilters();
+    update([ControllerBuilders.discoverFilters]);
+    _scheduleCalendarFetch();
+  }
+
+  void _resetActivityFilters() {
+    activityDistance = null;
+    activityFilterCategory = 'all';
+    activityType = 'all';
+    activityDate = 'anytime';
+    activityFrom = null;
+    activityUntil = null;
+    activitySkills = {};
+    activitySort = 'upcoming';
+  }
+
+  void setActivityDistance(String value) {
+    activityDistance = value.isEmpty ? null : value;
+    update([ControllerBuilders.discoverFilters]);
+  }
+
+  void setActivityFilterCategory(String value) {
+    activityFilterCategory = value;
+    update([ControllerBuilders.discoverFilters]);
+  }
+
+  void setActivityType(String value) {
+    activityType = value;
+    update([ControllerBuilders.discoverFilters]);
+  }
+
+  void setActivityDate(String value) {
+    activityDate = value;
+    update([ControllerBuilders.discoverFilters]);
+  }
+
+  void setActivitySort(String value) {
+    activitySort = value;
+    update([ControllerBuilders.discoverFilters]);
+  }
+
+  void toggleActivitySkill(int value) {
+    activitySkills.contains(value) ? activitySkills.remove(value) : activitySkills.add(value);
+    update([ControllerBuilders.discoverFilters]);
+  }
+
+  String activityDateLabel(DateTime? date, String hint) => date == null ? hint : DateFormat('MMM d, y').format(date);
+
+  Future<void> pickActivityFrom() async {
+    final today = DateUtils.dateOnly(DateTime.now());
+    final picked = await showDatePicker(context: Get.context!, initialDate: activityFrom ?? today, firstDate: today, lastDate: today.add(const Duration(days: 730)));
+    if (picked == null) return;
+    activityFrom = picked;
+    // an end date before the new start would make the range empty
+    if (activityUntil?.isBefore(picked) == true) activityUntil = null;
+    update([ControllerBuilders.discoverFilters]);
+  }
+
+  Future<void> pickActivityUntil() async {
+    final first = activityFrom ?? DateUtils.dateOnly(DateTime.now());
+    final picked = await showDatePicker(context: Get.context!, initialDate: activityUntil ?? first, firstDate: first, lastDate: first.add(const Duration(days: 730)));
+    if (picked == null) return;
+    activityUntil = picked;
+    update([ControllerBuilders.discoverFilters]);
+  }
+
+  void applyActivityFilters() => _scheduleCalendarFetch(Duration.zero);
+
+  void retryCalendarActivities() {
+    if (discoverOverview == null) getDiscoverOverview();
+    _scheduleCalendarFetch(Duration.zero);
+  }
+
+  // drawer choices only count on Apply: X puts back what the drawer opened with
+  VoidCallback _restoreActivityFilters = () {};
+
+  void rememberActivityFilters() {
+    final (distance, category, type, date, from, until, skills, sort) = (activityDistance, activityFilterCategory, activityType, activityDate, activityFrom, activityUntil, {...activitySkills}, activitySort);
+    _restoreActivityFilters = () {
+      activityDistance = distance;
+      activityFilterCategory = category;
+      activityType = type;
+      activityDate = date;
+      activityFrom = from;
+      activityUntil = until;
+      activitySkills = {...skills};
+      activitySort = sort;
+    };
+  }
+
+  void cancelActivityFilters() {
+    _restoreActivityFilters();
+    update([ControllerBuilders.discoverFilters, ControllerBuilders.discoverGroupsList]);
+  }
+
   final TextEditingController discoverSearchController = TextEditingController();
   String discoverCategory = 'all';
   final Set<String> savedDiscoverGroups = {};
@@ -826,13 +1045,16 @@ class GroupController extends GetxController {
   Timer? _discoverDebounce;
   // filters the shown list was fetched with; a debounced fetch for the same filters is skipped
   String? _discoverLoadedKey;
+  bool discoverLoadFailed = false;
+  // what page 1 was asked with; later pages reuse it so drawer changes wait for Apply
+  Map<String, dynamic> _discoverQuery = {};
   // join/request results by group id, layered over the list item's own flags
   final Map<int, discover.Item> _discoverJoinState = {};
 
   @override
   void onClose() {
     _discoverDebounce?.cancel();
-    blockNameController.dispose();
+    _calendarDebounce?.cancel();
     super.onClose();
   }
 
@@ -858,40 +1080,46 @@ class GroupController extends GetxController {
 
   Future<void> getDiscoverGroups({int page = 1}) async {
     final requestId = ++_discoverRequest;
-    if (page > 1) {
-      discoverLoadingMore = true;
-      update([ControllerBuilders.discoverGroupsList]);
-    }
-    final q = discoverSearchController.text.trim();
+    // page 1 replaces the list, and an older page 2 returning later won't redraw, so clear its placeholders now
+    discoverLoadingMore = page > 1;
+    if (page > 1) update([ControllerBuilders.discoverGroupsList]);
     final key = _discoverKey;
-    final data = await groupRepositoryImpl.discoverGroups({
-      'city_id': discoverTownId,
-      'discovery': 1,
-      'page': page,
-      'per_page': 12,
-      if (q.isNotEmpty) 'search': q,
-      if (discoverCategory != 'all') 'category': discoverCategory,
-      'distance': ?discoverDistance,
-      if (!discoverTypes.contains('all')) 'type[]': discoverTypes.toList(),
-      if (!discoverLevels.contains('all')) 'level[]': discoverLevels.toList(),
-    });
+    if (page == 1) {
+      final q = discoverSearchController.text.trim();
+      _discoverQuery = {
+        'city_id': discoverTownId,
+        'discovery': 1,
+        'per_page': 12,
+        if (q.isNotEmpty) 'search': q,
+        if (discoverCategory != 'all') 'category': discoverCategory,
+        'distance': ?discoverDistance,
+        if (!discoverTypes.contains('all')) 'type[]': discoverTypes.toList(),
+        if (!discoverLevels.contains('all')) 'level[]': discoverLevels.toList(),
+      };
+    }
+    final data = await groupRepositoryImpl.discoverGroups({..._discoverQuery, 'page': page});
     if (page > 1) discoverLoadingMore = false;
     if (requestId != _discoverRequest) return;
     data.fold((l) => debugPrint('getDiscoverGroups failed: $l'), (r) {
       if (r.success == true) {
         final items = r.data?.items ?? [];
         discoverItems = page == 1 ? items : [...?discoverItems, ...items];
-        _discoverLoadedKey = key;
+        if (page == 1) _discoverLoadedKey = key;
         _discoverPage = r.data?.pagination?.currentPage ?? page;
         _discoverLastPage = r.data?.pagination?.lastPage ?? page;
       }
     });
+    if (page == 1) {
+      // a list already on screen stays; a retry can't be skipped as "already loaded"
+      discoverLoadFailed = data.fold((_) => true, (r) => r.success != true) && discoverItems?.isNotEmpty != true;
+      if (discoverLoadFailed) _discoverLoadedKey = null;
+    }
     discoverItems ??= [];
     update([ControllerBuilders.discoverGroupsList]);
   }
 
   void loadMoreDiscoverGroups() {
-    if (discoverLoadingMore || discoverItems == null || _discoverPage >= _discoverLastPage) return;
+    if (discoverLoadingMore || discoverLoadFailed || discoverItems == null || _discoverPage >= _discoverLastPage) return;
     getDiscoverGroups(page: _discoverPage + 1);
   }
 
@@ -905,6 +1133,7 @@ class GroupController extends GetxController {
       if (_discoverKey == _discoverLoadedKey && discoverItems != null) return;
       // shimmer so old results don't sit under a new category or search
       discoverItems = null;
+      discoverLoadFailed = false;
       update([ControllerBuilders.discoverGroupsList]);
       getDiscoverGroups();
     });
@@ -986,6 +1215,29 @@ class GroupController extends GetxController {
     _scheduleDiscoverFetch(Duration.zero);
   }
 
+  void retryDiscoverGroups() {
+    if (discoverOverview == null) getDiscoverOverview();
+    _scheduleDiscoverFetch(Duration.zero);
+  }
+
+  // drawer choices only count on Apply: X puts back what the drawer opened with
+  VoidCallback _restoreDiscoverFilters = () {};
+
+  void rememberDiscoverFilters() {
+    final (category, distance, types, levels) = (discoverCategory, discoverDistance, {...discoverTypes}, {...discoverLevels});
+    _restoreDiscoverFilters = () {
+      discoverCategory = category;
+      discoverDistance = distance;
+      discoverTypes = {...types};
+      discoverLevels = {...levels};
+    };
+  }
+
+  void cancelDiscoverFilters() {
+    _restoreDiscoverFilters();
+    update([ControllerBuilders.discoverFilters, ControllerBuilders.discoverGroupsList]);
+  }
+
   void toggleSaveDiscoverGroup(String id) {
     savedDiscoverGroups.contains(id) ? savedDiscoverGroups.remove(id) : savedDiscoverGroups.add(id);
     update([ControllerBuilders.discoverGroupsList]);
@@ -1014,7 +1266,7 @@ class GroupController extends GetxController {
     result.fold(
       (l) {
         debugPrint('tapDiscoverAction failed: $l');
-        Get.snackbar('Error', isLeave ? 'Could not leave group' : 'Could not join group');
+        Fluttertoast.showToast(msg: isLeave ? 'Could not leave group' : 'Could not join group', gravity: ToastGravity.BOTTOM);
       },
       (r) {
         if (r.success != true) return;
@@ -1069,6 +1321,12 @@ class GroupController extends GetxController {
   ];
   pp.Action? get publicProfileFollowAction => publicProfile?.ui?.actions?.firstWhereOrNull((a) => a.id == 'follow');
 
+  // 'Photos' -> "Sam's photos"; the plain section title when the API sends no name
+  String publicProfileHeader(String section) {
+    final firstName = (publicProfile?.name ?? '').trim().split(' ').first;
+    return firstName.isEmpty ? section : "$firstName's ${section.toLowerCase()}";
+  }
+
   // selected tab id; 'overview' shows the profile sections, any other tab lists its /items pages
   String publicProfileTab = 'overview';
   final Map<String, List<Object>> publicProfileTabItems = {};
@@ -1121,7 +1379,7 @@ class GroupController extends GetxController {
     update([ControllerBuilders.publicProfile]);
   }
 
-  // Group settings. shortcut: mock data kept in memory, no settings endpoint yet; persist through the API when one exists
+  // Group settings picker and reach. shortcut: mock data kept in memory, not part of the settings API; persist it once an endpoint exists
   final List<Map<String, dynamic>> settingsGroups = [
     {'name': 'All groups', 'icon': Icons.tune_rounded, 'color': 0xFF075DC9},
     {'name': 'Ski Enthusiasts', 'icon': Icons.landscape_outlined, 'color': 0xFF2563EB},
@@ -1133,15 +1391,6 @@ class GroupController extends GetxController {
     {'title': 'Event reminders', 'subtitle': 'The day before and an hour before'},
     {'title': 'New discussions', 'subtitle': 'When someone starts a thread'},
     {'title': 'Weekly digest', 'subtitle': 'One email every Sunday morning'},
-  ];
-  // each row opens GroupSettingsPage on its 'page'
-  final List<Map<String, dynamic>> settingsRows = [
-    {'title': 'Notifications', 'value': '', 'icon': CupertinoIcons.bell, 'page': 'notifications'},
-    {'title': 'Privacy and visibility', 'value': '', 'icon': CupertinoIcons.eye, 'page': 'privacy'},
-    {'title': 'Activity interests', 'value': '', 'icon': CupertinoIcons.calendar, 'page': 'interests'},
-    {'title': 'Content', 'value': '', 'icon': CupertinoIcons.doc_text, 'page': 'content'},
-    {'title': 'Recommendations', 'value': '', 'icon': CupertinoIcons.sparkles, 'page': 'recommendations'},
-    {'title': 'Blocked members', 'value': '', 'icon': Icons.block_rounded, 'page': 'blocked'},
   ];
   int settingsGroupIndex = 0;
   // per-group overrides; a group without an entry uses the All groups defaults
@@ -1167,147 +1416,157 @@ class GroupController extends GetxController {
     update([ControllerBuilders.groupSettings]);
   }
 
-  // Settings sub-pages (GroupSettingsPage): title, subtitle and the prefs each one's restore button resets
-  final Map<String, Map<String, dynamic>> settingsPages = {
-    'interests': {
-      'title': 'Activity interests',
-      'subtitle': 'Tell us what you love doing so we can show you more of it.',
-      'keys': ['interests', 'skill'],
-    },
-    'content': {
-      'title': 'Content',
-      'subtitle': 'Shape the posts, photos and conversations in your feed.',
-      'keys': ['feed', 'order', 'hideSensitive'],
-    },
-    'notifications': {
-      'title': 'Notifications',
-      'subtitle': 'Keep the updates that matter. Turn down the rest.',
-      'keys': ['notify'],
-    },
-    'privacy': {
-      'title': 'Privacy and visibility',
-      'subtitle': 'Choose what other members can see.',
-      'keys': ['profile', 'joins', 'online', 'memberLists'],
-    },
-    'blocked': {
-      'title': 'Blocked members',
-      'subtitle': "People you block can't message you. Organizers can still review anything that's reported.",
-      'keys': ['blocked'],
-    },
-    'recommendations': {
-      'title': 'Recommendations',
-      'subtitle': 'Decide what we suggest and what we use to suggest it.',
-      'keys': ['suggest', 'learnHistory'],
-    },
-  };
-  static const _settingsDefaults = <String, dynamic>{
-    'interests': ['Skiing', 'Snowboarding', 'Golf', 'Mountain biking'],
-    'skill': 3,
-    'feed': ['Discussions', 'Activity posts', 'Photos and videos', 'Event announcements', 'Files and documents'],
-    'order': 'Newest',
-    'hideSensitive': true,
-    'notify': ['New group posts', 'Announcements', 'Activity reminders', 'Activity invitations', 'Direct messages'],
-    'profile': 'Members',
-    'joins': 'Members',
-    'online': 'Members',
-    'memberLists': true,
-    'blocked': ['Avery Brooks', 'Casey Morgan'],
-    'suggest': ['Activities', 'Groups', 'People'],
-    'learnHistory': true,
-  };
-  final Map<String, dynamic> settingsPrefs = {for (final e in _settingsDefaults.entries) e.key: e.value is List ? List<String>.of(e.value.cast<String>()) : e.value};
+  // Settings sub-pages (GroupSettingsPage) come from GET groups/settings: each section lists its fields, values[section][field] holds the saved prefs
+  GroupSettingsResponse? groupSettings;
+  bool groupSettingsLoading = false;
+  bool savingSettingsPage = false;
+  // edits on the open sub-page; they only reach groupSettings once the PUT succeeds, so backing out discards them
+  Map<String, dynamic> settingsDraft = {};
+  // long 'choices' fields (activity types) start with the first few options; names of the fields showing all
+  static const choicesPreview = 15;
+  final Set<String> expandedChoices = {};
 
-  final List<String> interestOptions = ['Skiing', 'Snowboarding', 'Hiking', 'Golf', 'Mountain biking', 'Social events', 'Training and coaching', 'Volunteering'];
-  final List<String> skillLevels = ['All levels', 'Beginner', 'Intermediate', 'Advanced'];
-  final List<String> skillDescriptions = [
-    'Show me outings for every skill level',
-    'New to it, or still learning the basics',
-    'Comfortable at a steady pace on most terrain',
-    'Long days, steep terrain and faster groups',
-  ];
-  final List<String> feedOptions = ['Discussions', 'Activity posts', 'Photos and videos', 'Event announcements', 'Files and documents', 'Gear for sale'];
-  final List<String> orderOptions = ['Newest', 'Most active', 'Most liked'];
-  final Map<String, List<Map<String, String>>> notifySections = {
-    'From your groups': [
-      {'title': 'New group posts', 'subtitle': 'New conversations in your groups'},
-      {'title': 'Announcements', 'subtitle': 'Important updates from organizers'},
-      {'title': 'Activity reminders', 'subtitle': 'Before an activity you joined starts'},
-      {'title': 'Activity invitations', 'subtitle': 'Activities you may enjoy'},
-    ],
-    'Just for you': [
-      {'title': 'Direct messages', 'subtitle': 'When someone messages you'},
-      {'title': 'Weekly digest', 'subtitle': 'A roundup of your groups each week'},
-    ],
-  };
-  final List<Map<String, String>> privacyQuestions = [
-    {'key': 'profile', 'title': 'Who can see your profile', 'subtitle': 'Your bio, interests and photos'},
-    {'key': 'joins', 'title': 'Who can see what you join', 'subtitle': 'Activities you’re going to or went to'},
-    {'key': 'online', 'title': 'Who can see you’re online', 'subtitle': 'The green dot on your photo'},
-  ];
-  final List<String> privacyOptions = ['Everyone', 'Members', 'Only me'];
-  final List<Map<String, String>> suggestOptions = [
-    {'title': 'Activities', 'subtitle': 'Outings that match your interests'},
-    {'title': 'Groups', 'subtitle': 'Groups you may want to join'},
-    {'title': 'People', 'subtitle': 'Members who share your interests'},
-    {'title': 'Something new', 'subtitle': 'Activities outside your usual interests'},
-  ];
-  final TextEditingController blockNameController = TextEditingController();
-  final Map<String, String> blockedDates = {'Avery Brooks': 'Sep 12', 'Casey Morgan': 'Oct 3'};
-
-  List<String> settingsList(String key) => settingsPrefs[key] as List<String>;
-
-  int get notifyOnCount => settingsList('notify').length;
-
-  int get notifyTotal => notifySections.values.fold(0, (sum, items) => sum + items.length);
-
-  String settingsRowValue(Map<String, dynamic> row) => switch (row['page']) {
-    'notifications' => '$notifyOnCount of $notifyTotal on',
-    'privacy' => settingsPrefs['profile'] == 'Members' ? 'Members only' : settingsPrefs['profile'],
-    'interests' => '${settingsList('interests').length} chosen',
-    'recommendations' => settingsList('suggest').isEmpty ? 'Off' : 'On',
-    'blocked' => settingsList('blocked').isEmpty ? 'None' : '${settingsList('blocked').length}',
-    'content' => settingsList('feed').length == feedOptions.length ? 'Everything' : '${settingsList('feed').length} of ${feedOptions.length}',
-    _ => row['value'],
+  static const _settingsIcons = <String, IconData>{
+    'bell': CupertinoIcons.bell,
+    'lock': CupertinoIcons.lock,
+    'eye': CupertinoIcons.eye,
+    'calendar-check': CupertinoIcons.calendar,
+    'clipboard': CupertinoIcons.doc_text,
+    'sparkles': CupertinoIcons.sparkles,
+    'circle-x': Icons.block_rounded,
+    'info-circle': CupertinoIcons.info_circle,
   };
 
-  void openSettingsPage(String page) => Get.toNamed(AppRoutes.groupSettingsPage, arguments: page);
+  IconData settingsIcon(String? name) => _settingsIcons[name] ?? CupertinoIcons.settings;
 
-  void setSettingsPref(String key, dynamic value) {
-    settingsPrefs[key] = value;
+  List<Section> get settingsSections => groupSettings?.data?.sections ?? [];
+
+  Section? get settingsOverview => settingsSections.where((s) => s.kind == 'overview').firstOrNull;
+
+  // the overview is GroupSettings itself; every other section is a row that opens GroupSettingsPage
+  List<Section> get settingsRows => settingsSections.where((s) => s.kind != 'overview').toList();
+
+  Section? settingsSection(String? id) => settingsSections.where((s) => s.id == id).firstOrNull;
+
+  Map<String, dynamic> _sectionPrefs(Defaults? prefs, String? section) {
+    final Map<String, dynamic> map = prefs?.toJson()[section] ?? {};
+    return {for (final e in map.entries) if (e.value != null) e.key: e.value is List ? List.of(e.value) : e.value};
+  }
+
+  Future<void> getGroupSettings() async {
+    groupSettingsLoading = groupSettings == null;
+    update([ControllerBuilders.groupSettings]);
+    final data = await groupRepositoryImpl.getGroupSettings();
+    data.fold((l) => debugPrint('getGroupSettings failed: $l'), (r) {
+      if (r.success == true && r.data != null) groupSettings = r;
+    });
+    groupSettingsLoading = false;
     update([ControllerBuilders.groupSettings]);
   }
 
-  void toggleSettingsItem(String key, String item) {
-    final list = settingsList(key);
-    list.contains(item) ? list.remove(item) : list.add(item);
+  // a 'group' field only lays out the fields inside it; their values sit in the section like any other field
+  List<SectionField> groupFields(SectionField field) => [
+    for (final f in field.fields ?? []) SectionField(type: f.type, name: f.name, label: f.label, help: f.help, options: f.options, fieldDefault: f.fieldDefault),
+  ];
+
+  dynamic settingsValue(SectionField field) => settingsDraft[field.name] ?? field.fieldDefault;
+
+  String optionLabel(SectionField? field, dynamic value) => field?.options?.where((o) => o.value == value).firstOrNull?.label ?? '${value ?? ''}';
+
+  String settingsRowValue(Section section) {
+    final summary = section.summary;
+    final prefs = _sectionPrefs(groupSettings?.data?.values, section.id);
+    String count(int n) => [n, summary?.suffix].nonNulls.join(' ');
+    return switch (summary?.format) {
+      'text' => summary?.text ?? '',
+      'enabled-count' => count(prefs.values.where((v) => v == true).length),
+      'selected-count' => count((prefs[summary?.field] as List?)?.length ?? 0),
+      'selected-label' => optionLabel(section.fields?.where((f) => f.name == summary?.field).firstOrNull, prefs[summary?.field]),
+      'enabled' => (summary?.fields ?? []).any((f) => prefs[f] == true) ? summary?.onLabel ?? 'On' : summary?.offLabel ?? 'Off',
+      _ => '',
+    };
+  }
+
+  void openSettingsPage(String? section) {
+    settingsDraft = _sectionPrefs(groupSettings?.data?.values, section);
+    expandedChoices.clear();
+    Get.toNamed(AppRoutes.groupSettingsPage, arguments: section);
+  }
+
+  void setSettingsValue(String? name, dynamic value) {
+    if (name == null) return;
+    settingsDraft[name] = value;
     update([ControllerBuilders.groupSettings]);
   }
 
-  void restoreSettingsPage(String page) {
-    for (final key in settingsPages[page]!['keys'] as List<String>) {
-      final value = _settingsDefaults[key];
-      settingsPrefs[key] = value is List ? List<String>.of(value.cast<String>()) : value;
+  List<Option> visibleChoices(SectionField field) {
+    final options = field.options ?? [];
+    return expandedChoices.contains(field.name) ? options : options.take(choicesPreview).toList();
+  }
+
+  void toggleChoicesExpanded(String? name) {
+    if (name == null) return;
+    if (!expandedChoices.remove(name)) expandedChoices.add(name);
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  void toggleSettingsChoice(SectionField field, String? option) {
+    if (option == null) return;
+    final chosen = List<String>.from(settingsValue(field) ?? const []);
+    chosen.contains(option) ? chosen.remove(option) : chosen.add(option);
+    setSettingsValue(field.name, chosen);
+  }
+
+  void restoreSettingsPage(String? section) {
+    settingsDraft = _sectionPrefs(groupSettings?.data?.defaults, section);
+    update([ControllerBuilders.groupSettings]);
+  }
+
+  // PUT takes partial updates, so only the open section is sent; it answers with the full settings payload
+  Future<void> saveSettingsPage(String? section) async {
+    if (savingSettingsPage || section == null) return;
+    savingSettingsPage = true;
+    update([ControllerBuilders.groupSettings]);
+    final data = await groupRepositoryImpl.saveGroupSettings({section: settingsDraft});
+    savingSettingsPage = false;
+    final saved = data.fold((l) {
+      debugPrint('saveSettingsPage failed: $l');
+      return false;
+    }, (r) {
+      if (r.success != true) return false;
+      if (r.data?.sections?.isNotEmpty == true) groupSettings = r;
+      return true;
+    });
+    update([ControllerBuilders.groupSettings]);
+    if (!saved) {
+      Fluttertoast.showToast(msg: 'Could not save your settings.', gravity: ToastGravity.BOTTOM);
+      return;
     }
-    update([ControllerBuilders.groupSettings]);
-  }
-
-  /// shortcut: prefs already apply as they change and only live in memory; call the settings API here once one exists
-  void saveSettingsPage() {
     Get.back();
-    Get.snackbar('Saved', 'Your settings have been saved.', snackPosition: SnackPosition.BOTTOM);
+    Fluttertoast.showToast(msg: 'Your settings have been saved.', gravity: ToastGravity.BOTTOM);
   }
+}
 
-  void blockMember() {
-    final name = blockNameController.text.trim();
-    if (name.isEmpty || settingsList('blocked').contains(name)) return;
-    settingsList('blocked').add(name);
-    blockedDates[name] = DateFormat('MMM d').format(DateTime.now());
-    blockNameController.clear();
-    update([ControllerBuilders.groupSettings]);
-  }
-
-  void unblockMember(String name) {
-    settingsList('blocked').remove(name);
-    update([ControllerBuilders.groupSettings]);
-  }
+/// Query params for the activities filter drawer; defaults are left out. The API ignores `until` without `from`, so a lone end date starts from today.
+Map<String, dynamic> calendarFilterParams({
+  String? distance,
+  required String category,
+  required String type,
+  required String date,
+  DateTime? from,
+  DateTime? until,
+  required Set<int> skills,
+  required String sort,
+}) {
+  String day(DateTime d) => DateFormat('yyyy-MM-dd').format(d);
+  final start = from ?? (until == null ? null : DateTime.now());
+  return {
+    'distance': ?distance,
+    if (category != 'all') 'category': category,
+    if (type != 'all') 'type': type,
+    if (date == 'custom' && start != null) ...{'date': 'custom', 'from': day(start), if (until != null) 'until': day(until)},
+    if (date != 'custom' && date != 'anytime') 'date': date,
+    if (skills.isNotEmpty) 'skill[]': skills.toList(),
+    if (sort != 'upcoming') 'sort': sort,
+  };
 }

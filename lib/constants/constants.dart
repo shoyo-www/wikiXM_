@@ -16,6 +16,7 @@ class GetXStorageConstants {
   static const authToken = "Authorization";
   static const darkTheme = "DarkTheme";
   static const townName = "TownName";
+  static const firstName = "FirstName";
   static const day = "day";
   static const String themeMode = 'themeMode';
 
@@ -123,10 +124,13 @@ class ControllerBuilders {
   static String discoverFilters = 'DiscoverFilters';
   static String publicProfile = 'PublicProfile';
   static String groupSettings = 'GroupSettings';
+  static String alertsHome = 'AlertsHome';
+  static String alertDetail = 'AlertDetail';
   static String groupProfilePage = 'GroupProfilePage';
   static String groupProfileSections = 'GroupProfileSections';
   static String groupProfilePrivacy = 'GroupProfilePrivacy';
   static String createGroupController = 'CreateGroupController';
+  static String createGroupProgress = 'CreateGroupProgress';
   static String interestHero = 'InterestHero';
   static String interestTabs = 'InterestTabs';
   static String interestHeader = 'InterestHeader';

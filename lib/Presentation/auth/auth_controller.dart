@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/data/datasource/Repository_impl/auth_repository_imp.dart';
+import 'package:wikixm/constants/constants.dart';
 import 'package:wikixm/data/datasource/local/local_storage.dart';
 import 'package:wikixm/data/datasource/remote/models/request/register.dart';
 import 'package:wikixm/data/datasource/remote/models/request/resend_otp.dart';
@@ -214,6 +216,7 @@ class AuthController extends GetxController {
         int code = r.code ?? 0;
         if (code == 200) {
           LocalStorage.setAuthToken(r.token ?? '');
+          LocalStorage.writeString(GetXStorageConstants.firstName, r.userInformation?.firstOrNull?.user?.firstName ?? '');
           Get.offAllNamed(AppRoutes.dashboard);
           isLoading.value = false;
         } else {
@@ -279,14 +282,14 @@ class AuthController extends GetxController {
     data.fold(
       (l) {
         if (l is ServerFailure) {
-          Get.snackbar('Failed', l.message ?? 'Something went wrong', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: const EdgeInsets.all(16), borderRadius: 8, duration: const Duration(seconds: 3));
+          Fluttertoast.showToast(msg: l.message ?? 'Something went wrong', gravity: ToastGravity.BOTTOM);
         }
       },
       (r) {
         bool code = r.success ?? false;
         if (code == true) {
           startOtpTimer();
-          Get.snackbar('Success', 'OTP sent successfully.');
+          Fluttertoast.showToast(msg: 'OTP sent successfully.', gravity: ToastGravity.BOTTOM);
         } else {}
       },
     );
@@ -301,7 +304,7 @@ class AuthController extends GetxController {
       (l) {
         isSearching.value = false;
         if (l is ServerFailure) {
-          Get.snackbar('Failed', l.message ?? 'Something went wrong', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: const EdgeInsets.all(16), borderRadius: 8, duration: const Duration(seconds: 3));
+          Fluttertoast.showToast(msg: l.message ?? 'Something went wrong', gravity: ToastGravity.BOTTOM);
         }
       },
       (r) {
@@ -327,7 +330,7 @@ class AuthController extends GetxController {
         isSearching.value = false;
         if (l is ServerFailure) {
           isLoading.value = false;
-          Get.snackbar('Failed', l.message ?? 'Something went wrong', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: const EdgeInsets.all(16), borderRadius: 8, duration: const Duration(seconds: 3));
+          Fluttertoast.showToast(msg: l.message ?? 'Something went wrong', gravity: ToastGravity.BOTTOM);
         }
       },
       (r) async {
@@ -349,7 +352,7 @@ class AuthController extends GetxController {
       (l) {
         isSearching.value = false;
         if (l is ServerFailure) {
-          Get.snackbar('Failed', l.message ?? 'Something went wrong', snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white, margin: const EdgeInsets.all(16), borderRadius: 8, duration: const Duration(seconds: 3));
+          Fluttertoast.showToast(msg: l.message ?? 'Something went wrong', gravity: ToastGravity.BOTTOM);
         }
       },
       (r) {
@@ -369,17 +372,18 @@ class AuthController extends GetxController {
       (l) {
         isLoading.value = false;
         if (l is ServerFailure) {
-          Get.snackbar("Failed", l.message ?? "Something went wrong");
+          Fluttertoast.showToast(msg: l.message ?? "Something went wrong", gravity: ToastGravity.BOTTOM);
         }
       },
       (r) {
         isLoading.value = false;
         if (r.success == true) {
           LocalStorage.setAuthToken(r.data?.token ?? "");
+          LocalStorage.writeString(GetXStorageConstants.firstName, r.data?.user?.firstName ?? '');
           LocalStorage.clearValueByKey('rToken');
           Get.offAllNamed(AppRoutes.dashboard);
         } else {
-          Get.snackbar("Failed", r.message ?? "Something went wrong");
+          Fluttertoast.showToast(msg: r.message ?? "Something went wrong", gravity: ToastGravity.BOTTOM);
         }
       },
     );

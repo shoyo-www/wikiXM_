@@ -68,7 +68,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                     ),
                                     const Spacer(),
                                     GestureDetector(
-                                      onTap: () {},
+                                      onTap: controller.openDiscoverGroups,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -163,12 +163,12 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                     ),
                                     const Spacer(),
                                     GestureDetector(
-                                      onTap: () {},
+                                      onTap: controller.openActivitiesCalendar,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
-                                            'View Calender ',
+                                            'See all activities ',
                                             style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
                                           ),
                                           Icon(CupertinoIcons.arrow_right, color: Theme.of(context).primaryColorDark, size: Dimensions.h_12),
@@ -339,7 +339,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                                     ),
                                     const Spacer(),
                                     GestureDetector(
-                                      onTap: () {},
+                                      onTap: controller.openDiscoverGroups,
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [

@@ -62,8 +62,10 @@ class DioException implements ApiException {
   String message;
   @override
   ExceptionType type = ExceptionType.dio;
+  /// Per-field validation errors from a 422 body, keyed like "settings.purpose".
+  Map<String, dynamic>? errors;
 
-  DioException(this.message);
+  DioException(this.message, {this.errors});
 
   @override
   String toString() {

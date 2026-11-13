@@ -21,6 +21,8 @@ class CommonScrollBlurScaffold extends StatefulWidget {
     this.showBack = false,
     this.isDrawer = false,
     this.onTap,
+    this.controller,
+    this.actions = const [],
   });
 
   final Widget hero;
@@ -37,6 +39,9 @@ class CommonScrollBlurScaffold extends StatefulWidget {
   final bool floating;
   final bool stretch;
   final ScrollPhysics? physics;
+  // pass one to drive the scroll from outside (e.g. jump to top); the caller then owns and disposes it
+  final ScrollController? controller;
+  final List<(String, IconData, VoidCallback)> actions;
 
   @override
   State<CommonScrollBlurScaffold> createState() => _CommonScrollBlurScaffoldState();
@@ -50,7 +55,7 @@ class _CommonScrollBlurScaffoldState extends State<CommonScrollBlurScaffold> {
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController()..addListener(_handleScroll);
+    _scrollController = (widget.controller ?? ScrollController())..addListener(_handleScroll);
   }
 
   void _handleScroll() {
@@ -61,7 +66,8 @@ class _CommonScrollBlurScaffoldState extends State<CommonScrollBlurScaffold> {
     }
     // iOS bounce past either end reverses direction on its own; don't let it flick the bar
     final inRange = offset >= 0 && offset <= _scrollController.position.maxScrollExtent;
-    final hidden = inRange ? offset > _scrollOffset && offset > Dimensions.h_50 : _appBarHidden;
+    // near the top the bar always shows, even when the page got there without a scroll (e.g. content shrank on a tab switch)
+    final hidden = offset > Dimensions.h_50 && (inRange ? offset > _scrollOffset : _appBarHidden);
     final next = offset.clamp(0.0, double.infinity);
     final changed = hidden != _appBarHidden || _blurFor(next) != _blurOpacity;
     _scrollOffset = next;
@@ -84,9 +90,8 @@ class _CommonScrollBlurScaffoldState extends State<CommonScrollBlurScaffold> {
 
   @override
   void dispose() {
-    _scrollController
-      ..removeListener(_handleScroll)
-      ..dispose();
+    _scrollController.removeListener(_handleScroll);
+    if (widget.controller == null) _scrollController.dispose();
     super.dispose();
   }
 
@@ -99,22 +104,29 @@ class _CommonScrollBlurScaffoldState extends State<CommonScrollBlurScaffold> {
       backgroundColor: widget.backgroundColor,
       body: Stack(
         children: [
-          CustomScrollView(
-            controller: _scrollController,
-            physics: widget.physics ?? const AlwaysScrollableScrollPhysics(),
-            slivers: [
-              SliverAppBar(
-                expandedHeight: widget.expandedHeight,
-                pinned: widget.pinned,
-                floating: widget.floating,
-                stretch: widget.stretch,
-                automaticallyImplyLeading: false,
-                backgroundColor: widget.backgroundColor,
-                elevation: 0,
-                flexibleSpace: FlexibleSpaceBar(collapseMode: CollapseMode.parallax, stretchModes: const [StretchMode.zoomBackground], background: widget.hero),
-              ),
-              ...widget.slivers,
-            ],
+          // shrinking content moves the offset without telling scroll listeners, so re-check on size changes too
+          NotificationListener<ScrollMetricsNotification>(
+            onNotification: (_) {
+              _handleScroll();
+              return false;
+            },
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: widget.physics ?? const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: widget.expandedHeight,
+                  pinned: widget.pinned,
+                  floating: widget.floating,
+                  stretch: widget.stretch,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: widget.backgroundColor,
+                  elevation: 0,
+                  flexibleSpace: FlexibleSpaceBar(collapseMode: CollapseMode.parallax, stretchModes: const [StretchMode.zoomBackground], background: widget.hero),
+                ),
+                ...widget.slivers,
+              ],
+            ),
           ),
           Positioned(
             top: Platform.isAndroid ? -Dimensions.h_15 : -20,
@@ -127,7 +139,7 @@ class _CommonScrollBlurScaffoldState extends State<CommonScrollBlurScaffold> {
                 opacity: _appBarHidden ? 0 : 1,
                 duration: const Duration(milliseconds: 350),
                 curve: Curves.easeInOut,
-                child: CommonBlurAppBar(blurOpacity: _blurOpacity, foregroundColor: _foregroundColor, showBackButton: widget.showBack, onTap: widget.onTap, isDrawer: widget.isDrawer),
+                child: CommonBlurAppBar(blurOpacity: _blurOpacity, foregroundColor: _foregroundColor, showBackButton: widget.showBack, onTap: widget.onTap, isDrawer: widget.isDrawer, actions: widget.actions),
               ),
             ),
           ),

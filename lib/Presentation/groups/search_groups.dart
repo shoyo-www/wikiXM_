@@ -13,6 +13,7 @@ import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
+import '../../data/datasource/remote/models/response/group_sections.dart' show ActivitiesItem;
 import '../../data/datasource/remote/models/response/search_group.dart' as discover;
 import '../widgets/cache_image.dart';
 import '../widgets/drawer/src/slider_direction.dart';
@@ -20,7 +21,9 @@ import '../widgets/drawer/src/slider_drawer.dart';
 import '../widgets/entrance_animation.dart';
 
 class SearchGroups extends StatefulWidget {
-  const SearchGroups({super.key});
+  const SearchGroups({super.key, this.activities = false});
+
+  final bool activities;
 
   @override
   State<SearchGroups> createState() => _SearchGroupsState();
@@ -29,12 +32,19 @@ class SearchGroups extends StatefulWidget {
 class _SearchGroupsState extends State<SearchGroups> {
   final GroupController controller = Get.put(GroupController());
   final GlobalKey<SliderDrawerState> filterDrawerKey = GlobalKey<SliderDrawerState>();
+  final ScrollController scrollController = ScrollController();
   static const _heroFallback = 'https://preetis-html.vercel.app/assets/images/groups/discover-groups/hero.webp';
 
   @override
   void initState() {
     super.initState();
-    controller.loadDiscover();
+    controller.initDiscoverPage(widget.activities);
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,10 +71,11 @@ class _SearchGroupsState extends State<SearchGroups> {
                 ? pageShimmer()
                 : NotificationListener<ScrollNotification>(
                     onNotification: (n) {
-                      if (n.metrics.axis == Axis.vertical && n.metrics.pixels >= n.metrics.maxScrollExtent - 300) controller.loadMoreDiscoverGroups();
+                      if (n.metrics.axis == Axis.vertical && n.metrics.pixels >= n.metrics.maxScrollExtent - 300) controller.discoverActivities ? controller.loadMoreCalendarActivities() : controller.loadMoreDiscoverGroups();
                       return false;
                     },
                     child: CommonScrollBlurScaffold(
+                      controller: scrollController,
                       showBack: true,
                       isDrawer: true,
                       onTap: openDrawer,
@@ -80,9 +91,11 @@ class _SearchGroupsState extends State<SearchGroups> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: Dimensions.h_8),
-                                EntranceAnimation(child: buildSearch(context)),
+                                EntranceAnimation(child: discoverTabs(context, c)),
+                                SizedBox(height: Dimensions.h_10),
+                                EntranceAnimation(index: 1, child: buildSearch(context)),
                                 SizedBox(height: Dimensions.h_12),
-                                EntranceAnimation(index: 1, child: categoryChips(context)),
+                                EntranceAnimation(index: 2, child: categoryChips(context)),
                                 SizedBox(height: Dimensions.h_12),
                               ],
                             ),
@@ -90,7 +103,7 @@ class _SearchGroupsState extends State<SearchGroups> {
                         ),
                         GetBuilder<GroupController>(
                           id: ControllerBuilders.discoverGroupsList,
-                          builder: (c) => SliverPadding(padding: EdgeInsets.fromLTRB(Dimensions.w_8, 0, Dimensions.w_8, Dimensions.h_20), sliver: groupsGrid(context, c)),
+                          builder: (c) => SliverPadding(padding: EdgeInsets.fromLTRB(Dimensions.w_8, 0, Dimensions.w_8, Dimensions.h_20), sliver: controller.discoverActivities ? activitiesGrid(context, c) : groupsGrid(context, c)),
                         ),
                       ],
                     ),
@@ -191,9 +204,9 @@ class _SearchGroupsState extends State<SearchGroups> {
     final number = NumberFormat.decimalPattern();
     String value(int? v) => v == null ? '–' : number.format(v);
     final statItems = [
-      (value: value(stats?.totalGroups), label: 'Groups', icon: CupertinoIcons.person_3_fill, color: const Color(0xFF1D5FEF)),
-      (value: value(stats?.totalMembers), label: 'Members', icon: CupertinoIcons.person_2_fill, color: const Color(0xFF0F9F8F)),
-      (value: value(stats?.activeGroupsThisWeek), label: 'Active this week', icon: CupertinoIcons.calendar, color: const Color(0xFFC8962E)),
+      (value: value(controller.discoverActivities ? c.calendarStats?.activities : stats?.totalGroups), label: controller.discoverActivities ? ' Activities' : 'Groups', icon: controller.discoverActivities ? CupertinoIcons.calendar : CupertinoIcons.person_3_fill, color: const Color(0xFF1D5FEF)),
+      (value: value(controller.discoverActivities ? c.calendarStats?.participants : stats?.totalMembers), label: controller.discoverActivities ? 'Participants' : 'Members', icon: CupertinoIcons.person_2_fill, color: const Color(0xFF0F9F8F)),
+      (value: value(controller.discoverActivities ? c.calendarStats?.weekend : stats?.activeGroupsThisWeek), label: controller.discoverActivities ? 'This weekend' : 'This week', icon: CupertinoIcons.calendar, color: const Color(0xFFC8962E)),
     ];
     final shadow = [Shadow(color: Colors.black.withValues(alpha: 0.6), blurRadius: 20, offset: const Offset(0, 2))];
     final titleStyle = TextStyle(fontSize: FontSize.sp_30, fontWeight: FontWeight.w900, height: 1.05, letterSpacing: -1, shadows: shadow);
@@ -213,24 +226,24 @@ class _SearchGroupsState extends State<SearchGroups> {
             ),
           ),
           Positioned(
-            left: Dimensions.w_15,
-            right: Dimensions.w_15,
+            left: Dimensions.w_8,
+            right: Dimensions.w_8,
             bottom: Dimensions.h_20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'DISCOVER GROUPS',
-                  style: TextStyle(color: const Color(0xFFFFE47A), fontSize: FontSize.sp_11, fontWeight: FontWeight.w900, letterSpacing: 0.6),
-                ),
-                SizedBox(height: Dimensions.h_4),
+                  Text(
+                    controller.discoverActivities ? "LOCAL PEOPLE. REAL ACTIVITIES." :'DISCOVER GROUPS',
+                    style: TextStyle(color: const Color(0xFFFFE47A), fontSize: FontSize.sp_11, fontWeight: FontWeight.w900, letterSpacing: 0.6),
+                  ),
+                  SizedBox(height: Dimensions.h_4),
                 Text.rich(
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Groups in\n',
+                        text: controller.discoverActivities ? 'Discover Activities in\n' : 'Groups in\n',
                         style: titleStyle.copyWith(color: Colors.white),
                       ),
                       TextSpan(
@@ -242,7 +255,7 @@ class _SearchGroupsState extends State<SearchGroups> {
                 ),
                 SizedBox(height: Dimensions.h_6),
                 Text(
-                  'Meet people who share your interests and get involved in your community.',
+                  controller.discoverActivities ? 'See what’s coming up and find something to join in your community.' : 'Meet people who share your interests and get involved in your community.',
                   style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontSize: FontSize.sp_12, fontWeight: FontWeight.w500, height: 1.35, shadows: shadow),
                 ),
                 SizedBox(height: Dimensions.h_15),
@@ -331,6 +344,67 @@ class _SearchGroupsState extends State<SearchGroups> {
     );
   }
 
+  Widget discoverTabs(BuildContext context, GroupController c) {
+    Widget tab(bool activities, IconData icon, String title, String subtitle) {
+      final selected = c.discoverActivities == activities;
+      final color = selected ? AppColor.blue(context) : Theme.of(context).highlightColor;
+      return Expanded(
+        child: Semantics(
+          button: true,
+          selected: selected,
+          child: GestureDetector(
+            onTap: () {
+              // the other tab's list starts at its top, not at this one's scroll offset
+              if (!selected && scrollController.hasClients) scrollController.jumpTo(0);
+              c.selectDiscoverTab(activities);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10, vertical: Dimensions.h_4),
+              decoration: BoxDecoration(
+                color: selected ? AppColor.blueSoft(context) : Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(Dimensions.h_8),
+                border: Border.all(color: selected ? AppColor.blue(context) : AppColor.border(context), width: selected ? 1.2 : 1),
+              ),
+              child: Row(
+                children: [
+                  Icon(icon, size: Dimensions.h_15, color: color),
+                  SizedBox(width: Dimensions.w_8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: color, fontSize: FontSize.sp_11, fontWeight: FontWeight.w700),
+                        ),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: AppColor.muted(context), fontSize: FontSize.sp_9),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      children: [
+        tab(false, CupertinoIcons.person_2, 'Discover Groups', 'Find and join communities'),
+        SizedBox(width: Dimensions.w_8),
+        tab(true, CupertinoIcons.calendar, 'Discover Activities', 'Events and partners'),
+      ],
+    );
+  }
+
   Widget buildSearch(BuildContext context) {
     final blue = AppColor.blue(context);
     return SizedBox(
@@ -341,8 +415,8 @@ class _SearchGroupsState extends State<SearchGroups> {
           children: [
             Expanded(
               child: TextField(
-                controller: c.discoverSearchController,
-                onChanged: c.searchDiscoverGroups,
+                controller: controller.discoverActivities ? c.activitySearchController : c.discoverSearchController,
+                onChanged: controller.discoverActivities ? c.searchActivities : c.searchDiscoverGroups,
                 textInputAction: TextInputAction.search,
                 style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_11, fontWeight: FontWeight.w500),
                 decoration: InputDecoration(
@@ -352,20 +426,20 @@ class _SearchGroupsState extends State<SearchGroups> {
                     height: Dimensions.h_20,
                     child: Icon(CupertinoIcons.search, size: Dimensions.h_15, color: blue),
                   ),
-                  suffixIcon: c.discoverSearchController.text.isEmpty
+                  suffixIcon: (controller.discoverActivities ? c.activitySearchController : c.discoverSearchController).text.isEmpty
                       ? const SizedBox.shrink()
                       : SizedBox(
                           width: Dimensions.w_20,
                           height: Dimensions.h_20,
                           child: GestureDetector(
-                            onTap: c.clearDiscoverSearch,
+                            onTap: controller.discoverActivities ? c.clearActivitySearch : c.clearDiscoverSearch,
                             child: Center(
                               child: Icon(CupertinoIcons.clear_circled_solid, size: Dimensions.h_18, color: Theme.of(context).hintColor),
                             ),
                           ),
                         ),
                   fillColor: Theme.of(context).cardColor,
-                  hintText: 'Search groups, activities, interests…',
+                  hintText: controller.discoverActivities ? 'Search activities, places…' : 'Search groups, activities, interests…',
                   hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: FontSize.sp_11),
                   contentPadding: EdgeInsets.symmetric(horizontal: Dimensions.w_12),
                   enabledBorder: OutlineInputBorder(
@@ -384,20 +458,23 @@ class _SearchGroupsState extends State<SearchGroups> {
               button: true,
               label: 'Filters',
               child: GestureDetector(
-                onTap: () => filterDrawerKey.currentState?.openSlider(),
+                onTap: () {
+                  controller.discoverActivities ? c.rememberActivityFilters() : c.rememberDiscoverFilters();
+                  filterDrawerKey.currentState?.openSlider();
+                },
                 child: Container(
                   width: Dimensions.h_33,
                   height: Dimensions.h_33,
                   decoration: BoxDecoration(
-                    color: c.discoverFiltersActive ? AppColor.blueSoft(context) : Theme.of(context).cardColor,
+                    color: (controller.discoverActivities ? c.calendarFiltersActive : c.discoverFiltersActive) ? AppColor.blueSoft(context) : Theme.of(context).cardColor,
                     shape: BoxShape.circle,
-                    border: Border.all(color: c.discoverFiltersActive ? blue : AppColor.border(context), width: 1),
+                    border: Border.all(color: (controller.discoverActivities ? c.calendarFiltersActive : c.discoverFiltersActive) ? blue : AppColor.border(context), width: 1),
                   ),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       Icon(Icons.filter_list_alt, size: Dimensions.h_20, color: blue),
-                      if (c.discoverFiltersActive)
+                      if (controller.discoverActivities ? c.calendarFiltersActive : c.discoverFiltersActive)
                         Positioned(
                           top: Dimensions.h_7,
                           right: Dimensions.h_7,
@@ -480,6 +557,33 @@ class _SearchGroupsState extends State<SearchGroups> {
       );
     }
 
+    Widget dateButton(String label, VoidCallback onTap) => GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: Dimensions.h_28,
+        padding: EdgeInsets.symmetric(horizontal: Dimensions.w_6),
+        decoration: BoxDecoration(
+          color: AppColor.surface(context),
+          border: Border.all(color: border, width: 0.5),
+          borderRadius: BorderRadius.circular(Dimensions.h_8),
+        ),
+        child: Row(
+          children: [
+            Icon(CupertinoIcons.calendar, size: Dimensions.h_12, color: blue),
+            SizedBox(width: Dimensions.w_4),
+            Expanded(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: ink, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
     Widget divider() => Container(
       height: 0.4,
       width: double.infinity,
@@ -496,12 +600,15 @@ class _SearchGroupsState extends State<SearchGroups> {
           Row(
             children: [
               Text(
-                'Filter Groups'.toUpperCase(),
+                (controller.discoverActivities ? 'Filter Activities' : 'Filter Groups').toUpperCase(),
                 style: TextStyle(color: ink, fontSize: FontSize.sp_14, fontWeight: FontWeight.w700),
               ),
               const Spacer(),
               GestureDetector(
-                onTap: () => filterDrawerKey.currentState?.closeSlider(),
+                onTap: () {
+                  controller.discoverActivities ? c.cancelActivityFilters() : c.cancelDiscoverFilters();
+                  filterDrawerKey.currentState?.closeSlider();
+                },
                 child: Icon(CupertinoIcons.clear_circled_solid, size: Dimensions.h_20, color: ink),
               ),
             ],
@@ -512,6 +619,51 @@ class _SearchGroupsState extends State<SearchGroups> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (controller.discoverActivities) ...[
+                    sectionTitle(town == null ? 'Distance' : 'Distance from $town'),
+                    dropdown(
+                      value: c.activityDistance ?? '',
+                      icon: CupertinoIcons.location_solid,
+                      options: [(value: '', label: 'Any distance', icon: null, color: null), for (final d in GroupController.activityDistanceOptions) (value: '$d', label: 'Within $d miles', icon: null, color: null)],
+                      onChanged: c.setActivityDistance,
+                    ),
+                    SizedBox(height: Dimensions.h_13),
+                    sectionTitle('Category'),
+                    dropdown(
+                      value: c.activityFilterCategory,
+                      icon: CupertinoIcons.square_grid_2x2_fill,
+                      options: [for (final cat in c.discoverOverview?.categories ?? []) (value: cat.id ?? '', label: cat.name ?? '', icon: categoryIcon(cat.icon), color: categoryColor(cat.color))],
+                      onChanged: c.setActivityFilterCategory,
+                    ),
+                    SizedBox(height: Dimensions.h_13),
+                    sectionTitle('Sort by'),
+                    dropdown(
+                      value: c.activitySort,
+                      icon: CupertinoIcons.arrow_up_arrow_down,
+                      options: [for (final o in GroupController.activitySortOptions) (value: o.value, label: o.label, icon: null, color: null)],
+                      onChanged: c.setActivitySort,
+                    ),
+                    divider(),
+                    sectionTitle('Type'),
+                    SizedBox(height: Dimensions.h_5),
+                    for (final o in GroupController.activityTypeOptions) checkItem(title: o.label, selected: c.activityType == o.value, onTap: () => c.setActivityType(o.value)),
+                    divider(),
+                    sectionTitle('Date'),
+                    SizedBox(height: Dimensions.h_5),
+                    for (final o in GroupController.activityDateOptions) checkItem(title: o.label, selected: c.activityDate == o.value, onTap: () => c.setActivityDate(o.value)),
+                    if (c.activityDate == 'custom')
+                      Row(
+                        children: [
+                          Expanded(child: dateButton(c.activityDateLabel(c.activityFrom, 'From'), c.pickActivityFrom)),
+                          SizedBox(width: Dimensions.w_6),
+                          Expanded(child: dateButton(c.activityDateLabel(c.activityUntil, 'Until'), c.pickActivityUntil)),
+                        ],
+                      ),
+                    divider(),
+                    sectionTitle('Skill level'),
+                    SizedBox(height: Dimensions.h_5),
+                    for (final o in GroupController.activitySkillOptions) checkItem(title: o.label, selected: c.activitySkills.contains(o.value), onTap: () => c.toggleActivitySkill(o.value)),
+                  ] else ...[
                   sectionTitle(town == null ? 'Distance' : 'Distance from $town'),
                   dropdown(
                     value: c.discoverDistance,
@@ -535,6 +687,7 @@ class _SearchGroupsState extends State<SearchGroups> {
                   sectionTitle('Activity level'),
                   SizedBox(height: Dimensions.h_5),
                   for (final l in filters?.activityLevels ?? []) checkItem(title: l.label ?? '', selected: c.discoverLevels.contains(l.value), onTap: () => c.toggleDiscoverLevel(l.value ?? 'all')),
+                  ],
                 ],
               ),
             ),
@@ -547,7 +700,7 @@ class _SearchGroupsState extends State<SearchGroups> {
                   height: Dimensions.h_28,
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      c.clearDiscoverFilters();
+                      controller.discoverActivities ? c.clearActivityFilters() : c.clearDiscoverFilters();
                       filterDrawerKey.currentState?.closeSlider();
                     },
                     icon: Icon(Icons.refresh_rounded, size: Dimensions.h_13, color: red),
@@ -570,7 +723,7 @@ class _SearchGroupsState extends State<SearchGroups> {
                   height: Dimensions.h_28,
                   child: ElevatedButton(
                     onPressed: () {
-                      c.applyDiscoverFilters();
+                      controller.discoverActivities ? c.applyActivityFilters() : c.applyDiscoverFilters();
                       filterDrawerKey.currentState?.closeSlider();
                     },
                     style: ElevatedButton.styleFrom(
@@ -601,22 +754,22 @@ class _SearchGroupsState extends State<SearchGroups> {
       child: GetBuilder<GroupController>(
         id: ControllerBuilders.discoverGroupsList,
         builder: (c) {
-          final categories = c.discoverOverview?.categories;
-          if (categories == null) return chipsShimmer();
+          final chips = controller.discoverActivities ? c.calendarInterestChips : c.discoverCategoryChips;
+          if (chips == null) return chipsShimmer();
           return ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.zero,
-            itemCount: categories.length,
+            itemCount: chips.length,
             separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_10),
             itemBuilder: (context, i) {
-              final cat = categories[i];
-              final selected = c.discoverCategory == cat.id;
+              final cat = chips[i];
+              final selected = (controller.discoverActivities ? c.activityInterest : c.discoverCategory) == cat.id;
               final color = categoryColor(cat.color);
               return Semantics(
                 button: true,
                 selected: selected,
                 child: GestureDetector(
-                  onTap: () => c.selectDiscoverCategory(cat.id ?? 'all'),
+                  onTap: () => controller.discoverActivities ? c.selectActivityInterest(cat.id ?? 'all') : c.selectDiscoverCategory(cat.id ?? 'all'),
                   child: Container(
                     padding: EdgeInsets.fromLTRB(Dimensions.w_5, 0, Dimensions.w_12, 0),
                     decoration: BoxDecoration(
@@ -641,7 +794,7 @@ class _SearchGroupsState extends State<SearchGroups> {
                               style: TextStyle(color: selected ? Colors.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
                             ),
                             Text(
-                              '${cat.groupCount ?? 0} groups',
+                              cat.count,
                               style: TextStyle(color: selected ? Colors.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5),
                             ),
                           ],
@@ -674,13 +827,13 @@ class _SearchGroupsState extends State<SearchGroups> {
             child: Column(
               children: [
                 Text(
-                  'No groups match your search',
+                  c.discoverLoadFailed ? "Couldn't load groups" : 'No groups match your search',
                   style: TextStyle(color: ink, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
                 ),
                 TextButton(
-                  onPressed: c.clearDiscoverFilters,
+                  onPressed: c.discoverLoadFailed ? c.retryDiscoverGroups : c.clearDiscoverFilters,
                   child: Text(
-                    'Clear filters',
+                    c.discoverLoadFailed ? 'Try again' : 'Clear filters',
                     style: TextStyle(color: blue, fontSize: FontSize.sp_11),
                   ),
                 ),
@@ -695,7 +848,7 @@ class _SearchGroupsState extends State<SearchGroups> {
         SliverGrid.builder(
           itemCount: groups.length,
           gridDelegate: gridDelegate,
-          itemBuilder: (context, index) => EntranceAnimation(index: index < 4 ? index + 2 : 0, child: groupCard(context, c, groups[index])),
+          itemBuilder: (context, index) => index < 4 ? EntranceAnimation(index: index + 2, child: groupCard(context, c, groups[index])) : groupCard(context, c, groups[index]),
         ),
         if (c.discoverLoadingMore)
           SliverPadding(
@@ -703,6 +856,148 @@ class _SearchGroupsState extends State<SearchGroups> {
             sliver: SliverGrid.builder(itemCount: 2, gridDelegate: gridDelegate, itemBuilder: (_, _) => cardShimmer()),
           ),
       ],
+    );
+  }
+
+  Widget activitiesGrid(BuildContext context, GroupController c) {
+    final activities = c.calendarActivities;
+    final gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: Dimensions.w_8, mainAxisSpacing: Dimensions.h_10, mainAxisExtent: Dimensions.h_260);
+    if (activities == null) {
+      return SliverGrid.builder(itemCount: 4, gridDelegate: gridDelegate, itemBuilder: (_, _) => cardShimmer());
+    }
+    if (activities.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: Dimensions.h_20),
+          child: Center(
+            child: Column(
+              children: [
+                Text(
+                  c.calendarEmptyMessage,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w800),
+                ),
+                if (c.calendarLoadFailed || c.calendarFiltered)
+                  TextButton(
+                    onPressed: c.calendarLoadFailed ? c.retryCalendarActivities : c.clearActivityFilters,
+                    child: Text(
+                      c.calendarLoadFailed ? 'Try again' : 'Clear filters',
+                      style: TextStyle(color: AppColor.blue(context), fontSize: FontSize.sp_11),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverGrid.builder(
+          itemCount: activities.length,
+          gridDelegate: gridDelegate,
+          itemBuilder: (context, index) => index < 4 ? EntranceAnimation(index: index + 2, child: activityCard(context, c, activities[index])) : activityCard(context, c, activities[index]),
+        ),
+        if (c.calendarLoadingMore)
+          SliverPadding(
+            padding: EdgeInsets.only(top: Dimensions.h_10),
+            sliver: SliverGrid.builder(itemCount: 2, gridDelegate: gridDelegate, itemBuilder: (_, _) => cardShimmer()),
+          ),
+      ],
+    );
+  }
+
+  // groupCard's layout; the whole card opens the activity, where joining happens
+  Widget activityCard(BuildContext context, GroupController c, ActivitiesItem a) {
+    final blue = AppColor.blue(context);
+    final ink = Theme.of(context).highlightColor;
+    final joined = a.isJoined == true;
+    final doneColor = AppColor.green(context);
+    final badge = a.badge?.label ?? '';
+    Widget meta(IconData icon, String text) => Row(
+      children: [
+        Icon(icon, size: Dimensions.h_12, color: blue),
+        SizedBox(width: Dimensions.w_3),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: ink, fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500),
+          ),
+        ),
+      ],
+    );
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => c.openGroupsHomeActivity(a),
+      child: CommonCard(
+        padding: EdgeInsets.zero,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(Dimensions.h_8)),
+                  child: AppCacheImage(imageUrl: a.image?.url ?? '', radius: 0, widthSize: Get.width, size: Dimensions.h_130, fit: BoxFit.cover),
+                ),
+                if (badge.isNotEmpty)
+                  Positioned(
+                    left: Dimensions.w_6,
+                    bottom: Dimensions.h_8,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_2),
+                      decoration: BoxDecoration(color: AppColor.white, borderRadius: BorderRadius.circular(Dimensions.h_4)),
+                      child: Text(
+                        badge,
+                        style: TextStyle(color: AppColor.green(context), fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(Dimensions.w_5, Dimensions.h_8, Dimensions.w_5, Dimensions.h_8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      a.title ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: ink, fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w800, height: 1.2, letterSpacing: -0.2),
+                    ),
+                    SizedBox(height: Dimensions.h_5),
+                    meta(CupertinoIcons.clock, c.calendarDetail(a, 'time')),
+                    SizedBox(height: Dimensions.h_4),
+                    meta(Icons.location_on_sharp, c.calendarDetail(a, 'place')),
+                    SizedBox(height: Dimensions.h_4),
+                    meta(CupertinoIcons.person_2, '${a.goingCount ?? 0} going · ${a.spotsAvailable ?? 0} spots left'),
+                    const Spacer(),
+                    Container(
+                      height: Dimensions.h_25,
+                      decoration: BoxDecoration(color: joined ? AppColor.greenSoft(context) : blue, borderRadius: BorderRadius.circular(Dimensions.h_10)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            joined ? 'Joined' : 'View activity',
+                            style: TextStyle(color: joined ? doneColor : AppColor.white, fontSize: FontSize.sp_11, fontWeight: FontWeight.w800),
+                          ),
+                          SizedBox(width: Dimensions.w_5),
+                          Icon(joined ? CupertinoIcons.checkmark_alt : CupertinoIcons.arrow_right, size: Dimensions.h_13, color: joined ? doneColor : AppColor.white),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -747,7 +1042,7 @@ class _SearchGroupsState extends State<SearchGroups> {
                   Positioned(
                     left: Dimensions.w_6,
                     right: Dimensions.w_6,
-                    top: Dimensions.h_8,
+                    bottom: Dimensions.h_8,
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Container(
@@ -761,7 +1056,7 @@ class _SearchGroupsState extends State<SearchGroups> {
                           interest.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: AppColor.blue(context), fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w700),
+                          style: TextStyle(color: AppColor.green(context), fontSize: FontSize.sp_8_5, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),

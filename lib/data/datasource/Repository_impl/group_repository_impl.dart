@@ -24,8 +24,11 @@ import '../remote/models/response/my_group_attention.dart';
 import '../remote/models/response/my_group_invitations.dart';
 import '../remote/models/response/my_group_activities.dart';
 import '../remote/models/response/my_group_settings.dart';
+import '../remote/models/response/group_settings_response.dart' show GroupSettingsResponse, groupSettingsResponseFromJson;
+import '../remote/models/response/group_activities.dart';
 import '../remote/models/response/search_group.dart';
 import '../remote/models/response/search_group_overview.dart';
+import '../remote/models/response/create_group.dart';
 import '../remote/services/apis.dart';
 
 GroupHomeResponse parseResponse(String response) {
@@ -37,6 +40,29 @@ GroupSectionsResponse parseSection(String response) {
 }
 
 SearchGroupResponse parseDiscoverGroups(String response) => searchGroupResponseFromJson(response);
+
+GroupActivitiesResponse parseGroupActivities(String response) => groupActivitiesResponseFromJson(response);
+
+CreateGroupOptionsResponse parseCreateGroupOptions(String response) => createGroupOptionsResponseFromJson(response);
+
+/// Flattens nested maps/lists into Laravel bracket keys (settings[permissions][0]) for multipart bodies.
+Map<String, dynamic> flattenFormFields(Map<String, dynamic> body, [String prefix = '']) {
+  final out = <String, dynamic>{};
+  void add(String key, dynamic value) {
+    if (value == null) return;
+    if (value is Map) {
+      value.forEach((k, v) => add('$key[$k]', v));
+    } else if (value is List) {
+      for (var i = 0; i < value.length; i++) {
+        add('$key[$i]', value[i]);
+      }
+    } else {
+      out[key] = value is bool ? (value ? 1 : 0) : value;
+    }
+  }
+  body.forEach((k, v) => add(prefix.isEmpty ? k : '$prefix[$k]', v));
+  return out;
+}
 
 class GroupRepositoryImpl implements GroupRepository {
   final _restClient = Get.find<RestClient>();
@@ -243,6 +269,32 @@ class GroupRepositoryImpl implements GroupRepository {
   }
 
   @override
+  Future<Either<Failure, GroupSettingsResponse>> getGroupSettings() async {
+    try {
+      final response = await _restClient.get(url: Apis.groupSettings);
+      return Right(groupSettingsResponseFromJson(response));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+    catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, GroupSettingsResponse>> saveGroupSettings(Map<String, dynamic> preferences) async {
+    try {
+      final response = await _restClient.put(url: Apis.groupSettings, request: {'preferences': preferences});
+      return Right(groupSettingsResponseFromJson(response));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+    catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, MyGroupInvitationsResponse>> myGroupInvitations() async {
     try {
       final response = await _restClient.get(url: Apis.myInvitations);
@@ -294,6 +346,101 @@ class GroupRepositoryImpl implements GroupRepository {
     }
     catch (e) {
       return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  // parsed off the UI thread, like discoverGroups: items carry long "searchable" text
+  @override
+  Future<Either<Failure, GroupActivitiesResponse>> groupActivities(Map<String, dynamic> params) async {
+    try {
+      final response = await _restClient.get(url: Apis.groupActivities, params: params);
+      return Right(await compute(parseGroupActivities, response as String));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+    catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CreateGroupOptionsResponse>> createGroupOptions() async {
+    try {
+      final response = await _restClient.get(url: Apis.createGroupOptions);
+      return Right(await compute(parseCreateGroupOptions, response as String));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, GroupCoverageResponse>> groupCoverage(int cityId, int radiusMiles) async {
+    try {
+      final response = await _restClient.get(url: Apis.groupCoverage, params: {'city_id': cityId, 'radius_miles': radiusMiles});
+      return Right(groupCoverageResponseFromJson(response));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> createGroup(Map<String, dynamic> body, {String? coverPath, String? avatarPath, List<String> galleryPaths = const []}) async {
+    try {
+      final hasFiles = coverPath != null || avatarPath != null || galleryPaths.isNotEmpty;
+      final response = hasFiles
+          ? await _restClient.multipartPost(
+              url: Apis.createGroup,
+              fields: flattenFormFields(body),
+              files: {
+                if (coverPath != null) 'cover_image': [coverPath],
+                if (avatarPath != null) 'avatar_image': [avatarPath],
+                for (var i = 0; i < galleryPaths.length; i++) 'gallery_images[$i]': [galleryPaths[i]],
+              },
+            )
+          : await _restClient.post(url: Apis.createGroup, request: body);
+      return Right(jsonDecode(response)['data']['group_id']);
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message, errors: e is DioException ? e.errors : null));
+    }
+  }
+
+  @override
+  Future<Either<Failure, GroupCreatedResponse>> groupCreated(int groupId) async {
+    try {
+      final response = await _restClient.get(url: '${Apis.groupDetail}$groupId/created');
+      return Right(groupCreatedResponseFromJson(response));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, InvitationRecipientsResponse>> invitationRecipients(int groupId, String search, int page) async {
+    try {
+      final response = await _restClient.get(url: '${Apis.groupDetail}$groupId/invitation-recipients', params: {if (search.isNotEmpty) 'search': search, 'page': page});
+      return Right(invitationRecipientsResponseFromJson(response));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> sendInvitations(int groupId, Map<String, dynamic> body) async {
+    try {
+      final response = await _restClient.post(url: '${Apis.groupDetail}$groupId/invitations', request: body);
+      return Right(jsonDecode(response)['message'] ?? 'Invitations sent.');
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> groupAiAssist(String action, Map<String, dynamic> context) async {
+    try {
+      final response = await _restClient.post(url: Apis.groupAiAssist, request: {'module': 'groups', 'action': action, 'context': context});
+      return Right(Map<String, dynamic>.from(jsonDecode(response)['data']['suggestion']));
+    } on ApiException catch (e) {
+      return Left(ServerFailure(e.message));
     }
   }
 }

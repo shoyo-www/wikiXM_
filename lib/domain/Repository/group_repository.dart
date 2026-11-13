@@ -13,12 +13,15 @@ import '../../data/datasource/remote/models/response/my_group_attention.dart';
 import '../../data/datasource/remote/models/response/my_group_invitations.dart';
 import '../../data/datasource/remote/models/response/my_group_activities.dart';
 import '../../data/datasource/remote/models/response/my_group_settings.dart';
+import '../../data/datasource/remote/models/response/group_settings_response.dart' show GroupSettingsResponse;
 import '../../data/datasource/remote/models/response/activity_profile.dart';
 import '../../data/datasource/remote/models/response/public_profile.dart';
 import '../../data/datasource/remote/models/response/public_profile_feed.dart';
 import '../../data/datasource/remote/models/response/public_profile_items.dart';
+import '../../data/datasource/remote/models/response/group_activities.dart';
 import '../../data/datasource/remote/models/response/search_group.dart';
 import '../../data/datasource/remote/models/response/search_group_overview.dart';
+import '../../data/datasource/remote/models/response/create_group.dart';
 
 abstract class GroupRepository {
   Future<Either<Failure, GroupHomeResponse>> getGroupHome();
@@ -35,6 +38,8 @@ abstract class GroupRepository {
   Future<Either<Failure, MyGroupActivitiesResponse>> myGroupActivities(int page);
   Future<Either<Failure, MyGroupSettingsResponse>> getMyGroupSettings();
   Future<Either<Failure, MyGroupSettingsResponse>> saveMyGroupSettings(bool recommendations);
+  Future<Either<Failure, GroupSettingsResponse>> getGroupSettings();
+  Future<Either<Failure, GroupSettingsResponse>> saveGroupSettings(Map<String, dynamic> preferences);
   Future<Either<Failure, ActivityProfileResponse>> activityProfile();
 
   Future<Either<Failure, PublicProfileResponse>> publicProfile(int id);
@@ -45,4 +50,13 @@ abstract class GroupRepository {
   Future<Either<Failure, SearchGroupOverviewResponse>> discoverOverview(int townId);
   Future<Either<Failure, SearchGroupResponse>> discoverGroups(Map<String, dynamic> params);
 
+  Future<Either<Failure, GroupActivitiesResponse>> groupActivities(Map<String, dynamic> params);
+
+  Future<Either<Failure, CreateGroupOptionsResponse>> createGroupOptions();
+  Future<Either<Failure, GroupCoverageResponse>> groupCoverage(int cityId, int radiusMiles);
+  Future<Either<Failure, int>> createGroup(Map<String, dynamic> body, {String? coverPath, String? avatarPath, List<String> galleryPaths = const []});
+  Future<Either<Failure, GroupCreatedResponse>> groupCreated(int groupId);
+  Future<Either<Failure, InvitationRecipientsResponse>> invitationRecipients(int groupId, String search, int page);
+  Future<Either<Failure, String>> sendInvitations(int groupId, Map<String, dynamic> body);
+  Future<Either<Failure, Map<String, dynamic>>> groupAiAssist(String action, Map<String, dynamic> context);
 }

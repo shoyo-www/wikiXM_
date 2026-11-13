@@ -27,7 +27,7 @@ class PublicProfile extends StatelessWidget {
     return CommonBlurScaffold(
       showBack: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      collapsedColor: AppColor.ink(context),
+      collapsedColor: Theme.of(context).highlightColor,
       child: GetBuilder<GroupController>(
         init: controller,
         id: ControllerBuilders.publicProfile,
@@ -53,15 +53,20 @@ class PublicProfile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: staggered([
-                      if (profile.activities?.isNotEmpty == true) ...[sectionHeader(context, 'Recent activity'), buildRecent(context, c)],
-                      if (profile.groups?.isNotEmpty == true) ...[sectionHeader(context, 'Groups  (${profile.statistics?.groups ?? profile.groups!.length})'), buildGroups(context, c)],
-                      if (feed?.upcomingActivities?.isNotEmpty == true) ...[sectionHeader(context, 'Upcoming activities'), buildActivities(context, c)],
+                      if (profile.roles?.isNotEmpty == true) ...[
+                        sectionHeader(context, c.publicProfileHeader('Roles'), seeAll: false),
+                        buildRoles(context, profile.roles!),
+                        SizedBox(height: Dimensions.h_15),
+                      ],
+                      if (profile.activities?.isNotEmpty == true) ...[sectionHeader(context, c.publicProfileHeader('Recent activity')), buildRecent(context, c)],
+                      if (profile.groups?.isNotEmpty == true) ...[sectionHeader(context, c.publicProfileHeader('Groups  (${profile.statistics?.groups ?? profile.groups!.length})')), buildGroups(context, c)],
+                      if (feed?.upcomingActivities?.isNotEmpty == true) ...[sectionHeader(context, c.publicProfileHeader('Upcoming activities')), buildActivities(context, c)],
                       if (profile.interests?.isNotEmpty == true) ...[
-                        sectionHeader(context, 'Interests', seeAll: false),
+                        sectionHeader(context, c.publicProfileHeader('Interests'), seeAll: false),
                         buildInterests(context, c.publicProfile!.interests!),
                         SizedBox(height: Dimensions.h_15),
                       ],
-                      if (feed?.photos?.isNotEmpty == true) ...[sectionHeader(context, 'Photos'), buildPhotos(context, c)],
+                      if (feed?.photos?.isNotEmpty == true) ...[sectionHeader(context, c.publicProfileHeader('Photos')), buildPhotos(context, c)],
                     ]),
                   ),
                 ),
@@ -73,21 +78,19 @@ class PublicProfile extends StatelessWidget {
     );
   }
 
-  Widget sectionHeader(BuildContext context, String title, {String? count, bool seeAll = true}) {
+  Widget sectionHeader(BuildContext context, String title, {bool seeAll = true}) {
     return Padding(
       padding: EdgeInsets.fromLTRB(Dimensions.w_10, 0, Dimensions.w_10, Dimensions.h_12),
       child: Row(
         children: [
-          Text(
-            title,
-            style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_15, fontWeight: FontWeight.w900, letterSpacing: -0.5),
-          ),
-          if (count != null)
-            Text(
-              ' · $count',
-              style: TextStyle(color: AppColor.muted(context), fontSize: FontSize.sp_14, fontWeight: FontWeight.w600, letterSpacing: -0.5),
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_15, fontWeight: FontWeight.w900, letterSpacing: -0.5),
             ),
-          const Spacer(),
+          ),
           if (seeAll)
             Text(
               'See all',
@@ -130,7 +133,7 @@ class PublicProfile extends StatelessWidget {
         Stack(
           children: [
             ShimmerBox(Get.width, Dimensions.h_210, radius: 0),
-            // Mirrors buildHero: avatar on the left, name / location / role chips beside it.
+            // Mirrors buildHero: avatar on the left, name / location beside it.
             Padding(
               padding: EdgeInsets.only(top: Dimensions.h_190 - avatar * 0.75, left: Dimensions.w_10, right: Dimensions.w_10),
               child: Row(
@@ -150,14 +153,6 @@ class PublicProfile extends StatelessWidget {
                         ShimmerBox(Dimensions.w_160, Dimensions.h_22),
                         SizedBox(height: Dimensions.h_8),
                         ShimmerBox(Dimensions.w_120, Dimensions.h_12),
-                        SizedBox(height: Dimensions.h_10),
-                        Wrap(
-                          spacing: Dimensions.w_4,
-                          runSpacing: Dimensions.h_8,
-                          children: [
-                            for (final w in [Dimensions.w_70, Dimensions.w_90]) ShimmerBox(w, Dimensions.h_22, radius: 99),
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -292,6 +287,15 @@ class PublicProfile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: Dimensions.h_5),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_3),
+                          decoration: BoxDecoration(color: AppColor.blueSoft(context), borderRadius: BorderRadius.circular(99)),
+                          child: Text(
+                            'GROUP PROFILE',
+                            style: TextStyle(color: AppColor.blue(context), fontSize: FontSize.sp_10, fontWeight: FontWeight.w800, letterSpacing: 0.8),
+                          ),
+                        ),
+                        SizedBox(height: Dimensions.h_3),
                         Row(
                           children: [
                             Flexible(
@@ -316,27 +320,6 @@ class PublicProfile extends StatelessWidget {
                                 style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w900),
                               ),
                             ),
-                          ],
-                        ),
-                        SizedBox(height: Dimensions.h_8),
-                        Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: Dimensions.w_4,
-                          runSpacing: Dimensions.h_8,
-                          children: [
-                            for (final role in profile.roles ?? <String>[])
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_5),
-                                decoration: BoxDecoration(
-                                  color: AppColor.surface(context),
-                                  borderRadius: BorderRadius.circular(99),
-                                  border: Border.all(color: AppColor.border(context)),
-                                ),
-                                child: Text(
-                                  role,
-                                  style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w600),
-                                ),
-                              ),
                           ],
                         ),
                       ],
@@ -1005,6 +988,31 @@ class PublicProfile extends StatelessWidget {
         itemBuilder: (context, i) {
           return SizedBox(width: cardWidth, child: activityCard(context, c, activities[i], i));
         },
+      ),
+    );
+  }
+
+  Widget buildRoles(BuildContext context, List<String> roles) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Dimensions.w_10),
+      child: Wrap(
+        spacing: Dimensions.w_5,
+        runSpacing: Dimensions.h_5,
+        children: [
+          for (final role in roles)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_8, vertical: Dimensions.h_5),
+              decoration: BoxDecoration(
+                color: AppColor.surface(context),
+                borderRadius: BorderRadius.circular(99),
+                border: Border.all(color: AppColor.border(context)),
+              ),
+              child: Text(
+                role,
+                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w600),
+              ),
+            ),
+        ],
       ),
     );
   }

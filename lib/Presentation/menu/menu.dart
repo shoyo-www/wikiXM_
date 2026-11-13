@@ -272,6 +272,16 @@ class _MenuState extends State<Menu> {
                   NavItem(
                     icon: '',
                     isIcon: true,
+                    isIconName: CupertinoIcons.exclamationmark_triangle,
+                    title: 'Alerts',
+                    onTap: () {
+                      Get.toNamed(AppRoutes.alerts);
+                    },
+                  ),
+                  SizedBox(height: Dimensions.h_5),
+                  NavItem(
+                    icon: '',
+                    isIcon: true,
                     isIconName: CupertinoIcons.globe,
                     title: 'My Microsite',
                     onTap: () {

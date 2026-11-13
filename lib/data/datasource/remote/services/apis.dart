@@ -42,6 +42,7 @@ class Apis {
   static const myGarageAI = '$baseUrl/garage/assistant';
   static const groupHome = '$baseUrl/groups/home';
   static const groupSections = '$baseUrl/groups/sections';
+  static const groupActivities = '$baseUrl/groups/sections/activities';
   static const groupJoin = '$baseUrl/groups/join';
   static const groupLeave = '$baseUrl/groups/leave';
   static const interestsDetail = '$baseUrl/groups/interests';
@@ -55,9 +56,14 @@ class Apis {
   static const myAttention = '$baseUrl/groups/my-attention';
   static const myActivities = '$baseUrl/groups/my-activities';
   static const myGroupSettings = '$baseUrl/groups/account-settings';
+  static const groupSettings = '$baseUrl/groups/settings';
   static const activityProfile = '$baseUrl/groups/people/877/profile';
   static const publicProfile = '$baseUrl/groups/public-profiles/';
   static const discoverOverview = '$baseUrl/groups/discover/overview';
   static const groupList = '$baseUrl/groups/list';
+  static const createGroupOptions = '$baseUrl/groups/create-options';
+  static const groupCoverage = '$baseUrl/groups/coverage';
+  static const createGroup = '$baseUrl/groups';
+  static const groupAiAssist = '$baseUrl/groups/ai-assist';
 }
 

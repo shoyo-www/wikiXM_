@@ -24,13 +24,17 @@ class AppRoutes {
   static const String groups = '/groups';
   static const String groupDetail = '/groupDetail';
   static const String createGroup = '/createGroup';
+  static const String groupCreated = '/groupCreated';
   static const String activityDetail = '/activityDetail';
   static const String detailPage = '/detailPage';
   static const String groupUserProfile = '/groupUserProfile';
   static const String myGroup = '/myGroup';
   static const String searchGroups = '/searchGroups';
+  static const String activitiesCalendar = '/activitiesCalendar';
   static const String publicProfile = '/publicProfile';
   static const String groupSettings = '/groupSettings';
   static const String groupSettingsPage = '/groupSettingsPage';
+  static const String alerts = '/alerts';
+  static const String alertDetail = '/alertDetail';
 
 }

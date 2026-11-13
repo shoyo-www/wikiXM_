@@ -14,7 +14,7 @@ import '../../constants/constants.dart';
 import '../../data/datasource/local/local_storage.dart';
 
 class CommonBlurAppBar extends StatelessWidget {
-  const CommonBlurAppBar({super.key, required this.foregroundColor, required this.blurOpacity, this.showBackButton = false, this.isDrawer = false, this.onTap, this.child});
+  const CommonBlurAppBar({super.key, required this.foregroundColor, required this.blurOpacity, this.showBackButton = false, this.isDrawer = false, this.onTap, this.child, this.actions = const []});
 
   final Color foregroundColor;
   final double blurOpacity;
@@ -22,17 +22,17 @@ class CommonBlurAppBar extends StatelessWidget {
   final bool isDrawer;
   final void Function()? onTap;
   final Widget? child;
+  // glass buttons on the right of the back header: (SF symbol, fallback icon, tap)
+  final List<(String, IconData, VoidCallback)> actions;
 
   @override
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.paddingOf(context).top;
     return SizedBox(
       height: topPadding + Dimensions.h_50,
-      // one shared backdrop read for all bands instead of one screen copy per band
       child: BackdropGroup(
         child: Stack(
         children: [
-          // was two stacked bands (sigma 2.8 then 2.2); one pass at their combined sigma looks the same at half the cost
           _BlurBand(
             top: 0,
             height: topPadding + Dimensions.h_16 + Dimensions.h_1,
@@ -144,6 +144,11 @@ class CommonBlurAppBar extends StatelessWidget {
         if (isDrawer) ...[
           const Spacer(),
           _circleButton(symbol: 'line.3.horizontal', icon: CupertinoIcons.line_horizontal_3, onTap: onTap ?? () {}),
+        ],
+        if (actions.isNotEmpty) const Spacer(),
+        for (final (i, (symbol, icon, tap)) in actions.indexed) ...[
+          if (i > 0) SizedBox(width: Dimensions.w_8),
+          _circleButton(symbol: symbol, icon: icon, onTap: tap),
         ],
       ],
     );

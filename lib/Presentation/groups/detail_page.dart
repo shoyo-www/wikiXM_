@@ -7,6 +7,7 @@ import 'package:wikixm/Presentation/widgets/common_card.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
 import 'package:wikixm/Presentation/widgets/common_shimmer.dart';
 import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
+import 'package:wikixm/Presentation/widgets/post_card.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
@@ -235,7 +236,7 @@ class _DetailPageState extends State<DetailPage> {
                                         ),
                                       ),
                                       SizedBox(height: Dimensions.h_10),
-                                      if (c.groupDetailData?.posts?.isEmpty ?? true) postEmpty(c) else for (final post in c.groupDetailData!.posts!.take(2)) postCard(post),
+                                      if (c.groupDetailData?.posts?.isEmpty ?? true) postEmpty(c) else for (final post in c.groupDetailData!.posts!.take(2)) PostCard(item: post),
                                     ],
                                     SizedBox(height: Dimensions.h_20),
                                     Text(
@@ -385,7 +386,7 @@ class _DetailPageState extends State<DetailPage> {
                                         physics: const NeverScrollableScrollPhysics(),
                                         padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5),
                                         itemBuilder: (c, i) {
-                                          return EntranceAnimation(index: i, child: postCard(controller.groupTabData!.posts![i]));
+                                          return EntranceAnimation(index: i, child: PostCard(item: controller.groupTabData!.posts![i]));
                                         },
                                       ),
                                   ]),
@@ -549,113 +550,6 @@ class _DetailPageState extends State<DetailPage> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget postCard(model.Post item) {
-    return CommonCard(
-      margin: EdgeInsets.only(bottom: Dimensions.h_10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (item.isPinned == 1) ...[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_5, vertical: Dimensions.h_4),
-              decoration: BoxDecoration(color: AppColor.greenSoft(context), borderRadius: BorderRadius.circular(Dimensions.h_4)),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(CupertinoIcons.pin, size: Dimensions.h_10, color: AppColor.green(context)),
-                  SizedBox(width: Dimensions.w_5),
-                  Text(
-                    'Pinned by your organizer',
-                    style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, color: AppColor.green(context)),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: Dimensions.h_10),
-          ],
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              AppCacheImage(imageUrl: item.avatar ?? '', size: Dimensions.h_30, widthSize: Dimensions.h_30, isCircle: true, color: Theme.of(context).highlightColor),
-              SizedBox(width: Dimensions.w_8),
-              Expanded(
-                child: Row(
-                  children: [
-                    Text(
-                      '${item.firstName ?? ''} ${item.lastName ?? ''}',
-                      style: TextStyle(fontSize: FontSize.sp_12, fontWeight: FontWeight.w700, color: Theme.of(context).highlightColor),
-                    ),
-                    if (item.authorRoleLabel?.isNotEmpty ?? false) ...[
-                      SizedBox(width: Dimensions.w_8),
-                      Text(
-                        item.authorRoleLabel!,
-                        style: TextStyle(fontSize: FontSize.sp_10, fontWeight: FontWeight.w700, color: AppColor.blue(context)),
-                      ),
-                    ],
-                    SizedBox(width: Dimensions.w_8),
-                    Text(
-                      item.createdAtLabel ?? '',
-                      style: TextStyle(fontSize: FontSize.sp_9, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
-                    ),
-                    const Spacer(),
-                    Icon(item.isSaved == 1 ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark, size: Dimensions.h_16, color: Theme.of(context).highlightColor),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: Dimensions.h_10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title ?? '',
-                      style: TextStyle(fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w700, color: Theme.of(context).highlightColor, height: 1.1),
-                    ),
-                    SizedBox(height: Dimensions.h_5),
-                    Padding(
-                      padding: EdgeInsets.only(left: Dimensions.w_6),
-                      child: Text(
-                        item.body ?? '',
-                        style: TextStyle(fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor, height: 1.3),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (item.image?.isNotEmpty ?? false) ...[SizedBox(width: Dimensions.w_10), AppCacheImage(imageUrl: item.image!, size: Dimensions.h_75, widthSize: Dimensions.w_120)],
-            ],
-          ),
-          SizedBox(height: Dimensions.h_10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(width: Dimensions.w_6),
-              Icon(item.isLiked == 1 ? CupertinoIcons.hand_thumbsup_fill : CupertinoIcons.hand_thumbsup, size: Dimensions.h_11, color: Theme.of(context).highlightColor),
-              SizedBox(width: Dimensions.w_5),
-              Text(
-                '${item.likesCount ?? 0} Likes',
-                style: TextStyle(fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
-              ),
-              SizedBox(width: Dimensions.w_15),
-              Icon(CupertinoIcons.chat_bubble_text, size: Dimensions.h_11, color: Theme.of(context).highlightColor),
-              SizedBox(width: Dimensions.w_5),
-              Text(
-                '${item.commentsCount ?? 0} Comments',
-                style: TextStyle(fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 

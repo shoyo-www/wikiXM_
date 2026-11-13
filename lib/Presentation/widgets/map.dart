@@ -272,20 +272,6 @@ class _NearbyMapState extends State<NearbyMap> {
               widget.nearby?.title ?? 'Explore Near You',
               style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_14, fontWeight: FontWeight.w800),
             ),
-            const Spacer(),
-            GestureDetector(
-              onTap: openFullScreen,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'View Map',
-                    style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: FontSize.sp_10, fontWeight: FontWeight.w800),
-                  ),
-                  Icon(CupertinoIcons.arrow_right, color: Theme.of(context).primaryColorDark, size: Dimensions.h_12),
-                ],
-              ),
-            ),
           ],
         ),
         SizedBox(height: Dimensions.h_10),

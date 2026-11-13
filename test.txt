@@ -1,13 +1,14 @@
 Today's Task
 Project: WikiXM
 
--Updated the profile and user details on the profile page.
--Remove the tabs functionality from the profile page.
--Created the privacy and visibility screen.
--Created the activity preference screen.
--Created the content preference screen.
--Created the AI recommendation screen
--Created the blocked users screen
+-Created the Alerts Detail page UI .
+-Added a photo carousel to the detail header.
+-Added Save and Share glass buttons to the common app bar.
+-Added Overview, Discussion, Timeline, Articles and Photos tabs .
+-Added the Discussion tab using the group post card, with mock posts and a sticky post box at the bottom.
+-Showed a community discussion preview in the Overview tab.
+-Made the Articles tab a full-width vertical list of cards with the image on the left.
+-Added a common full-screen photo viewer with swipe and pinch to zoom.
 
 Free Time: None
 Roadblocks: None

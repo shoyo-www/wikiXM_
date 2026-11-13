@@ -83,12 +83,7 @@ class RestClient implements BaseService {
           } else if(e.response?.statusCode == null) {
             throw dio.DioException('Something went wrong');
           }else {
-            Map<String, dynamic> errorResponse = jsonDecode(e.response?.data);
-            dynamic message = errorResponse['message'];
-            if (message is List) {
-              message = message.isNotEmpty ? message.first.toString() : 'Something went wrong';
-            }
-            throw dio.DioException(message?.toString() ?? 'Something went wrong');
+            throw _apiError(e.response?.data);
           }
         }
         if (kDebugMode) {
@@ -189,22 +184,7 @@ class RestClient implements BaseService {
             e.response?.statusCode == null) {
           throw dio.DioException('Something went wrong');
         } else {
-          dynamic data = e.response?.data;
-          String message = 'Something went wrong';
-
-          if (data is Map && data['message'] != null) {
-            final errorMessage = data['message'];
-
-            if (errorMessage is List) {
-              message = errorMessage.isNotEmpty
-                  ? errorMessage.first.toString()
-                  : message;
-            } else {
-              message = errorMessage.toString();
-            }
-          }
-
-          throw dio.DioException(message);
+          throw _apiError(e.response?.data);
         }
       }
 
@@ -213,6 +193,23 @@ class RestClient implements BaseService {
       }
 
       throw dio.DioException(Constants.someThingWentWrong);
+    }
+  }
+
+  /// Responses are plain strings; prefers the first field error of a 422 over the generic "Validation failed."
+  dio.DioException _apiError(dynamic data) {
+    try {
+      final body = data is String ? jsonDecode(data) : data;
+      final errors = body['errors'];
+      if (errors is Map && errors.isNotEmpty) {
+        final first = errors.values.first;
+        return dio.DioException((first is List && first.isNotEmpty ? first.first : first).toString(), errors: Map<String, dynamic>.from(errors));
+      }
+      final message = body['message'];
+      if (message is List) return dio.DioException(message.isNotEmpty ? message.first.toString() : 'Something went wrong');
+      return dio.DioException(message?.toString() ?? 'Something went wrong');
+    } catch (_) {
+      return dio.DioException('Something went wrong');
     }
   }
 }
