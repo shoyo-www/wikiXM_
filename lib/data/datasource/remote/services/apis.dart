@@ -65,5 +65,8 @@ class Apis {
   static const groupCoverage = '$baseUrl/groups/coverage';
   static const createGroup = '$baseUrl/groups';
   static const groupAiAssist = '$baseUrl/groups/ai-assist';
+  static const alertsHome = '$baseUrl/community-alerts/home';
+  static const incidents = '$baseUrl/community-alerts/incidents/';
+  static const alertCategories = '$baseUrl/community-alerts/categories';
+  static const categoryIncidents = '$baseUrl/community-alerts/categories/incidents';
 }
-

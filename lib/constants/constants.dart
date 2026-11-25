@@ -126,6 +126,13 @@ class ControllerBuilders {
   static String groupSettings = 'GroupSettings';
   static String alertsHome = 'AlertsHome';
   static String alertDetail = 'AlertDetail';
+  static String alertDetailPhotos = 'AlertDetailPhotos';
+  static String alertDetailFollow = 'AlertDetailFollow';
+  static String alertDetailContent = 'AlertDetailContent';
+  static String allAlerts = 'AllAlerts';
+  static String allAlertsList = 'AllAlertsList';
+  static String communityPhotos = 'CommunityPhotos';
+  static String reportIssue = 'ReportIssue';
   static String groupProfilePage = 'GroupProfilePage';
   static String groupProfileSections = 'GroupProfileSections';
   static String groupProfilePrivacy = 'GroupProfilePrivacy';

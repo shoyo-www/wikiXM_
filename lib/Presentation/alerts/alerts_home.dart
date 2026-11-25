@@ -1,14 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:wikixm/Presentation/alerts/alerts_controller.dart';
+import 'package:wikixm/Presentation/alerts/alerts_drawer.dart';
 import 'package:wikixm/Presentation/widgets/cache_image.dart';
+import 'package:wikixm/Presentation/widgets/common_error_view.dart';
+import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
+import 'package:wikixm/Presentation/widgets/common_shimmer.dart';
 import 'package:wikixm/Presentation/widgets/common_sliver_scaffold.dart';
+import 'package:wikixm/Presentation/widgets/common_tabs.dart';
 import 'package:wikixm/Presentation/widgets/marquee.dart';
 import 'package:wikixm/constants/appcolor.dart';
 import 'package:wikixm/constants/constants.dart';
 import '../../constants/fontsize.dart';
 import '../widgets/entrance_animation.dart';
+import '../../data/datasource/remote/models/response/alerts_home.dart' as home;
 
 class AlertsHome extends StatelessWidget with AlertsUi {
   const AlertsHome({super.key});
@@ -17,55 +24,127 @@ class AlertsHome extends StatelessWidget with AlertsUi {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AlertsController>(
-      init: controller,
-      id: ControllerBuilders.alertsHome,
-      builder: (c) => CommonScrollBlurScaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        collapsedColor: Theme.of(context).highlightColor,
-        showBack: true,
-        expandedHeight: Dimensions.h_220,
-        hero: buildHeroHeader(context, c),
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: Dimensions.h_10),
-              child: buildBreaking(context, c),
-            ),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(Dimensions.w_10, Dimensions.h_1, Dimensions.w_10, MediaQuery.of(context).padding.bottom + Dimensions.h_20),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate(
-                entranceList([
-                  for (final section in [
-                    // buildAffecting(context, c),
-                    buildSnapshot(context, c),
-                    buildIncident(context, c),
-                    buildHelps(context, c),
-                    buildSolutions(context, c),
-                    buildNews(context, c),
-                    buildRoutes(context, c),
-                    buildJournal(context, c),
-                    buildMap(context, c),
-                    buildExplore(context, c),
-                    buildBusinesses(context, c),
-                  ])
-                    Padding(
-                      padding: EdgeInsets.only(bottom: Dimensions.h_20),
-                      child: section,
-                    ),
-                ]),
+    final ctrl = controller;
+    return AlertsDrawer(
+      builder: (openDrawer) => GetBuilder<AlertsController>(
+        init: ctrl,
+        id: ControllerBuilders.alertsHome,
+        builder: (c) => c.sections == null && c.isLoading
+            ? AppScaffold(top: false, bottom: false, bodyPadding: EdgeInsets.zero, backgroundColor: Theme.of(context).scaffoldBackgroundColor, body: pageShimmer())
+            : CommonScrollBlurScaffold(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                collapsedColor: Theme.of(context).highlightColor,
+                showBack: true,
+                isDrawer: true,
+                onTap: openDrawer,
+                expandedHeight: Dimensions.h_220,
+                hero: buildHeroHeader(context, c),
+                slivers: [
+                  if (c.sections == null)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: CommonErrorView(message: c.error, onRetry: c.getAlertsHome),
+                      ),
+                    )
+                  else ...[
+                    if (c.breaking.isNotEmpty)
+                      SliverPadding(
+                        padding: EdgeInsets.fromLTRB(Dimensions.w_10, Dimensions.h_10, Dimensions.w_10, MediaQuery.of(context).padding.bottom + Dimensions.h_20),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate(
+                            entranceList([
+                              for (final section in [buildSnapshot(context, c), buildIncident(context, c), buildSolutions(context, c), buildNews(context, c), buildJournal(context, c), buildMap(context, c), buildExplore(context, c), buildBusinesses(context, c)])
+                                if (section != null)
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: Dimensions.h_20),
+                                    child: section,
+                                  ),
+                            ]),
+                          ),
+                        ),
+                      ),
+                  ],
+                ],
               ),
+      ),
+    );
+  }
+
+  Widget pageShimmer() {
+    Widget header() => Padding(
+      padding: EdgeInsets.only(bottom: Dimensions.h_10),
+      child: Row(children: [ShimmerBox(Dimensions.w_150, Dimensions.h_15), const Spacer(), ShimmerBox(Dimensions.w_60, Dimensions.h_10)]),
+    );
+    Widget row() => ShimmerCard(
+      Row(
+        children: [
+          ShimmerBox(Dimensions.w_35, Dimensions.h_33, radius: Dimensions.h_10),
+          SizedBox(width: Dimensions.w_10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ShimmerBox(Dimensions.w_175, Dimensions.h_12),
+                SizedBox(height: Dimensions.h_6),
+                ShimmerBox(Dimensions.w_220, Dimensions.h_10),
+              ],
             ),
           ),
         ],
       ),
+      margin: EdgeInsets.only(bottom: Dimensions.h_8),
+    );
+    return CommonShimmer(
+      heroHeight: Dimensions.h_220,
+      hero: [
+        ShimmerBox(Dimensions.w_35, Dimensions.h_33, radius: Dimensions.h_10),
+        const Spacer(),
+        ShimmerBox(Dimensions.w_200, Dimensions.h_30, radius: Dimensions.h_8),
+        SizedBox(height: Dimensions.h_10),
+        ShimmerBox(Dimensions.w_220, Dimensions.h_11),
+        SizedBox(height: Dimensions.h_6),
+        ShimmerBox(Dimensions.w_175, Dimensions.h_11),
+        const Spacer(),
+        Row(
+          children: [
+            ShimmerBox(Dimensions.w_97, Dimensions.h_28, radius: Dimensions.h_6),
+            SizedBox(width: Dimensions.w_10),
+            ShimmerBox(Dimensions.w_97, Dimensions.h_28, radius: Dimensions.h_6),
+          ],
+        ),
+      ],
+      body: [
+        ShimmerBox(double.infinity, Dimensions.h_30, radius: Dimensions.h_8),
+        SizedBox(height: Dimensions.h_20),
+        header(),
+        ShimmerBox(double.infinity, Dimensions.h_70, radius: Dimensions.h_10),
+        SizedBox(height: Dimensions.h_20),
+        header(),
+        ShimmerCard(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ShimmerBox(double.infinity, Dimensions.h_160, radius: Dimensions.h_10),
+              SizedBox(height: Dimensions.h_10),
+              ShimmerBox(Dimensions.w_220, Dimensions.h_15),
+              SizedBox(height: Dimensions.h_8),
+              ShimmerBox(double.infinity, Dimensions.h_11),
+              SizedBox(height: Dimensions.h_6),
+              ShimmerBox(Dimensions.w_175, Dimensions.h_11),
+            ],
+          ),
+        ),
+        SizedBox(height: Dimensions.h_20),
+        header(),
+        for (var i = 0; i < 3; i++) row(),
+      ],
     );
   }
 
   Widget buildHeroHeader(BuildContext context, AlertsController c) {
     final fade = Theme.of(context).brightness == Brightness.light ? AppColor.softBackground : AppColor.backgroundDark;
+    final hero = c.sections?.hero;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -88,23 +167,17 @@ class AlertsHome extends StatelessWidget with AlertsUi {
               Padding(
                 padding: EdgeInsets.only(left: Dimensions.w_5, top: Dimensions.h_80),
                 child: Text(
-                  c.greeting,
+                  hero?.title ?? 'Alerts',
                   style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_30, fontWeight: FontWeight.w900, shadows: heroShadow, height: 1.2),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: Dimensions.w_8, top: Dimensions.h_10, right: Dimensions.w_60),
-                child: Text.rich(
-                  TextSpan(
-                    text: c.intro,
-                    style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w500, shadows: heroShadow),
-                    children: [
-                      TextSpan(
-                        text: c.introSource,
-                        style: TextStyle(fontWeight: FontWeight.w800),
-                      ),
-                    ],
-                  ),
+                child: Text(
+                  hero?.description ?? '',
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_12, fontWeight: FontWeight.w500, shadows: heroShadow),
                 ),
               ),
               SizedBox(height: Dimensions.h_10),
@@ -188,87 +261,21 @@ class AlertsHome extends StatelessWidget with AlertsUi {
 
   static final heroShadow = [Shadow(color: AppColor.black.withValues(alpha: 0.9), blurRadius: 30, offset: const Offset(0, 2))];
 
-  Widget heroStatItem({required IconData icon, required String value, required String label}) {
-    return Row(
-      children: [
-        Icon(icon, size: Dimensions.h_15, color: AppColor.white),
-        SizedBox(width: Dimensions.w_8),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              value,
-              style: TextStyle(fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w900, color: AppColor.white, height: 1),
-            ),
-            Text(
-              label,
-              style: TextStyle(fontSize: FontSize.sp_10, color: AppColor.white, shadows: heroShadow),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget buildAffecting(BuildContext context, AlertsController c) {
-    return Container(
-      padding: EdgeInsets.all(Dimensions.h_12),
-      decoration: cardDecoration(context),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text('${c.affecting.length} things affecting you', style: titleStyle(context, FontSize.sp_14, weight: FontWeight.w800)),
-              ),
-              pill(context, '✦ AI brief', AppColor.blue(context), AppColor.blueSoft(context)),
-            ],
-          ),
-          for (final a in c.affecting) ...[
-            Divider(height: Dimensions.h_20, color: AppColor.border(context)),
-            Row(
-              children: [
-                iconBox(context, a['icon'], a['tone']),
-                SizedBox(width: Dimensions.w_10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(a['title'], style: titleStyle(context, FontSize.sp_12)),
-                          SizedBox(width: Dimensions.w_6),
-                          pill(context, a['tag'], tone(context, a['tone']), toneSoft(context, a['tone'])),
-                        ],
-                      ),
-                      Text(a['body'], style: mutedStyle(context)),
-                    ],
-                  ),
-                ),
-                Icon(CupertinoIcons.chevron_right, color: AppColor.muted(context), size: Dimensions.h_13),
-              ],
-            ),
-          ],
-          Divider(height: Dimensions.h_20, color: AppColor.border(context)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text('Read full brief', style: linkStyle(context)),
-              Text('✦ Ask about alerts', style: linkStyle(context)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget buildBreaking(BuildContext context, AlertsController c) => tickerStrip(context, 'BREAKING', c.breaking, 'red');
 
-  Widget buildSnapshot(BuildContext context, AlertsController c) {
+  Widget emptyText(BuildContext context, String? text) => Padding(
+    padding: EdgeInsets.symmetric(vertical: Dimensions.h_8),
+    child: Text(text ?? '', style: mutedStyle(context)),
+  );
+
+  Widget? buildSnapshot(BuildContext context, AlertsController c) {
+    final s = c.sections?.snapshot;
+    final metrics = c.snapshotMetrics;
+    if (metrics.isEmpty) return null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeader(context, 'Fall city alert snapshot', action: 'View details'),
+        sectionHeader(context, s?.title ?? '', action: s?.action?.label),
         Container(
           decoration: cardDecoration(context),
           child: Padding(
@@ -276,11 +283,11 @@ class AlertsHome extends StatelessWidget with AlertsUi {
             child: IntrinsicHeight(
               child: Row(
                 children: [
-                  for (final s in c.snapshot)
+                  for (final m in metrics)
                     Expanded(
                       child: Container(
                         margin: EdgeInsets.symmetric(horizontal: Dimensions.w_2),
-                        decoration: s == c.snapshot.last
+                        decoration: m == metrics.last
                             ? null
                             : BoxDecoration(
                                 border: Border(right: BorderSide(color: AppColor.border(context))),
@@ -291,16 +298,17 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(s['icon'], color: tone(context, s['tone']), size: Dimensions.h_15),
+                                Icon(AlertsController.icon(m.icon), color: tone(context, m.tone), size: Dimensions.h_15),
                                 SizedBox(width: Dimensions.w_6),
                                 Text(
-                                  s['value'],
+                                  '${m.value ?? 0}',
                                   style: TextStyle(color: Theme.of(context).highlightColor, fontSize: FontSize.sp_20, fontWeight: FontWeight.w900),
                                 ),
                               ],
                             ),
                             Text(
-                              s['label'],
+                              m.label ?? '',
+                              textAlign: TextAlign.center,
                               style: mutedStyle(context, size: FontSize.sp_10).copyWith(color: Theme.of(context).highlightColor, height: 1.3),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -318,16 +326,19 @@ class AlertsHome extends StatelessWidget with AlertsUi {
     );
   }
 
-  Widget buildIncident(BuildContext context, AlertsController c) {
-    final i = c.incident;
+  Widget? buildIncident(BuildContext context, AlertsController c) {
+    final i = c.sections?.featuredIncident;
+    if (i == null) return null;
+    final timeline = i.timeline ?? <home.Timeline>[];
+    final stats = i.stats ?? <home.Stat>[];
+    final actions = (i.actions ?? <home.DetailActionElement>[]).skip(1);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeader(context, 'Incident hub', trailing: i['updated']),
-        // inner taps (tabs, follow) win the gesture arena, the rest of the card opens the detail
+        sectionHeader(context, 'incident hub'.trim(), trailing: i.updatedLabel),
         GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: c.openIncident,
+          onTap: () => c.openIncident(i.incidentId ?? i.id),
           child: Container(
             clipBehavior: Clip.antiAlias,
             decoration: cardDecoration(context),
@@ -336,15 +347,17 @@ class AlertsHome extends StatelessWidget with AlertsUi {
               children: [
                 Stack(
                   children: [
-                    AppCacheImage(imageUrl: i['image'], widthSize: Get.width, size: Dimensions.h_160, fit: BoxFit.cover, isShadow: false, radius: 0),
+                    AppCacheImage(imageUrl: i.imageUrl ?? '', widthSize: Get.width, size: Dimensions.h_160, fit: BoxFit.cover, isShadow: false, radius: 0),
                     Positioned(
                       left: Dimensions.w_10,
                       top: Dimensions.h_10,
-                      child: Row(
+                      right: Dimensions.w_10,
+                      child: Wrap(
+                        spacing: Dimensions.w_5,
+                        runSpacing: Dimensions.h_4,
                         children: [
-                          pill(context, i['tags'][0], AppColor.white, AppColor.red(context)),
-                          SizedBox(width: Dimensions.w_5),
-                          pill(context, i['tags'][1].toString().toUpperCase(), Theme.of(context).highlightColor, AppColor.surface(context), fontWeight: FontWeight.w600, fontSize: FontSize.sp_9),
+                          if (i.badge != null) pill(context, i.badge!, AppColor.white, tone(context, i.tone)),
+                          if (i.statusLabel != null) pill(context, i.statusLabel!.toUpperCase(), Theme.of(context).highlightColor, AppColor.surface(context), fontWeight: FontWeight.w600, fontSize: FontSize.sp_9),
                         ],
                       ),
                     ),
@@ -355,26 +368,36 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(i['title'], style: titleStyle(context, FontSize.sp_18, weight: FontWeight.w800).copyWith(letterSpacing: -0.3, height: 1.2)),
+                      Text(i.title ?? '', style: titleStyle(context, FontSize.sp_18, weight: FontWeight.w800).copyWith(letterSpacing: -0.3, height: 1.2)),
                       SizedBox(height: Dimensions.h_4),
                       Padding(
                         padding: EdgeInsets.only(left: Dimensions.w_5),
-                        child: Text(i['body'], style: mutedStyle(context, size: FontSize.sp_12)),
+                        child: Text(
+                          i.description ?? '',
+                          maxLines: 4,
+                          overflow: TextOverflow.ellipsis,
+                          style: mutedStyle(context, size: FontSize.sp_12),
+                        ),
                       ),
                       SizedBox(height: Dimensions.h_5),
                       Divider(height: Dimensions.h_20, color: AppColor.border(context)),
                       IntrinsicHeight(
                         child: Row(
                           children: [
-                            for (final (n, s) in (i['stats'] as List).indexed) ...[
+                            for (final (n, s) in stats.indexed) ...[
                               if (n > 0) VerticalDivider(width: Dimensions.w_20, color: AppColor.border(context)),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(s['label'], style: mutedStyle(context, size: FontSize.sp_10)),
+                                    Text(s.label ?? '', style: mutedStyle(context, size: FontSize.sp_10)),
                                     SizedBox(height: Dimensions.h_2),
-                                    Text(s['value'], style: titleStyle(context, FontSize.sp_15, weight: FontWeight.w800)),
+                                    Text(
+                                      s.value ?? '',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: titleStyle(context, FontSize.sp_13, weight: FontWeight.w800),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -384,9 +407,8 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                       ),
                       Divider(height: Dimensions.h_20, color: AppColor.border(context)),
                       SizedBox(height: Dimensions.h_5),
-                      tabs(context, c.incidentTabs, c.incidentTab, c.selectIncidentTab),
-                      SizedBox(height: Dimensions.h_12),
-                      for (final (n, t) in c.timeline.indexed)
+                      if (c.incidentTabs.isNotEmpty) ...[PillTabs(tabs: c.incidentTabs, selected: c.incidentTab, onTap: c.selectIncidentTab), SizedBox(height: Dimensions.h_12)],
+                      for (final (n, t) in timeline.indexed)
                         IntrinsicHeight(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -397,7 +419,7 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                                     padding: EdgeInsets.only(top: Dimensions.h_3),
                                     child: CircleAvatar(radius: Dimensions.h_4, backgroundColor: AppColor.green(context)),
                                   ),
-                                  if (n < c.timeline.length - 1)
+                                  if (n < timeline.length - 1)
                                     Expanded(
                                       child: VerticalDivider(width: Dimensions.w_8, color: AppColor.border(context)),
                                     ),
@@ -412,13 +434,13 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                                     children: [
                                       Row(
                                         children: [
-                                          Text(t['time']!, style: titleStyle(context, FontSize.sp_12)),
+                                          Text(AlertsController.clock(t.occurredAt ?? t.createdAt), style: titleStyle(context, FontSize.sp_12)),
                                           SizedBox(width: Dimensions.w_6),
-                                          t['source'] == 'Official' ? pill(context, 'Official', AppColor.green(context), AppColor.greenSoft(context)) : pill(context, 'Neighbor', AppColor.blue(context), AppColor.blueSoft(context)),
+                                          if (t.type != null) pill(context, t.type!.capitalizeFirst!, AppColor.green(context), AppColor.greenSoft(context)),
                                         ],
                                       ),
                                       SizedBox(height: Dimensions.h_2),
-                                      Text(t['body']!, style: titleStyle(context, FontSize.sp_12, weight: FontWeight.w500).copyWith(height: 1.35)),
+                                      Text(t.title ?? '', style: titleStyle(context, FontSize.sp_12, weight: FontWeight.w500).copyWith(height: 1.35)),
                                     ],
                                   ),
                                 ),
@@ -426,7 +448,7 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                             ],
                           ),
                         ),
-                      Center(child: Text('Open full incident page', style: linkStyle(context))),
+                      Center(child: Text(i.detailAction?.label ?? 'Open full incident page', style: linkStyle(context))),
                       SizedBox(height: Dimensions.h_12),
                       Row(
                         children: [
@@ -451,7 +473,7 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                               ),
                             ),
                           ),
-                          for (final icon in [CupertinoIcons.chat_bubble_text, CupertinoIcons.camera, CupertinoIcons.pencil])
+                          for (final a in actions)
                             Container(
                               margin: EdgeInsets.only(left: Dimensions.w_8),
                               width: Dimensions.h_35,
@@ -460,58 +482,27 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                                 border: Border.all(color: AppColor.border(context)),
                                 borderRadius: BorderRadius.circular(Dimensions.h_8),
                               ),
-                              child: Icon(icon, color: Theme.of(context).highlightColor, size: Dimensions.h_16),
+                              child: Icon(AlertsController.icon(a.icon), color: Theme.of(context).highlightColor, size: Dimensions.h_16),
                             ),
                         ],
                       ),
                       SizedBox(height: Dimensions.h_10),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(CupertinoIcons.info, color: AppColor.muted(context), size: Dimensions.h_13),
-                          SizedBox(width: Dimensions.w_5),
-                          Expanded(
-                            child: Text(i['note'], style: mutedStyle(context, size: FontSize.sp_10)),
-                          ),
-                        ],
-                      ),
+                      if (i.note != null)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(CupertinoIcons.info, color: AppColor.muted(context), size: Dimensions.h_13),
+                            SizedBox(width: Dimensions.w_5),
+                            Expanded(
+                              child: Text(i.note!, style: mutedStyle(context, size: FontSize.sp_10)),
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildHelps(BuildContext context, AlertsController c) {
-    return Column(
-      children: [
-        sectionHeader(context, 'Solutions for this incident', action: 'Add a tip'),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          clipBehavior: Clip.none,
-          child: Row(
-            children: [
-              for (final h in c.helps)
-                Container(
-                  width: Dimensions.w_200,
-                  margin: EdgeInsets.only(right: Dimensions.w_10),
-                  padding: EdgeInsets.only(top: Dimensions.h_6, bottom: Dimensions.h_10, left: Dimensions.w_8),
-                  decoration: cardDecoration(context),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      pill(context, 'Verified', AppColor.green(context), AppColor.greenSoft(context)),
-                      SizedBox(height: Dimensions.h_6),
-                      Text(h['title']!, style: titleStyle(context, FontSize.sp_13)),
-                      Text(h['body']!, style: mutedStyle(context, size: FontSize.sp_10), maxLines: 2),
-                    ],
-                  ),
-                ),
-            ],
           ),
         ),
       ],
@@ -540,178 +531,121 @@ class AlertsHome extends StatelessWidget with AlertsUi {
     ),
   );
 
-  Widget buildSolutions(BuildContext context, AlertsController c) {
+  Widget? buildSolutions(BuildContext context, AlertsController c) {
+    final s = c.sections?.communitySolutions;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeader(context, 'Community solutions', action: 'Add yours'),
-        for (final s in c.solutions) listRow(context, s['icon'], s['tone'], s['title'], s['body']),
-        Center(child: Text('See all community solutions', style: linkStyle(context))),
+        sectionHeader(context, s?.title ?? 'Community solutions', action: s?.action?.label ?? 'Add yours'),
+        for (final i in c.solutions) listRow(context, i['icon'], i['tone'], i['title'], i['body']),
+        Center(child: Text(s?.moreAction?.label ?? 'See all community solutions', style: linkStyle(context))),
       ],
     );
   }
 
-  Widget buildRoutes(BuildContext context, AlertsController c) {
+  Widget? buildJournal(BuildContext context, AlertsController c) {
+    final j = c.sections?.journal;
+    if (j == null) return null;
+    final items = c.journal;
+    final total = j.items?.length ?? 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeader(context, 'My followed routes', action: 'Manage routes'),
-        Container(
-          padding: EdgeInsets.all(Dimensions.h_10),
-          decoration: cardDecoration(context),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Routes you follow', style: mutedStyle(context)),
-              SizedBox(height: Dimensions.h_6),
-              Wrap(
-                spacing: Dimensions.w_6,
-                runSpacing: Dimensions.h_6,
-                crossAxisAlignment: WrapCrossAlignment.center,
+        sectionHeader(context, j.title ?? '', action: j.action?.label),
+        if (total == 0)
+          emptyText(context, j.emptyDescription ?? j.emptyTitle)
+        else ...[
+          PillTabs(tabs: c.journalTabs, selected: c.journalTab, onTap: c.selectJournalTab),
+          SizedBox(height: Dimensions.h_10),
+          for (final f in items)
+            Container(
+              margin: EdgeInsets.only(bottom: Dimensions.h_8),
+              padding: EdgeInsets.all(Dimensions.h_10),
+              decoration: cardDecoration(context),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (final r in c.followedRoutes) pill(context, r, AppColor.blue(context), AppColor.blueSoft(context), icon: CupertinoIcons.checkmark),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(CupertinoIcons.add, color: AppColor.blue(context), size: Dimensions.h_13),
-                      SizedBox(width: Dimensions.w_3),
-                      Text('Add route', style: linkStyle(context)),
-                    ],
+                  iconBox(context, AlertsController.icon(f.icon), f.tone),
+                  SizedBox(width: Dimensions.w_10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(f.title ?? '', style: titleStyle(context, FontSize.sp_13)),
+                        Text([f.badge, f.updatedLabel].whereType<String>().join('. '), style: mutedStyle(context)),
+                        SizedBox(height: Dimensions.h_4),
+                        Row(
+                          children: [
+                            Icon(CupertinoIcons.chat_bubble, color: AppColor.muted(context), size: Dimensions.h_11),
+                            SizedBox(width: Dimensions.w_3),
+                            Text('${f.replies ?? 0} replies', style: mutedStyle(context)),
+                            SizedBox(width: Dimensions.w_12),
+                            Icon(CupertinoIcons.lightbulb, color: AppColor.muted(context), size: Dimensions.h_11),
+                            SizedBox(width: Dimensions.w_3),
+                            Text('${f.solutions ?? 0} solutions', style: mutedStyle(context)),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
+                  Icon(CupertinoIcons.chevron_right, color: AppColor.muted(context), size: Dimensions.h_13),
                 ],
               ),
-              Divider(height: Dimensions.h_20, color: AppColor.border(context)),
-              Row(
-                children: [
-                  Icon(CupertinoIcons.bell, color: Theme.of(context).highlightColor, size: Dimensions.h_13),
-                  SizedBox(width: Dimensions.w_6),
-                  Text('Notify me about', style: titleStyle(context, FontSize.sp_11)),
-                  const Spacer(),
-                  Text(c.notifyLevel, style: linkStyle(context).copyWith(fontSize: FontSize.sp_10)),
-                  Icon(CupertinoIcons.chevron_down, color: AppColor.blue(context), size: Dimensions.h_10),
-                ],
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: Dimensions.h_10),
-        for (final r in c.routes)
-          Container(
-            margin: EdgeInsets.only(bottom: Dimensions.h_8),
-            padding: EdgeInsets.all(Dimensions.h_8),
-            decoration: cardDecoration(context),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppCacheImage(imageUrl: r['image']!, widthSize: Dimensions.w_90, size: Dimensions.h_70, fit: BoxFit.cover, isShadow: false, radius: Dimensions.h_8),
-                SizedBox(width: Dimensions.w_10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(child: Text(r['title']!, style: titleStyle(context, FontSize.sp_13))),
-                          pill(context, r['tag']!, tone(context, r['tone']), toneSoft(context, r['tone'])),
-                        ],
-                      ),
-                      SizedBox(height: Dimensions.h_2),
-                      Text(r['body']!, style: mutedStyle(context)),
-                      SizedBox(height: Dimensions.h_2),
-                      Text(r['source']!, style: mutedStyle(context, size: FontSize.sp_10)),
-                    ],
-                  ),
-                ),
-              ],
             ),
-          ),
+          Center(child: Text('Showing ${items.length} of $total alerts', style: mutedStyle(context))),
+        ],
       ],
     );
   }
 
-  Widget buildJournal(BuildContext context, AlertsController c) {
+  Widget? buildMap(BuildContext context, AlertsController c) {
+    final m = c.sections?.impactMap;
+    if (m == null) return null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeader(context, 'Fall City Alert journal', action: 'View all alerts'),
-        tabs(context, c.journalTabs, c.journalTab, c.selectJournalTab),
-        SizedBox(height: Dimensions.h_10),
-        for (final j in c.journal)
-          Container(
-            margin: EdgeInsets.only(bottom: Dimensions.h_8),
-            padding: EdgeInsets.all(Dimensions.h_10),
-            decoration: cardDecoration(context),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                iconBox(context, j['icon'], j['tone']),
-                SizedBox(width: Dimensions.w_10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(j['title'], style: titleStyle(context, FontSize.sp_13)),
-                      Text(j['meta'], style: mutedStyle(context)),
-                      SizedBox(height: Dimensions.h_4),
-                      Row(
-                        children: [
-                          Icon(CupertinoIcons.chat_bubble, color: AppColor.muted(context), size: Dimensions.h_11),
-                          SizedBox(width: Dimensions.w_3),
-                          Text('${j['replies']} replies', style: mutedStyle(context)),
-                          SizedBox(width: Dimensions.w_12),
-                          Icon(CupertinoIcons.lightbulb, color: AppColor.muted(context), size: Dimensions.h_11),
-                          SizedBox(width: Dimensions.w_3),
-                          Text('${j['solutions']} solutions', style: mutedStyle(context)),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(CupertinoIcons.chevron_right, color: AppColor.muted(context), size: Dimensions.h_13),
-              ],
-            ),
-          ),
-        Center(child: Text(c.journalFooter, style: mutedStyle(context))),
-      ],
-    );
-  }
-
-  Widget buildMap(BuildContext context, AlertsController c) {
-    Widget pin(double left, double top, IconData icon, Color color) => Positioned(
-      left: left,
-      top: top,
-      child: CircleAvatar(
-        radius: Dimensions.h_12,
-        backgroundColor: color,
-        child: Icon(icon, color: AppColor.white, size: Dimensions.h_12),
-      ),
-    );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        sectionHeader(context, 'Local impact map', action: 'Open map'),
+        sectionHeader(context, m.title ?? '', action: 'Open map'),
         Container(
           clipBehavior: Clip.antiAlias,
           decoration: cardDecoration(context),
           child: Column(
             children: [
-              // shortcut: illustrative map with fixed pins, swap for MapWidget once alerts have coordinates
               Container(
                 height: Dimensions.h_160,
                 color: AppColor.mapBlueSoft(context),
                 child: Stack(
                   children: [
-                    // the svg already draws the Fall City and river labels
-                    Positioned.fill(
-                      child: AppCacheImage(imageUrl: c.mapImage, widthSize: Get.width, size: Dimensions.h_160, fit: BoxFit.cover, isShadow: false, radius: 0),
-                    ),
-                    pin(Dimensions.w_175, Dimensions.h_15, CupertinoIcons.wifi, AppColor.blue(context)),
-                    pin(Dimensions.w_80, Dimensions.h_65, CupertinoIcons.bolt_fill, AppColor.orange(context)),
-                    pin(Dimensions.w_260, Dimensions.h_85, CupertinoIcons.car_detailed, AppColor.red(context)),
-                    Positioned(
-                      left: Dimensions.w_8,
-                      bottom: Dimensions.h_8,
-                      child: Text('I-90', style: mutedStyle(context, size: FontSize.sp_9)),
-                    ),
+                    if (c.mapCenter != null)
+                      FlutterMap(
+                        options: MapOptions(
+                          initialCenter: c.mapCenter!,
+                          initialZoom: 12,
+                          backgroundColor: AppColor.mapBlueSoft(context),
+                          // no one-finger drag: it would fight the page scroll
+                          interactionOptions: const InteractionOptions(flags: InteractiveFlag.pinchZoom | InteractiveFlag.pinchMove | InteractiveFlag.doubleTapZoom),
+                        ),
+                        children: [
+                          TileLayer(urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', userAgentPackageName: 'com.wikixm.app'),
+                          MarkerLayer(
+                            markers: [
+                              for (final p in c.mapPins)
+                                Marker(
+                                  point: p['point'],
+                                  width: Dimensions.h_25,
+                                  height: Dimensions.h_25,
+                                  child: Icon(p['icon'], color: tone(context, p['tone']), size: Dimensions.h_20),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    if ((m.pins ?? []).isEmpty && m.emptyLabel != null)
+                      Positioned(
+                        left: Dimensions.w_8,
+                        right: Dimensions.w_8,
+                        bottom: Dimensions.h_8,
+                        child: pill(context, m.emptyLabel!, Theme.of(context).highlightColor, AppColor.surface(context), fontWeight: FontWeight.w600),
+                      ),
                   ],
                 ),
               ),
@@ -719,17 +653,17 @@ class AlertsHome extends StatelessWidget with AlertsUi {
                 padding: EdgeInsets.all(Dimensions.h_8),
                 child: Row(
                   children: [
-                    for (final f in c.mapFilters)
+                    for (final l in m.layers ?? <home.Layer>[])
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
-                        onTap: () => c.toggleMapFilter(f),
+                        onTap: () => c.toggleMapFilter(l.id ?? ''),
                         child: Padding(
                           padding: EdgeInsets.only(right: Dimensions.w_12, top: Dimensions.h_6, bottom: Dimensions.h_6),
                           child: Row(
                             children: [
-                              Icon(c.activeMapFilters.contains(f) ? CupertinoIcons.checkmark_square_fill : CupertinoIcons.square, color: AppColor.blue(context), size: Dimensions.h_15),
+                              Icon(c.activeMapFilters.contains(l.id) ? CupertinoIcons.checkmark_square_fill : CupertinoIcons.square, color: AppColor.blue(context), size: Dimensions.h_15),
                               SizedBox(width: Dimensions.w_4),
-                              Text(f, style: titleStyle(context, FontSize.sp_12)),
+                              Text(l.label ?? '', style: titleStyle(context, FontSize.sp_12)),
                             ],
                           ),
                         ),
@@ -740,103 +674,115 @@ class AlertsHome extends StatelessWidget with AlertsUi {
             ],
           ),
         ),
-        SizedBox(height: Dimensions.h_4),
-        Text('Illustrative map. Locations are approximate.', style: mutedStyle(context, size: FontSize.sp_10)),
+        if (m.note != null) ...[SizedBox(height: Dimensions.h_4), Text(m.note!, style: mutedStyle(context, size: FontSize.sp_10))],
       ],
     );
   }
 
-  Widget buildNews(BuildContext context, AlertsController c) {
-    final h = c.newsHero;
+  Widget? buildNews(BuildContext context, AlertsController c) {
+    final n = c.sections?.news;
+    if (n == null) return null;
+    final h = n.feature;
+    final items = n.items ?? <home.Feature>[];
+    final photos = c.sections?.gallery?.items ?? <home.GalleryItem>[];
+    String meta(home.Feature f) => [f.updatedLabel, '${f.photos ?? 0} photos', '${f.replies ?? 0} replies'].whereType<String>().join(', ');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeader(context, 'Local news and reports'),
-        tabs(context, c.newsTabs, c.newsTab, c.selectNewsTab),
-        SizedBox(height: Dimensions.h_10),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(Dimensions.h_12),
-          child: Stack(
-            children: [
-              AppCacheImage(imageUrl: h['image']!, widthSize: Get.width, size: Dimensions.h_200, fit: BoxFit.cover, isShadow: false, radius: 0),
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [AppColor.transparent, AppColor.wikiXMNavy.withValues(alpha: 0.9)]),
+        sectionHeader(context, n.title ?? ''),
+        if (n.description != null) ...[Text(n.description!, style: mutedStyle(context)), SizedBox(height: Dimensions.h_10)],
+        if (h == null && items.isEmpty) emptyText(context, n.emptyLabel),
+        if (h != null) ...[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(Dimensions.h_12),
+            child: Stack(
+              children: [
+                AppCacheImage(imageUrl: h.imageUrl ?? '', widthSize: Get.width, size: Dimensions.h_200, fit: BoxFit.cover, isShadow: false, radius: 0),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [AppColor.transparent, AppColor.wikiXMNavy.withValues(alpha: 0.9)]),
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                left: Dimensions.w_12,
-                right: Dimensions.w_12,
-                bottom: Dimensions.h_12,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    pill(context, h['tag']!, AppColor.white, AppColor.blue(context)),
-                    SizedBox(height: Dimensions.h_4),
-                    Text(
-                      h['title']!,
-                      style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_17, fontWeight: FontWeight.w800),
-                    ),
-                    Text(
-                      h['meta']!,
-                      style: TextStyle(color: AppColor.white.withValues(alpha: 0.8), fontSize: FontSize.sp_10),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: Dimensions.h_10),
-        for (final n in c.news)
-          Padding(
-            padding: EdgeInsets.only(bottom: Dimensions.h_10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppCacheImage(imageUrl: n['image']!, widthSize: Dimensions.w_80, size: Dimensions.h_60, fit: BoxFit.cover, isShadow: false, radius: Dimensions.h_8),
-                SizedBox(width: Dimensions.w_10),
-                Expanded(
+                Positioned(
+                  left: Dimensions.w_12,
+                  right: Dimensions.w_12,
+                  bottom: Dimensions.h_12,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (h.badge != null) pill(context, h.badge!, AppColor.white, AppColor.blue(context)),
+                      SizedBox(height: Dimensions.h_4),
                       Text(
-                        n['tag'].toString().toUpperCase(),
-                        style: TextStyle(color: AppColor.blue(context), fontSize: FontSize.sp_9).copyWith(fontWeight: FontWeight.w700),
+                        h.title ?? '',
+                        style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_17, fontWeight: FontWeight.w800),
                       ),
-                      SizedBox(height: Dimensions.h_2),
-                      Text(n['title']!, style: titleStyle(context, FontSize.sp_13_5)),
-                      SizedBox(height: Dimensions.h_2),
-                      Text(n['meta']!, style: mutedStyle(context, size: FontSize.sp_10)),
+                      Text(
+                        meta(h),
+                        style: TextStyle(color: AppColor.white.withValues(alpha: 0.8), fontSize: FontSize.sp_10),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-        Row(
-          children: [
-            for (final p in c.neighborPhotos)
-              Padding(
-                padding: EdgeInsets.only(right: Dimensions.w_6),
-                child: AppCacheImage(imageUrl: p, widthSize: Dimensions.w_70, size: Dimensions.h_50, fit: BoxFit.cover, isShadow: false, radius: Dimensions.h_8),
-              ),
-            Expanded(
-              child: Text(c.neighborPhotosLabel, textAlign: TextAlign.center, style: linkStyle(context)),
+          SizedBox(height: Dimensions.h_10),
+        ],
+        for (final f in items)
+          Padding(
+            padding: EdgeInsets.only(bottom: Dimensions.h_10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppCacheImage(imageUrl: f.imageUrl ?? '', widthSize: Dimensions.w_80, size: Dimensions.h_60, fit: BoxFit.cover, isShadow: false, radius: Dimensions.h_8),
+                SizedBox(width: Dimensions.w_10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        (f.badge ?? '').toUpperCase(),
+                        style: TextStyle(color: AppColor.blue(context), fontSize: FontSize.sp_9).copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(height: Dimensions.h_2),
+                      Text(f.title ?? '', style: titleStyle(context, FontSize.sp_13_5)),
+                      SizedBox(height: Dimensions.h_2),
+                      Text(meta(f), style: mutedStyle(context, size: FontSize.sp_10)),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        if (photos.isNotEmpty)
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: c.openCommunityPhotos,
+            child: Row(
+              children: [
+                for (final p in photos.take(3))
+                  Padding(
+                    padding: EdgeInsets.only(right: Dimensions.w_6),
+                    child: AppCacheImage(imageUrl: p.imageUrl ?? '', widthSize: Dimensions.w_70, size: Dimensions.h_50, fit: BoxFit.cover, isShadow: false, radius: Dimensions.h_8),
+                  ),
+                Expanded(
+                  child: Text('${photos.length} community photo${photos.length == 1 ? '' : 's'}', textAlign: TextAlign.center, style: linkStyle(context)),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }
 
-  Widget buildExplore(BuildContext context, AlertsController c) {
+  Widget? buildExplore(BuildContext context, AlertsController c) {
+    final cat = c.sections?.categories;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        sectionHeader(context, 'Explore alerts'),
+        sectionHeader(context, cat?.title ?? 'Explore alerts'),
         GridView.count(
           crossAxisCount: 4,
           shrinkWrap: true,
@@ -845,36 +791,49 @@ class AlertsHome extends StatelessWidget with AlertsUi {
           mainAxisSpacing: Dimensions.h_8,
           crossAxisSpacing: Dimensions.w_8,
           children: [
-            for (final e in c.explore)
-              Container(
-                decoration: cardDecoration(context),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(e['icon'], color: Theme.of(context).highlightColor, size: Dimensions.h_20),
-                          SizedBox(height: Dimensions.h_3),
-                          Text(e['title'], style: titleStyle(context, FontSize.sp_12, weight: FontWeight.w500)),
-                        ],
-                      ),
-                    ),
-                    if (e['count'] > 0)
-                      Positioned(
-                        right: -Dimensions.w_3,
-                        top: -Dimensions.h_3,
-                        child: CircleAvatar(
-                          radius: Dimensions.h_7,
-                          backgroundColor: AppColor.red(context),
-                          child: Text(
-                            '${e['count']}',
-                            style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
+            for (final e in cat?.items ?? <home.CategoriesItem>[])
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => c.openCategory(e.slug),
+                child: Container(
+                  decoration: cardDecoration(context),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: Dimensions.w_3),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(AlertsController.icon(e.icon), color: Theme.of(context).highlightColor, size: Dimensions.h_20),
+                              SizedBox(height: Dimensions.h_3),
+                              Text(
+                                e.label ?? '',
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
+                                style: titleStyle(context, FontSize.sp_10, weight: FontWeight.w500),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                  ],
+                      if (c.categoryCount(e.slug) > 0)
+                        Positioned(
+                          right: -Dimensions.w_3,
+                          top: -Dimensions.h_3,
+                          child: CircleAvatar(
+                            radius: Dimensions.h_7,
+                            backgroundColor: AppColor.red(context),
+                            child: Text(
+                              '${c.categoryCount(e.slug)}',
+                              style: TextStyle(color: AppColor.white, fontSize: FontSize.sp_9, fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
           ],
@@ -950,18 +909,18 @@ class AlertsHome extends StatelessWidget with AlertsUi {
 /// Shared look for the alerts pages.
 mixin AlertsUi {
   Color tone(BuildContext context, String? t) => switch (t) {
-    'red' => AppColor.red(context),
-    'orange' => AppColor.orange(context),
-    'blue' => AppColor.blue(context),
-    'violet' => AppColor.violet(context),
+    'red' || 'power' || 'risk' || 'safety' => AppColor.red(context),
+    'orange' || 'warning' || 'earthquake' || 'travel' || 'pass' => AppColor.orange(context),
+    'blue' || 'internet' || 'weather' || 'flood' || 'calm' => AppColor.blue(context),
+    'violet' || 'community' => AppColor.violet(context),
     _ => AppColor.green(context),
   };
 
   Color toneSoft(BuildContext context, String? t) => switch (t) {
-    'red' => AppColor.redSoft(context),
-    'orange' => AppColor.orangeSoft(context),
-    'blue' => AppColor.blueSoft(context),
-    'violet' => AppColor.violetSoft(context),
+    'red' || 'power' || 'risk' || 'safety' => AppColor.redSoft(context),
+    'orange' || 'warning' || 'earthquake' || 'travel' || 'pass' => AppColor.orangeSoft(context),
+    'blue' || 'internet' || 'weather' || 'flood' || 'calm' => AppColor.blueSoft(context),
+    'violet' || 'community' => AppColor.violetSoft(context),
     _ => AppColor.greenSoft(context),
   };
 
@@ -978,11 +937,11 @@ mixin AlertsUi {
   );
 
   Widget sectionHeader(BuildContext context, String title, {String? action, String? trailing}) => Padding(
-    padding: EdgeInsets.only(bottom: Dimensions.h_8),
+    padding: EdgeInsets.only(bottom: Dimensions.h_13),
     child: Row(
       children: [
         Expanded(
-          child: Text(title, style: titleStyle(context, FontSize.sp_16, weight: FontWeight.w800).copyWith(letterSpacing: -0.3)),
+          child: Text(AlertsController.titleCase(title), style: titleStyle(context, FontSize.sp_16, weight: FontWeight.w800).copyWith(letterSpacing: -0.3)),
         ),
         if (action != null) Text(action, style: linkStyle(context)),
         if (trailing != null) Text(trailing, style: mutedStyle(context, size: FontSize.sp_10)),
@@ -1010,32 +969,6 @@ mixin AlertsUi {
     height: size ?? Dimensions.h_35,
     decoration: BoxDecoration(color: t == null ? AppColor.closeBackground(context) : toneSoft(context, t), borderRadius: BorderRadius.circular(Dimensions.h_8)),
     child: Icon(icon, color: t == null ? Theme.of(context).highlightColor : tone(context, t), size: Dimensions.h_16),
-  );
-
-  Widget tabs(BuildContext context, List<String> items, int selected, ValueChanged<int> onTap) => SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    child: Row(
-      children: [
-        for (final (i, t) in items.indexed)
-          GestureDetector(
-            onTap: () => onTap(i),
-            child: Container(
-              margin: EdgeInsets.only(right: Dimensions.w_6),
-              padding: EdgeInsets.symmetric(horizontal: Dimensions.w_12, vertical: Dimensions.h_5),
-              // the selected tab gets a matching border so tabs keep the same size when switching
-              decoration: BoxDecoration(
-                color: i == selected ? AppColor.blue(context) : Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(Dimensions.h_6),
-                border: Border.all(color: i == selected ? AppColor.blue(context) : AppColor.border(context), width: 0.5),
-              ),
-              child: Text(
-                t,
-                style: TextStyle(color: i == selected ? AppColor.surface(context) : Theme.of(context).highlightColor, fontSize: FontSize.sp_12, fontWeight: FontWeight.w700),
-              ),
-            ),
-          ),
-      ],
-    ),
   );
 
   /// Coloured strip with a [label] pill and a [Marquee] of items (each needs icon, tone, title, body and time).

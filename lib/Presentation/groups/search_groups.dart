@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wikixm/Presentation/groups/controller.dart';
 import 'package:wikixm/Presentation/groups/groups_drawer.dart';
+import 'package:wikixm/Presentation/widgets/common_tabs.dart';
 import 'package:wikixm/Presentation/widgets/common_card.dart';
 import 'package:wikixm/Presentation/widgets/common_dropdown.dart';
 import 'package:wikixm/Presentation/widgets/common_scaffold.dart';
@@ -749,65 +750,18 @@ class _SearchGroupsState extends State<SearchGroups> {
   }
 
   Widget categoryChips(BuildContext context) {
-    return SizedBox(
-      height: Dimensions.h_30,
-      child: GetBuilder<GroupController>(
-        id: ControllerBuilders.discoverGroupsList,
-        builder: (c) {
-          final chips = controller.discoverActivities ? c.calendarInterestChips : c.discoverCategoryChips;
-          if (chips == null) return chipsShimmer();
-          return ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.zero,
-            itemCount: chips.length,
-            separatorBuilder: (_, _) => SizedBox(width: Dimensions.w_10),
-            itemBuilder: (context, i) {
-              final cat = chips[i];
-              final selected = (controller.discoverActivities ? c.activityInterest : c.discoverCategory) == cat.id;
-              final color = categoryColor(cat.color);
-              return Semantics(
-                button: true,
-                selected: selected,
-                child: GestureDetector(
-                  onTap: () => controller.discoverActivities ? c.selectActivityInterest(cat.id ?? 'all') : c.selectDiscoverCategory(cat.id ?? 'all'),
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(Dimensions.w_5, 0, Dimensions.w_12, 0),
-                    decoration: BoxDecoration(
-                      color: selected ? AppColor.blue(context) : Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(Dimensions.h_8),
-                      border: Border.all(color: selected ? AppColor.blue(context) : AppColor.border(context)),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(Dimensions.h_3),
-                          decoration: BoxDecoration(color: selected ? Colors.white.withValues(alpha: 0.2) : color.withValues(alpha: 0.12), shape: BoxShape.circle),
-                          child: Icon(categoryIcon(cat.icon), size: Dimensions.h_12, color: selected ? Colors.white : color),
-                        ),
-                        SizedBox(width: Dimensions.w_8),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              cat.name ?? '',
-                              style: TextStyle(color: selected ? Colors.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_10, fontWeight: FontWeight.w700),
-                            ),
-                            Text(
-                              cat.count,
-                              style: TextStyle(color: selected ? Colors.white : Theme.of(context).highlightColor, fontSize: FontSize.sp_8_5),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
+    return GetBuilder<GroupController>(
+      id: ControllerBuilders.discoverGroupsList,
+      builder: (c) {
+        final chips = controller.discoverActivities ? c.calendarInterestChips : c.discoverCategoryChips;
+        if (chips == null) return chipsShimmer();
+        final selectedId = controller.discoverActivities ? c.activityInterest : c.discoverCategory;
+        return CategoryTabs(
+          tabs: [for (final cat in chips) (title: cat.name ?? '', subtitle: cat.count, icon: categoryIcon(cat.icon), color: categoryColor(cat.color))],
+          selected: chips.indexWhere((cat) => cat.id == selectedId),
+          onTap: (i) => controller.discoverActivities ? c.selectActivityInterest(chips[i].id ?? 'all') : c.selectDiscoverCategory(chips[i].id ?? 'all'),
+        );
+      },
     );
   }
 

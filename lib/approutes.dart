@@ -36,5 +36,8 @@ class AppRoutes {
   static const String groupSettingsPage = '/groupSettingsPage';
   static const String alerts = '/alerts';
   static const String alertDetail = '/alertDetail';
+  static const String allAlerts = '/allAlerts';
+  static const String communityPhotos = '/communityPhotos';
+  static const String reportIssue = '/reportIssue';
 
 }

@@ -13,7 +13,12 @@ class PostCard extends StatelessWidget {
   final bool showSave;
   final bool showCommentIcon;
   final String commentsLabel;
-  const PostCard({super.key, required this.item, this.showSave = true, this.showCommentIcon = true, this.commentsLabel = 'Comments'});
+  // replies and solutions on the alert detail have no likes or comment counts
+  final bool showFooter;
+  final VoidCallback? onComments;
+  // open replies shown inside the card under the footer; the count then reads "Hide replies"
+  final Widget? thread;
+  const PostCard({super.key, required this.item, this.showSave = true, this.showCommentIcon = true, this.commentsLabel = 'Comments', this.showFooter = true, this.onComments, this.thread});
 
   @override
   Widget build(BuildContext context) {
@@ -80,11 +85,13 @@ class PostCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.title ?? '',
-                      style: TextStyle(fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w700, color: Theme.of(context).highlightColor, height: 1.1),
-                    ),
-                    SizedBox(height: Dimensions.h_5),
+                    if (item.title?.isNotEmpty ?? false) ...[
+                      Text(
+                        item.title!,
+                        style: TextStyle(fontSize: FontSize.sp_13_5, fontWeight: FontWeight.w700, color: Theme.of(context).highlightColor, height: 1.1),
+                      ),
+                      SizedBox(height: Dimensions.h_5),
+                    ],
                     Padding(
                       padding: EdgeInsets.only(left: Dimensions.w_6),
                       child: Text(
@@ -98,28 +105,32 @@ class PostCard extends StatelessWidget {
               if (item.image?.isNotEmpty ?? false) ...[SizedBox(width: Dimensions.w_10), AppCacheImage(imageUrl: item.image!, size: Dimensions.h_75, widthSize: Dimensions.w_120)],
             ],
           ),
-          SizedBox(height: Dimensions.h_10),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(width: Dimensions.w_6),
-              Icon(item.isLiked == 1 ? CupertinoIcons.hand_thumbsup_fill : CupertinoIcons.hand_thumbsup, size: Dimensions.h_11, color: Theme.of(context).highlightColor),
-              SizedBox(width: Dimensions.w_5),
-              Text(
-                '${item.likesCount ?? 0} Likes',
-                style: TextStyle(fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
-              ),
-              SizedBox(width: Dimensions.w_15),
-              if (showCommentIcon) ...[
-                Icon(CupertinoIcons.chat_bubble_text, size: Dimensions.h_11, color: Theme.of(context).highlightColor),
+          if (showFooter) ...[
+            SizedBox(height: Dimensions.h_10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(width: Dimensions.w_6),
+                Icon(item.isLiked == 1 ? CupertinoIcons.hand_thumbsup_fill : CupertinoIcons.hand_thumbsup, size: Dimensions.h_11, color: Theme.of(context).highlightColor),
                 SizedBox(width: Dimensions.w_5),
+                Text(
+                  '${item.likesCount ?? 0} Likes',
+                  style: TextStyle(fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
+                ),
+                SizedBox(width: Dimensions.w_15),
+                if (showCommentIcon) ...[Icon(CupertinoIcons.chat_bubble_text, size: Dimensions.h_11, color: Theme.of(context).highlightColor), SizedBox(width: Dimensions.w_5)],
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: onComments,
+                  child: Text(
+                    thread != null ? 'Hide ${commentsLabel.toLowerCase()}' : '${item.commentsCount ?? 0} $commentsLabel',
+                    style: TextStyle(fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
+                  ),
+                ),
               ],
-              Text(
-                '${item.commentsCount ?? 0} $commentsLabel',
-                style: TextStyle(fontSize: FontSize.sp_9_5, fontWeight: FontWeight.w500, color: Theme.of(context).highlightColor),
-              ),
-            ],
-          ),
+            ),
+          ],
+          if (thread != null) ...[SizedBox(height: Dimensions.h_10), thread!],
         ],
       ),
     );

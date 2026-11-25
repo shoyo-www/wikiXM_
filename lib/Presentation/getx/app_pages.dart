@@ -4,6 +4,9 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:wikixm/Presentation/alerts/alert_detail.dart';
 import 'package:wikixm/Presentation/alerts/alerts_home.dart';
+import 'package:wikixm/Presentation/alerts/all_alerts.dart';
+import 'package:wikixm/Presentation/alerts/community_photos.dart';
+import 'package:wikixm/Presentation/alerts/report_issue.dart';
 import 'package:wikixm/Presentation/auth/sign_in.dart';
 import 'package:wikixm/Presentation/business/microsite.dart';
 import 'package:wikixm/Presentation/command_center/command_center.dart';
@@ -79,6 +82,9 @@ class AppPages {
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.groupSettingsPage, page: () => const GroupSettingsPage()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.alerts, page: () => const AlertsHome()),
     GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.alertDetail, page: () => const AlertDetail()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.allAlerts, page: () => const AllAlerts()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.communityPhotos, page: () => const CommunityPhotos()),
+    GetPage(transitionDuration: duration, transition: transition, name: AppRoutes.reportIssue, page: () => const ReportIssue()),
   ];
 }
 

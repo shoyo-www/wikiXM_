@@ -1,14 +1,12 @@
 Today's Task
 Project: WikiXM
 
--Created the Alerts Detail page UI .
--Added a photo carousel to the detail header.
--Added Save and Share glass buttons to the common app bar.
--Added Overview, Discussion, Timeline, Articles and Photos tabs .
--Added the Discussion tab using the group post card, with mock posts and a sticky post box at the bottom.
--Showed a community discussion preview in the Overview tab.
--Made the Articles tab a full-width vertical list of cards with the image on the left.
--Added a common full-screen photo viewer with swipe and pinch to zoom.
+-Added common error and empty placeholder widgets.
+-Added Incident Detail API with all tabs.
+-Added replies inside the discussion card.
+-Added shimmer and tab loaders on the detail page.
+-Added drawer to the detail page.
+-Added Alert Categories API with filters and pagination.
 
 Free Time: None
 Roadblocks: None

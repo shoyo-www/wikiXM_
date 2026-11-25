@@ -16,8 +16,9 @@ class CommonDropdown<T> extends StatelessWidget {
   final double? height;
   final double? radius;
   final bool textFieldStyle;
+  final double? fontSize;
 
-  const CommonDropdown({super.key, required this.items, required this.value, required this.onChanged, this.itemLabel, this.itemIcon, this.itemColor, this.icon, this.hint = 'Select', this.height, this.radius, this.textFieldStyle = false});
+  const CommonDropdown({super.key, required this.items, required this.value, required this.onChanged, this.itemLabel, this.itemIcon, this.itemColor, this.icon, this.hint = 'Select', this.height, this.radius, this.textFieldStyle = false, this.fontSize});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class CommonDropdown<T> extends StatelessWidget {
     final selected = items.contains(value) ? value : null;
     final fieldColor = Theme.of(context).highlightColor;
     final border = textFieldStyle ? Border.all(color: fieldColor, width: 0.1) : Border.all(color: AppColor.border(context), width: 0.5);
-    final headerPadding = EdgeInsets.symmetric(horizontal: textFieldStyle ? Dimensions.w_10 : Dimensions.w_8, vertical: textFieldStyle ? 0 : Dimensions.h_8);
+    final headerPadding = EdgeInsets.symmetric(horizontal: textFieldStyle ? Dimensions.w_10 : Dimensions.w_8, vertical: textFieldStyle ? 0 : (height != null && height! < Dimensions.h_30 ? Dimensions.h_4 : Dimensions.h_8));
     Widget header(Widget child) => textFieldStyle ? SizedBox(height: height ?? kMinInteractiveDimension, child: Align(alignment: Alignment.centerLeft, child: child)) : child;
     String label(T item) => itemLabel?.call(item) ?? item.toString();
 
@@ -41,7 +42,7 @@ class CommonDropdown<T> extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: item == null ? (textFieldStyle ? Theme.of(context).hintColor : AppColor.muted(context)) : (isSelected ? blue : fieldColor),
-                fontSize: header ? FontSize.sp_11 : FontSize.sp_10,
+                fontSize: header ? (fontSize ?? FontSize.sp_11) : FontSize.sp_10,
                 fontWeight: header ? (textFieldStyle ? FontWeight.w400 : FontWeight.w700) : FontWeight.w500,
               ),
             ),
@@ -53,7 +54,6 @@ class CommonDropdown<T> extends StatelessWidget {
     return SizedBox(
       height: height ?? Dimensions.h_35,
       child: DropdownFlutter<T>(
-        // Rebuild when value changes outside the dropdown (e.g. restore defaults); initialItem is only read once.
         key: ValueKey(selected),
         items: items,
         initialItem: selected,
@@ -69,7 +69,6 @@ class CommonDropdown<T> extends StatelessWidget {
         listItemBuilder: (context, item, isSelected, _) => row(item, header: false, isSelected: isSelected),
         decoration: CustomDropdownDecoration(
           closedFillColor: textFieldStyle ? Colors.transparent : AppColor.surface(context),
-          // stays opaque: the open list draws over the page
           expandedFillColor: AppColor.surface(context),
           closedBorder: border,
           expandedBorder: border,
